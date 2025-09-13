@@ -6,6 +6,7 @@ import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
+import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { DoorOpen, Plus, Users, Wallet } from "lucide-react";
@@ -90,6 +91,11 @@ function SaccoAdminDashboard() {
         </div>
 
         {/* Modal */}
+        <CreateSavingType
+          isOpen={savingTypeModal}
+          onClose={() => setSavingTypeModal(false)}
+          refetchSavingTypes={refetchSavingTypes}
+        />
       </div>
     </div>
   );
