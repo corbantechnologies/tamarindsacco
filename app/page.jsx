@@ -2,12 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Wallet, Lock, Heart } from "lucide-react";
+import {
+  Users,
+  Wallet,
+  Lock,
+  Menu as MenuIcon,
+  X as XIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 function LandingPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Header */}
@@ -15,7 +23,7 @@ function LandingPage() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Image
-              src="/logoNoBg.png"
+              src="/logo.png"
               alt="Tamarind SACCO Logo"
               width={50}
               height={50}
@@ -40,11 +48,72 @@ function LandingPage() {
           <Button
             variant="outline"
             className="md:hidden border-white text-white hover:bg-white hover:text-[#cc5500]"
+            onClick={() => setIsMenuOpen(true)}
           >
-            Menu
+            <MenuIcon className="h-5 w-5" />
+            <span className="sr-only">Menu</span>
           </Button>
         </div>
       </header>
+
+      {/* Mobile Sidebar */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-[200px] sm:w-[300px] bg-white text-black transform ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 ease-in-out md:hidden border-l border-[#cc5500] shadow-lg`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-4 flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-[#cc5500]">Menu</h2>
+            <Button
+              variant="ghost"
+              className="p-2 hover:bg-gray-100"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <XIcon className="h-5 w-5 text-black" />
+              <span className="sr-only">Close menu</span>
+            </Button>
+          </div>
+          <nav className="flex flex-col gap-6 p-4">
+            <Link
+              href="#features"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Features
+            </Link>
+            <Link
+              href="#about"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              About
+            </Link>
+            <Link
+              href="/login"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Join Now
+            </Link>
+          </nav>
+        </div>
+      </div>
+
+      {/* Overlay for Mobile Sidebar */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
+      )}
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-[#cc5500] to-[#e66b00] text-white py-20">
