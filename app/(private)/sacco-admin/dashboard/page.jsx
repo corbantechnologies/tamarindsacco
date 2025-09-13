@@ -50,6 +50,12 @@ function SaccoAdminDashboard() {
           </div>
           <div className="flex gap-3">
             <Button
+              onClick={() => setSavingTypeModal(true)}
+              className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" /> New Saving Type
+            </Button>
+            <Button
               variant="outline"
               size="sm"
               onClick={() => signOut()}
@@ -57,12 +63,6 @@ function SaccoAdminDashboard() {
             >
               <DoorOpen className="h-4 w-4" />
               Log out
-            </Button>
-            <Button
-              onClick={() => setSavingTypeModal(true)}
-              className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" /> New Saving Type
             </Button>
           </div>
         </div>
