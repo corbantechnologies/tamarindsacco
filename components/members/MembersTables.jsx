@@ -33,7 +33,7 @@ const MembersTable = ({ members, refetchMembers }) => (
           </TableHeader>
           <TableBody>
             {members?.map((member) => (
-              <TableRow key={member.id}>
+              <TableRow key={member.reference}>
                 <TableCell className="font-medium">
                   {member.member_no}
                 </TableCell>

@@ -27,7 +27,7 @@ const SavingsTypesTable = ({ savingTypes }) => (
           </TableHeader>
           <TableBody>
             {savingTypes?.map((type) => (
-              <TableRow key={type.id}>
+              <TableRow key={type.reference}>
                 <TableCell className="font-medium">{type.name}</TableCell>
                 <TableCell>
                   <span className="font-semibold text-success">
