@@ -1,6 +1,9 @@
 "use client";
-import { Label } from "@radix-ui/react-label";
-import { Eye, EyeOff, Lock } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
 import { getSession, signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -29,13 +32,12 @@ function LoginForm() {
       } else {
         toast?.success("Login successful! Redirecting...");
         if (session?.user?.is_staff === true) {
-          // TODO: Temporarily redirecting all staff to sacco admin dashboard
           router.push("/sacco-admin/dashboard");
         } else if (session?.user?.is_system_admin === true) {
           router.push("/sacco-admin/dashboard");
-        } else if (session?.user?.is_member === true)
+        } else if (session?.user?.is_member === true) {
           router.push("/member/dashboard");
-        else {
+        } else {
           router.push("/");
         }
       }
@@ -48,26 +50,26 @@ function LoginForm() {
         <div className="text-center mb-8">
           <Image
             src="/logoNoBg.png"
-            alt="Logo"
+            alt="Tamarind SACCO Logo"
             width={100}
             height={100}
             className="mx-auto mb-4 rounded-full"
           />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Tamarind SACCO
-          </h1>
-          <p className="text-gray-600">The SACCO for everyone</p>
+          <h1 className="text-3xl font-bold text-black">Tamarind SACCO</h1>
+          <p className="text-gray-500">The SACCO for everyone</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Payroll Number */}
           <div className="space-y-2">
-            <Label htmlFor="member_no">Payroll Number</Label>
-            <input
+            <Label htmlFor="member_no" className="text-black">
+              Payroll Number
+            </Label>
+            <Input
               type="text"
               id="member_no"
               placeholder="Enter your member number or payroll number"
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              className="border-black focus:ring-[#cc5500] focus:border-[#cc5500]"
               value={member_no}
               onChange={(e) => setMemberNo(e.target.value)}
             />
@@ -75,19 +77,21 @@ function LoginForm() {
 
           {/* Password */}
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-black">
+              Password
+            </Label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Password"
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                className="border-black focus:ring-[#cc5500] focus:border-[#cc5500]"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -102,12 +106,13 @@ function LoginForm() {
           {/* TODO: Add forgot password link */}
 
           {/* Login Button */}
-          <button
+          <Button
             type="submit"
-            className="w-full bg-[#cc5500] hover:bg-[#ffcc00] text-white font-semibold py-2 rounded-md"
+            className="w-full bg-[#cc5500] hover:bg-[#e66b00] text-white"
+            disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
