@@ -11,7 +11,7 @@ import React, { useState, useTransition } from "react";
 import toast from "react-hot-toast";
 
 function LoginForm() {
-  const [loading, setLoading] = useTransition();
+  const [loading, setLoading] = useState(false);
   const [member_no, setMemberNo] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +20,8 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(async () => {
+    setLoading(true);
+    try {
       const response = await signIn("credentials", {
         redirect: false,
         member_no,
@@ -41,7 +42,10 @@ function LoginForm() {
           router.push("/");
         }
       }
-    });
+    } catch (error) {
+      console.log(error);
+      toast?.error("Login failed. Please try again.");
+    }
   };
 
   return (
