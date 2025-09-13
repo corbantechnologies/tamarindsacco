@@ -1,15 +1,13 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import MembersCountCard from "@/components/members/MemberInfoCard";
 import MembersTable from "@/components/members/MembersTables";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
-import SavingsTypesCountCard from "@/components/savingstypes/SavingTypesCount";
+import { Button } from "@/components/ui/button";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { Button, Card, Flex, Heading, Table, Text } from "@radix-ui/themes";
 import { DoorOpen, Plus, Users, Wallet } from "lucide-react";
 import { signOut } from "next-auth/react";
 import React, { useState } from "react";
@@ -52,18 +50,18 @@ function SaccoAdminDashboard() {
           <div className="flex gap-3">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => signOut()}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 border-black text-black hover:bg-gray-100"
             >
               <DoorOpen className="h-4 w-4" />
               Log out
             </Button>
             <Button
               onClick={() => setSavingTypeModal(true)}
-              className="bg-primary hover:bg-primary/90 flex items-center gap-2"
+              className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
             >
-              <Plus className="h-4 w-4" />
-              New Saving Type
+              <Plus className="h-4 w-4 mr-2" /> New Saving Type
             </Button>
           </div>
         </div>
