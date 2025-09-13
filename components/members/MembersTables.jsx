@@ -19,58 +19,64 @@ const MembersTable = ({ members, refetchMembers }) => (
       <CardTitle className="text-xl">Members List</CardTitle>
     </CardHeader>
     <CardContent>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Member No</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members?.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell className="font-medium">{member.member_no}</TableCell>
-              <TableCell>
-                {member.salutation} {member.first_name} {member.last_name}
-              </TableCell>
-              <TableCell>{member.email}</TableCell>
-              <TableCell>{member.phone}</TableCell>
-              <TableCell>
-                <Badge
-                  variant={member.is_approved ? "default" : "secondary"}
-                  className={
-                    member.is_approved
-                      ? "bg-success text-success-foreground"
-                      : ""
-                  }
-                >
-                  {member.is_approved ? (
-                    <CheckCircle className="h-3 w-3 mr-1" />
-                  ) : (
-                    <Clock className="h-3 w-3 mr-1" />
-                  )}
-                  {member.is_approved ? "Approved" : "Pending"}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                {!member.is_approved && (
-                  <Button
-                    size="sm"
-                    onClick={() => onApprove(member.id)}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    Approve
-                  </Button>
-                )}
-              </TableCell>
+      {members?.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Member No</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {members?.map((member) => (
+              <TableRow key={member.id}>
+                <TableCell className="font-medium">
+                  {member.member_no}
+                </TableCell>
+                <TableCell>
+                  {member.salutation} {member.first_name} {member.last_name}
+                </TableCell>
+                <TableCell>{member.email}</TableCell>
+                <TableCell>{member.phone}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={member.is_approved ? "default" : "secondary"}
+                    className={
+                      member.is_approved
+                        ? "bg-success text-success-foreground"
+                        : ""
+                    }
+                  >
+                    {member.is_approved ? (
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                    ) : (
+                      <Clock className="h-3 w-3 mr-1" />
+                    )}
+                    {member.is_approved ? "Approved" : "Pending"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  {!member.is_approved && (
+                    <Button
+                      size="sm"
+                      onClick={() => onApprove(member.id)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      Approve
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p className="text-center text-muted-foreground">No members found.</p>
+      )}
     </CardContent>
   </Card>
 );
