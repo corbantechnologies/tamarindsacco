@@ -1,5 +1,8 @@
-import { Card, CardHeader, CardContent, CardTitle } from "@radix-ui/themes";
+"use client";
+
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { User } from "lucide-react";
 
 const AdminInfoCard = ({ member }) => (
   <Card className="shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-primary">

@@ -1,29 +1,39 @@
-import { Card, Heading, Table } from "@radix-ui/themes";
+"use client";
 import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 
 const SavingsTypesTable = ({ savingTypes }) => (
-  <Card className="mt-6">
-    <Heading size="5" mb="4">
-      Savings Types
-    </Heading>
-    <Table.Root variant="surface">
-      <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Interest Rate</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Description</Table.ColumnHeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {savingTypes?.map((type) => (
-          <Table.Row key={type.id}>
-            <Table.Cell>{type.name}</Table.Cell>
-            <Table.Cell>{type.interest_rate}%</Table.Cell>
-            <Table.Cell>{type.description}</Table.Cell>
-          </Table.Row>
-        ))}
-      </Table.Body>
-    </Table.Root>
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-xl">Savings Types</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Interest Rate</TableHead>
+            <TableHead>Description</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {savingTypes?.map((type) => (
+            <TableRow key={type.id}>
+              <TableCell className="font-medium">{type.name}</TableCell>
+              <TableCell>
+                <span className="font-semibold text-success">
+                  {type.interest_rate}%
+                </span>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {type.description}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
   </Card>
 );
 

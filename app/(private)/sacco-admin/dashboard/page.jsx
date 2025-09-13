@@ -4,12 +4,14 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import MembersCountCard from "@/components/members/MemberInfoCard";
 import MembersTable from "@/components/members/MembersTables";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
+import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import SavingsTypesCountCard from "@/components/savingstypes/SavingTypesCount";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { Button, Card, Flex, Heading, Table, Text } from "@radix-ui/themes";
 import { DoorOpen, Plus, Users, Wallet } from "lucide-react";
+import { signOut } from "next-auth/react";
 import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
@@ -35,49 +37,62 @@ function SaccoAdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <Flex direction="column" gap="6">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-6 space-y-6">
         {/* Header Section */}
-        <Flex justify="between" align="center" gap="4">
-          <Flex direction="column" gap="2">
-            <Heading size="8" style={{ color: "#cc5500" }}>
-              Welcome, {member?.salutation} {member?.last_name}
-            </Heading>
-            <Text size="4" color="gray">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-primary">
+              Welcome, {member.salutation} {member.last_name}
+            </h1>
+            <p className="text-muted-foreground mt-1">
               Manage your members and saving types
-            </Text>
-          </Flex>
-          <Flex gap="4">
+            </p>
+          </div>
+          <div className="flex gap-3">
             <Button
               variant="outline"
-              size="2"
               onClick={() => signOut()}
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2"
             >
               <DoorOpen className="h-4 w-4" />
               Log out
             </Button>
             <Button
               onClick={() => setSavingTypeModal(true)}
-              color="orange"
-              variant="soft"
+              className="bg-primary hover:bg-primary/90 flex items-center gap-2"
             >
-              <Plus className="h-4 w-4 mr-2" /> New Saving Type
+              <Plus className="h-4 w-4" />
+              New Saving Type
             </Button>
-          </Flex>
-        </Flex>
+          </div>
+        </div>
 
-        {/* Cards Section */}
-        <Flex gap="4" wrap="wrap">
+        {/* Stats Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <AdminInfoCard member={member} />
-          <MembersCountCard count={members?.length || 0} />
-          <SavingsTypesCountCard count={savingTypes?.length || 0} />
-        </Flex>
+          <StatsCard
+            title="Total Members"
+            value={members?.length}
+            Icon={Users}
+            description="Active members in the system"
+          />
+          <StatsCard
+            title="Savings Types"
+            value={savingTypes?.length}
+            Icon={Wallet}
+            description="Available saving products"
+          />
+        </div>
 
         {/* Tables Section */}
-        <MembersTable members={members} refetchMembers={refetchMembers} />
-        <SavingsTypesTable savingTypes={savingTypes} />
-      </Flex>
+        <div className="space-y-6">
+          <MembersTable members={members} />
+          <SavingsTypesTable savingTypes={savingTypes} />
+        </div>
+
+        {/* Modal */}
+      </div>
     </div>
   );
 }
