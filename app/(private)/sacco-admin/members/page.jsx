@@ -58,6 +58,7 @@ function Members() {
           />
         </div>
 
+        {/* members table */}
         <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
       </div>
     </div>
