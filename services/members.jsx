@@ -2,7 +2,7 @@
 
 import { apiActions, apiMultipartActions } from "@/tools/axios";
 
-export const signUpSystemAdmin = async (values) => {
+export const signUpSaccoAdmin = async (values) => {
   const response = await apiActions?.post(
     "/api/v1/auth/signup/system-admin/",
     values
@@ -19,7 +19,13 @@ export const signUpMember = async (values) => {
   return response;
 };
 
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
 // SACCO Admins
+// Add new member
+export const addMember = async (values, token) => {
+  await apiActions?.post("/api/v1/auth/new-member/", values, token);
+};
+
 // View all members
 export const getMembers = async (token) => {
   const response = await apiActions?.get("/api/v1/auth/", token);
@@ -40,7 +46,7 @@ export const approveMember = async (member_no, token) => {
   await apiActions?.patch(`/api/v1/auth/approve-member/${member_no}/`, token);
 };
 
-// -----------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------
 // Member Views
 export const getMember = async (userId, token) => {
   const response = await apiActions?.get(`/api/v1/auth/${userId}/`, token);
