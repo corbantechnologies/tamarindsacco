@@ -12,11 +12,13 @@ import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { DoorOpen, Plus, User, Users, Wallet } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
   const [memberCreateModal, setMemberCreateModal] = useState(false);
+  const router = useRouter();
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -38,13 +40,13 @@ function SaccoAdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto p-4 sm:p-6 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
-              Welcome, {member.salutation} {member.last_name}
+              Welcome, {member?.salutation} {member?.last_name}
             </h1>
             <p className="text-gray-500 mt-1">
               Manage your members and saving types
@@ -93,7 +95,11 @@ function SaccoAdminDashboard() {
 
         {/* Tables Section */}
         <div className="space-y-6">
-          <MembersTable members={members} />
+          <MembersTable
+            members={members}
+            refetchMembers={refetchMembers}
+            router={router}
+          />
           <SavingsTypesTable savingTypes={savingTypes} />
         </div>
 

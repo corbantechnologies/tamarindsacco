@@ -66,3 +66,12 @@ export const updateMember = async (userId, formData, token) => {
   );
   return response?.data;
 };
+
+// Activate Account
+export const activateAccount = async (values) => {
+  const response = await apiActions?.patch(
+    `/api/v1/auth/password/activate-account/`,
+    values
+  );
+  return response?.data;
+};

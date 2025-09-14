@@ -12,8 +12,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { CheckCircle, Clock } from "lucide-react";
+import { Button } from "../ui/button";
 
-const MembersTable = ({ members, refetchMembers }) => (
+const MembersTable = ({ members, refetchMembers, router }) => (
   <Card>
     <CardHeader>
       <CardTitle className="text-xl">Members List</CardTitle>
@@ -60,15 +61,15 @@ const MembersTable = ({ members, refetchMembers }) => (
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {!member.is_approved && (
-                    <Button
-                      size="sm"
-                      onClick={() => onApprove(member.id)}
-                      className="bg-primary hover:bg-primary/90"
-                    >
-                      Approve
-                    </Button>
-                  )}
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      router?.push(`sacco-admin/members/${member.member_no}`);
+                    }}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Manage
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
