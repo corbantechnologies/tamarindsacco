@@ -1,8 +1,7 @@
-// app/api/auth/[...nextauth]/route.js
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Sign In with your credentials",
@@ -49,6 +48,7 @@ const handler = NextAuth({
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       return { ...token, ...user };
@@ -59,6 +59,7 @@ const handler = NextAuth({
     },
   },
   pages: { signIn: "/auth/login" },
-});
+};
 
-export { handler as GET, handler as POST };
+
+export default NextAuth(authOptions);
