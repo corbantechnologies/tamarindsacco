@@ -38,45 +38,44 @@ function SaccoAdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-primary">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
               Welcome, {member.salutation} {member.last_name}
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-gray-500 mt-1">
               Manage your members and saving types
             </p>
           </div>
-          <div className="flex md:flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Button
               onClick={() => setMemberCreateModal(true)}
-              className="bg-[#045e32] hover:bg-[#022007] text-white"
+              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
               <User className="h-4 w-4 mr-2" /> New Member
             </Button>
             <Button
               onClick={() => setSavingTypeModal(true)}
-              className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+              className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
               <Plus className="h-4 w-4 mr-2" /> New Saving Type
             </Button>
             <Button
               variant="outline"
-              size="sm"
+              className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
               onClick={() => signOut()}
-              className="flex items-center gap-2 border-black text-black hover:bg-gray-100"
             >
-              <DoorOpen className="h-4 w-4" />
+              <DoorOpen className="h-4 w-4 mr-2" />
               Log out
             </Button>
           </div>
         </div>
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           <AdminInfoCard member={member} />
           <StatsCard
             title="Total Members"

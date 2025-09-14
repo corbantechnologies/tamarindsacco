@@ -23,7 +23,12 @@ export const signUpMember = async (values) => {
 // SACCO Admins
 // Add new member
 export const addMember = async (values, token) => {
-  await apiActions?.post("/api/v1/auth/new-member/", values, token);
+  const response = await apiActions?.post(
+    "/api/v1/auth/new-member/create/",
+    values,
+    token
+  );
+  return response;
 };
 
 // View all members
