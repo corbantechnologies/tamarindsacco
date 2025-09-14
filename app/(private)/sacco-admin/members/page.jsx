@@ -1,0 +1,48 @@
+"use client";
+import LoadingSpinner from "@/components/general/LoadingSpinner";
+import SaccoMembersTable from "@/components/members/SaccoMembersTable";
+import { Button } from "@/components/ui/button";
+import { useFetchMembers } from "@/hooks/members/actions";
+import { User } from "lucide-react";
+import React, { useState } from "react";
+
+function Members() {
+  const [memberCreateModal, setMemberCreateModal] = useState(false);
+  const {
+    isLoading: isLoadingMembers,
+    data: members,
+    refetch: refetchMembers,
+  } = useFetchMembers();
+
+  if (isLoadingMembers) return <LoadingSpinner />;
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+        {/* header section */}
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
+              Members
+            </h1>
+            <p className="text-gray-500 mt-1">Manage your members</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <Button
+              onClick={() => setMemberCreateModal(true)}
+              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+            >
+              <User className="h-4 w-4 mr-2" /> New Member
+            </Button>
+          </div>
+        </div>
+
+        <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
+      </div>
+    </div>
+  );
+}
+
+export default Members;
