@@ -38,7 +38,7 @@ function LandingPage() {
             <Link href="#about" className="hover:underline">
               About
             </Link>
-            <Link href="/login" className="hover:underline">
+            <Link href="/auth/login" className="hover:underline">
               Login
             </Link>
             <Link href="/register" className="hover:underline">
@@ -90,7 +90,7 @@ function LandingPage() {
               About
             </Link>
             <Link
-              href="/login"
+              href="/auth/login"
               className="text-lg hover:text-[#cc5500]"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -144,7 +144,7 @@ function LandingPage() {
               variant="outline"
               className="border-white text-white hover:bg-white hover:text-[#cc5500]"
             >
-              <Link href="/login">Login</Link>
+              <Link href="/auth/login">Login</Link>
             </Button>
           </div>
         </div>
@@ -265,7 +265,7 @@ function LandingPage() {
             <Link href="#about" className="hover:underline">
               About
             </Link>
-            <Link href="/login" className="hover:underline">
+            <Link href="/auth/login" className="hover:underline">
               Login
             </Link>
             <Link href="/register" className="hover:underline">
