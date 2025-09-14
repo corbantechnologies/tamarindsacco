@@ -151,7 +151,7 @@ function SaccoMembersTable({ members }) {
                           size="sm"
                           onClick={() => {
                             router.push(
-                              `sacco-admin/members/${member.member_no}`
+                              `/sacco-admin/members/${member.member_no}`
                             );
                           }}
                           className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
