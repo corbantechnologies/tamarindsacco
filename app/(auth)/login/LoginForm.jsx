@@ -27,7 +27,9 @@ function LoginForm() {
         member_no,
         password,
       });
+      console.log("signIn response:", response); // Log the response
       const session = await getSession();
+      console.log("Session:", session); // Log the session
       if (response?.error) {
         toast?.error("Invalid member number or password");
       } else {
@@ -43,8 +45,10 @@ function LoginForm() {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error("Login error:", error);
       toast?.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
