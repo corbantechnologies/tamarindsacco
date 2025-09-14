@@ -1,9 +1,10 @@
 "use client";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
+import StatsCard from "@/components/saccoadmin/StatsCard";
 import { Button } from "@/components/ui/button";
 import { useFetchMembers } from "@/hooks/members/actions";
-import { User } from "lucide-react";
+import { User, Users } from "lucide-react";
 import React, { useState } from "react";
 
 function Members() {
@@ -37,6 +38,24 @@ function Members() {
               <User className="h-4 w-4 mr-2" /> New Member
             </Button>
           </div>
+        </div>
+
+        {/* stats table */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <StatsCard
+            title="Total Members"
+            value={members?.length}
+            Icon={Users}
+            description="Active members in the system"
+          />
+
+          <StatsCard
+            title="Pending Approvals"
+            value={members?.length}
+            Icon={Users}
+            description="Active members in the system"
+          />
         </div>
 
         <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
