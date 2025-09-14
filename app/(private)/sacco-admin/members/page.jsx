@@ -1,4 +1,5 @@
 "use client";
+
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import StatsCard from "@/components/saccoadmin/StatsCard";
@@ -17,11 +18,14 @@ function Members() {
 
   if (isLoadingMembers) return <LoadingSpinner />;
 
+  // Calculate pending approvals
+  const pendingApprovals =
+    members?.filter((member) => !member.is_approved).length || 0;
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto p-4 sm:p-6 space-y-6">
-        {/* header section */}
-
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
@@ -40,25 +44,23 @@ function Members() {
           </div>
         </div>
 
-        {/* stats table */}
-
+        {/* Stats Cards Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <StatsCard
             title="Total Members"
-            value={members?.length}
+            value={members?.length || 0}
             Icon={Users}
             description="Active members in the system"
           />
-
           <StatsCard
             title="Pending Approvals"
-            value={members?.length}
+            value={pendingApprovals}
             Icon={Users}
-            description="Active members in the system"
+            description="Members awaiting approval"
           />
         </div>
 
-        {/* members table */}
+        {/* Members Table */}
         <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
       </div>
     </div>
