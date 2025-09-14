@@ -13,11 +13,11 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Toaster position="top-center" />
-        {/* <NextAuthProvider> */}
+        <NextAuthProvider>
           <TanstackQueryProvider>
             <Theme>{children}</Theme>
           </TanstackQueryProvider>
-        {/* </NextAuthProvider> */}
+        </NextAuthProvider>
       </body>
     </html>
   );
