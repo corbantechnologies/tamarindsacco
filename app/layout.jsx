@@ -3,6 +3,7 @@ import TanstackQueryProvider from "@/providers/TanstackQueryProvider";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import { Toaster } from "react-hot-toast";
 import { Theme } from "@radix-ui/themes";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function RootLayout({ children }) {
   return (
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Toaster position="top-center" />
+        <Analytics />
         <NextAuthProvider>
           <TanstackQueryProvider>
             <Theme>{children}</Theme>
