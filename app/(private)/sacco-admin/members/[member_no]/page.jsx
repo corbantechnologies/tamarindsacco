@@ -8,43 +8,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-// Mock service for approving a member (replace with actual API call)
-async function approveMember(member_no, token) {
-  try {
-    const response = await fetch(`/api/members/${member_no}/approve`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ is_approved: true }),
-    });
-    if (!response.ok) throw new Error("Failed to approve member");
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
-}
+import { approveMember } from "@/services/members";
 
 function MemberDetail() {
   const { member_no } = useParams();
+  const token = useAxiosAuth();
   const {
     isLoading: isLoadingMember,
     data: member,
+    error,
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
   const [isApproving, setIsApproving] = useState(false);
-  const token = useAxiosAuth();
+
+  // Debug: Log member_no and token
+  useEffect(() => {
+    console.log("MemberDetail: member_no =", member_no);
+    console.log("MemberDetail: token =", token);
+    if (error) {
+      console.error("MemberDetail: Fetch error =", error);
+      toast.error("Failed to load member details!");
+    }
+  }, [member_no, token, error]);
 
   if (isLoadingMember) return <LoadingSpinner />;
 
-  if (!member) {
+  if (!member || error) {
     return (
       <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-        <p className="text-gray-500">Member not found.</p>
+        <p className="text-gray-500">
+          {error ? "Error loading member details." : "Member not found."}
+        </p>
       </div>
     );
   }
@@ -56,7 +52,7 @@ function MemberDetail() {
       toast.success("Member approved successfully!");
       refetchMember();
     } catch (error) {
-      console.error(error);
+      console.error("Approve error:", error);
       toast.error("Failed to approve member!");
     } finally {
       setIsApproving(false);

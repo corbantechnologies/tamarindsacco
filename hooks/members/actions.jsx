@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import useUserId from "../authentication/useUserId";
-import { approveMember, getMember, getMembers } from "@/services/members";
+import { approveMember, getMember, getMemberDetail, getMembers } from "@/services/members";
 
 // MEMBER Hooks
 export function useFetchMember() {
