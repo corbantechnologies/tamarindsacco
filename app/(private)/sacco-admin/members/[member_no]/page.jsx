@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { useFetchMemberDetail } from "@/hooks/members/actions";
+import { useFetchMemberDetail, useVerifyMember } from "@/hooks/members/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { approveMember } from "@/services/members";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   CheckCircle,
@@ -25,6 +24,7 @@ import {
   Settings,
   ArrowBigLeft,
 } from "lucide-react";
+import { apiActions } from "@/tools/axios";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -36,17 +36,20 @@ function MemberDetail() {
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
   const [isApproving, setIsApproving] = useState(false);
-  const router = useRouter();
 
   const handleApprove = async () => {
     try {
       setIsApproving(true);
-      await approveMember(member_no, token);
-      toast.success("Member approved successfully!");
+      await apiActions?.patch(
+        `/api/v1/auth/approve-member/${member_no}/`,
+        {},
+        token
+      );
+      toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
       console.error("Approve error:", error);
-      toast.error("Failed to approve member!");
+      toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
     }
@@ -88,7 +91,9 @@ function MemberDetail() {
       label: "System Admin",
       active: member?.is_system_admin,
     },
-  ].filter((role) => role.active);
+  ].filter((role) => role?.active);
+
+  console.log(token);
 
   if (isLoadingMember) return <LoadingSpinner />;
 
@@ -101,23 +106,24 @@ function MemberDetail() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
               <Avatar className="h-24 w-24 border-4 border-primary/20">
                 <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
-                  {getInitials(member.first_name, member.last_name)}
+                  {getInitials(member?.first_name, member?.last_name)}
                 </AvatarFallback>
               </Avatar>
 
               <div className="flex-1 space-y-4">
                 <div>
                   <h1 className="text-4xl font-bold text-foreground mb-2">
-                    {member.salutation} {member.first_name} {member.last_name}
+                    {member?.salutation} {member?.first_name}{" "}
+                    {member?.last_name}
                   </h1>
                   <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <CreditCard className="h-4 w-4" />
-                      Member #{member.member_no}
+                      Member #{member?.member_no}
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      Joined {formatDate(member.created_at)}
+                      Joined {formatDate(member?.created_at)}
                     </span>
                   </div>
                 </div>
@@ -154,10 +160,10 @@ function MemberDetail() {
 
               {!member.is_approved && (
                 <Button
-                  onClick={handleApprove}
+                  onClick={() => handleApprove()}
                   disabled={isApproving}
-                  size="lg"
-                  className="bg-success hover:bg-success/90 text-success-foreground px-8"
+                  size="sm"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
                 >
                   {isApproving ? "Approving..." : "Approve Member"}
                 </Button>
