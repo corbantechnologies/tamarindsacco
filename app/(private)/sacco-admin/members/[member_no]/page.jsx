@@ -1,16 +1,30 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { useFetchMemberDetail } from "@/hooks/members/actions";
+import { useFetchMemberDetail, useVerifyMember } from "@/hooks/members/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock } from "lucide-react";
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { approveMember } from "@/services/members";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  CheckCircle,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  Calendar,
+  MapPin,
+  Building,
+  CreditCard,
+  Shield,
+  Settings,
+  ArrowBigLeft,
+} from "lucide-react";
+import { apiActions } from "@/tools/axios";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -23,37 +37,19 @@ function MemberDetail() {
   } = useFetchMemberDetail(member_no);
   const [isApproving, setIsApproving] = useState(false);
 
-  // Debug: Log member_no and token
-  useEffect(() => {
-    console.log("MemberDetail: member_no =", member_no);
-    console.log("MemberDetail: token =", token);
-    if (error) {
-      console.error("MemberDetail: Fetch error =", error);
-      toast.error("Failed to load member details!");
-    }
-  }, [member_no, token, error]);
-
-  if (isLoadingMember) return <LoadingSpinner />;
-
-  if (!member || error) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-        <p className="text-gray-500">
-          {error ? "Error loading member details." : "Member not found."}
-        </p>
-      </div>
-    );
-  }
-
   const handleApprove = async () => {
     try {
       setIsApproving(true);
-      await approveMember(member_no, token);
-      toast.success("Member approved successfully!");
+      await apiActions?.patch(
+        `/api/v1/auth/approve-member/${member_no}/`,
+        {},
+        token
+      );
+      toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
       console.error("Approve error:", error);
-      toast.error("Failed to approve member!");
+      toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
     }
@@ -68,188 +64,279 @@ function MemberDetail() {
     });
   };
 
+  const getInitials = (firstName, lastName) => {
+    return `${firstName?.charAt(0) || ""}${
+      lastName?.charAt(0) || ""
+    }`.toUpperCase();
+  };
+
+  const InfoField = ({ icon: Icon, label, value }) => (
+    <div className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 hover:bg-secondary/80 transition-colors">
+      <Icon className="h-5 w-5 text-primary mt-0.5" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-base font-semibold text-foreground truncate">
+          {value || "N/A"}
+        </p>
+      </div>
+    </div>
+  );
+
+  const roles = [
+    { key: "is_staff", label: "Staff", active: member?.is_staff },
+    { key: "is_member", label: "Member", active: member?.is_member },
+    { key: "is_superuser", label: "Superuser", active: member?.is_superuser },
+    {
+      key: "is_system_admin",
+      label: "System Admin",
+      active: member?.is_system_admin,
+    },
+  ].filter((role) => role?.active);
+
+  console.log(token);
+
+  if (isLoadingMember) return <LoadingSpinner />;
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto p-4 sm:p-6">
-        <Card className="bg-white shadow-xl">
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-[#cc5500]">
-                {member.salutation} {member.first_name} {member.last_name}
-              </CardTitle>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+        {/* Header Card */}
+        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+              <Avatar className="h-24 w-24 border-4 border-primary/20">
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
+                  {getInitials(member?.first_name, member?.last_name)}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h1 className="text-4xl font-bold text-foreground mb-2">
+                    {member?.salutation} {member?.first_name}{" "}
+                    {member?.last_name}
+                  </h1>
+                  <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <CreditCard className="h-4 w-4" />
+                      Member #{member?.member_no}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      Joined {formatDate(member?.created_at)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Badge
+                    variant={member.is_approved ? "default" : "secondary"}
+                    className={`${
+                      member.is_approved
+                        ? "bg-success text-success-foreground hover:bg-success/90"
+                        : "bg-warning text-warning-foreground hover:bg-warning/90"
+                    } px-3 py-1 text-sm font-semibold`}
+                  >
+                    {member.is_approved ? (
+                      <CheckCircle className="h-4 w-4 mr-1" />
+                    ) : (
+                      <Clock className="h-4 w-4 mr-1" />
+                    )}
+                    {member.is_approved ? "Approved" : "Pending Approval"}
+                  </Badge>
+
+                  <Badge
+                    variant={member.is_active ? "default" : "secondary"}
+                    className={`${
+                      member.is_active
+                        ? "bg-success text-success-foreground hover:bg-success/90"
+                        : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    } px-3 py-1 text-sm font-semibold`}
+                  >
+                    {member.is_active ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+              </div>
+
               {!member.is_approved && (
                 <Button
-                  onClick={handleApprove}
+                  onClick={() => handleApprove()}
                   disabled={isApproving}
-                  className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
+                  size="sm"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
                 >
                   {isApproving ? "Approving..." : "Approve Member"}
                 </Button>
               )}
             </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Personal Information */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#cc5500] mb-4">
-                Personal Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Email</p>
-                  <p className="text-base text-black">{member.email}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Phone</p>
-                  <p className="text-base text-black">{member.phone}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Date of Birth</p>
-                  <p className="text-base text-black">
-                    {formatDate(member.dob)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Gender</p>
-                  <p className="text-base text-black">
-                    {member.gender || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">County</p>
-                  <p className="text-base text-black">
-                    {member.county || "N/A"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Identification */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#cc5500] mb-4">
-                Identification
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Member Number</p>
-                  <p className="text-base text-black">{member.member_no}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">ID Type</p>
-                  <p className="text-base text-black">
-                    {member.id_type || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">ID Number</p>
-                  <p className="text-base text-black">
-                    {member.id_number || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Tax PIN</p>
-                  <p className="text-base text-black">
-                    {member.tax_pin || "N/A"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Employment */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#cc5500] mb-4">
-                Employment
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Employment Type</p>
-                  <p className="text-base text-black">
-                    {member.employment_type || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Employer</p>
-                  <p className="text-base text-black">
-                    {member.employer || "N/A"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Job Title</p>
-                  <p className="text-base text-black">
-                    {member.job_title || "N/A"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Status */}
-            <div>
-              <h2 className="text-xl font-semibold text-[#cc5500] mb-4">
-                Status
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Approval Status</p>
-                  <Badge
-                    variant={member.is_approved ? "default" : "secondary"}
-                    className={
-                      member.is_approved
-                        ? "bg-[#045e32] text-white"
-                        : "bg-gray-200 text-gray-800"
-                    }
-                  >
-                    {member.is_approved ? (
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                    ) : (
-                      <Clock className="h-3 w-3 mr-1" />
-                    )}
-                    {member.is_approved ? "Approved" : "Pending"}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Account Status</p>
-                  <Badge
-                    variant={member.is_active ? "default" : "secondary"}
-                    className={
-                      member.is_active
-                        ? "bg-[#045e32] text-white"
-                        : "bg-gray-200 text-gray-800"
-                    }
-                  >
-                    {member.is_active ? "Active" : "Inactive"}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Roles</p>
-                  <div className="flex gap-2">
-                    {member.is_staff && (
-                      <Badge className="bg-[#cc5500] text-white">Staff</Badge>
-                    )}
-                    {member.is_member && (
-                      <Badge className="bg-[#cc5500] text-white">Member</Badge>
-                    )}
-                    {member.is_superuser && (
-                      <Badge className="bg-[#cc5500] text-white">
-                        Superuser
-                      </Badge>
-                    )}
-                    {member.is_system_admin && (
-                      <Badge className="bg-[#cc5500] text-white">
-                        System Admin
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Created At</p>
-                  <p className="text-base text-black">
-                    {formatDate(member.created_at)}
-                  </p>
-                </div>
-              </div>
-            </div>
           </CardContent>
         </Card>
+
+        {/* Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Personal Information */}
+          <div className="lg:col-span-2 space-y-8">
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <User className="h-6 w-6 text-primary" />
+                  Personal Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <InfoField
+                  icon={Mail}
+                  label="Email Address"
+                  value={member.email}
+                />
+                <InfoField
+                  icon={Phone}
+                  label="Phone Number"
+                  value={member.phone}
+                />
+                <InfoField
+                  icon={Calendar}
+                  label="Date of Birth"
+                  value={formatDate(member.dob)}
+                />
+                <InfoField icon={User} label="Gender" value={member.gender} />
+                <InfoField icon={MapPin} label="County" value={member.county} />
+                <InfoField
+                  icon={CreditCard}
+                  label="Reference Code"
+                  value={member.reference}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Employment Information */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Building className="h-6 w-6 text-primary" />
+                  Employment Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid md:grid-cols-2 gap-4">
+                <InfoField
+                  icon={Building}
+                  label="Employment Type"
+                  value={member.employment_type}
+                />
+                <InfoField
+                  icon={Building}
+                  label="Employer"
+                  value={member.employer}
+                />
+                <InfoField
+                  icon={User}
+                  label="Job Title"
+                  value={member.job_title}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-8">
+            {/* Identification */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Shield className="h-5 w-5 text-primary" />
+                  Identification
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField
+                  icon={CreditCard}
+                  label="ID Type"
+                  value={member.id_type}
+                />
+                <InfoField
+                  icon={CreditCard}
+                  label="ID Number"
+                  value={member.id_number}
+                />
+                <InfoField
+                  icon={CreditCard}
+                  label="Tax PIN"
+                  value={member.tax_pin}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Roles & Permissions */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Settings className="h-5 w-5 text-primary" />
+                  Roles & Permissions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {roles.length > 0 ? (
+                    roles.map((role) => (
+                      <div
+                        key={role.key}
+                        className="flex items-center justify-between p-3 rounded-lg bg-primary/5"
+                      >
+                        <span className="font-medium text-foreground">
+                          {role.label}
+                        </span>
+                        <Badge
+                          variant="default"
+                          className="bg-primary text-primary-foreground"
+                        >
+                          Active
+                        </Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-muted-foreground text-center py-4">
+                      No roles assigned
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Account Timeline */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Clock className="h-5 w-5 text-primary" />
+                  Account Timeline
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
+                  <div className="h-3 w-3 rounded-full bg-success"></div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      Account Created
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDate(member.created_at)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
+                  <div className="h-3 w-3 rounded-full bg-primary"></div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      Last Updated
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDate(member.updated_at)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
