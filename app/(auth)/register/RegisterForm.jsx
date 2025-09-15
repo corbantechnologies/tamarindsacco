@@ -32,7 +32,7 @@ function RegisterForm() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image
-              src="/logoNoBg.png"
+              src="/logo.png"
               width={96}
               height={96}
               alt="Tamarind SACCO Logo"
@@ -93,18 +93,19 @@ function RegisterForm() {
                     >
                       Salutation *
                     </Label>
-                    <Field as={Select} name="salutation">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select salutation" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Mr">Mr</SelectItem>
-                        <SelectItem value="Mrs">Mrs</SelectItem>
-                        <SelectItem value="Miss">Miss</SelectItem>
-                        <SelectItem value="Ms">Ms</SelectItem>
-                        <SelectItem value="Dr">Dr</SelectItem>
-                        <SelectItem value="Prof">Prof</SelectItem>
-                      </SelectContent>
+                    <Field
+                      as="select"
+                      name="salutation"
+                      id="salutation"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    >
+                      <option value="">Select Salutation</option>
+                      <option value="Mr">Mr</option>
+                      <option value="Mrs">Mrs</option>
+                      <option value="Miss">Miss</option>
+                      <option value="Ms">Ms</option>
+                      <option value="Dr">Dr</option>
+                      <option value="Prof">Prof</option>
                     </Field>
                     <ErrorMessage
                       name="salutation"
@@ -224,14 +225,15 @@ function RegisterForm() {
                     >
                       Gender *
                     </Label>
-                    <Field as={Select} name="gender">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Male">Male</SelectItem>
-                        <SelectItem value="Female">Female</SelectItem>
-                      </SelectContent>
+                    <Field
+                      as="select"
+                      name="gender"
+                      id="gender"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
                     </Field>
                     <ErrorMessage
                       name="gender"
@@ -255,14 +257,15 @@ function RegisterForm() {
                     >
                       ID Type *
                     </Label>
-                    <Field as={Select} name="id_type">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select ID type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="National ID">National ID</SelectItem>
-                        <SelectItem value="Passport">Passport</SelectItem>
-                      </SelectContent>
+                    <Field
+                      as="select"
+                      name="id_type"
+                      id="id_type"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    >
+                      <option value="">Select ID Type</option>
+                      <option value="National ID">National ID</option>
+                      <option value="Passport">Passport</option>
                     </Field>
                     <ErrorMessage
                       name="id_type"
@@ -328,21 +331,18 @@ function RegisterForm() {
                     >
                       Employment Type *
                     </Label>
-                    <Field as={Select} name="employment_type">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select employment type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Permanent">Permanent</SelectItem>
-                        <SelectItem value="Casual">Casual</SelectItem>
-                        <SelectItem value="Contract">Contract</SelectItem>
-                        <SelectItem value="Self-Employed">
-                          Self-Employed
-                        </SelectItem>
-                        <SelectItem value="Not Employed">
-                          Not Employed
-                        </SelectItem>
-                      </SelectContent>
+                    <Field
+                      as="select"
+                      name="employment_type"
+                      id="employment_type"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    >
+                      <option value="">Select Employment Type</option>
+                      <option value="Permanent">Permanent</option>
+                      <option value="Casual">Casual</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Self-Employed">Self-Employed</option>
+                      <option value="Not Employed">Not Employed</option>
                     </Field>
                     <ErrorMessage
                       name="employment_type"
