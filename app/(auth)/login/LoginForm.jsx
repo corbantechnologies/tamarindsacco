@@ -117,6 +117,14 @@ function LoginForm() {
           >
             {loading ? "Logging in..." : "Login"}
           </Button>
+
+          {/* Register Link */}
+          <p className="text-center">
+            Don&apos;t have an account?{" "}
+            <a href="/register" className="text-[#cc5500] hover:underline">
+              Register now
+            </a>
+          </p>
         </form>
       </div>
     </div>
