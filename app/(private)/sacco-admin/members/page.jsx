@@ -4,6 +4,7 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import { Button } from "@/components/ui/button";
+import CreateMember from "@/forms/members/CreateMember";
 import { useFetchMembers } from "@/hooks/members/actions";
 import { User, Users } from "lucide-react";
 import React, { useState } from "react";
@@ -62,6 +63,13 @@ function Members() {
 
         {/* Members Table */}
         <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
+
+        {/* Member Create Modal */}
+        <CreateMember
+          openModal={memberCreateModal}
+          closeModal={() => setMemberCreateModal(false)}
+          refetchMembers={refetchMembers}
+        />
       </div>
     </div>
   );
