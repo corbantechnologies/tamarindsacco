@@ -8,7 +8,7 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchMember } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { DoorOpen } from "lucide-react";
+import { DoorOpen, Plus, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import React, { useState } from "react";
 
@@ -90,7 +90,7 @@ function MemberDashboard() {
             <StatsCard
               title="Savings Types"
               value={savingTypes?.length}
-              Icon={Wallet}
+              Icon={Wallet2}
               description="Available saving products"
             />
           </div>

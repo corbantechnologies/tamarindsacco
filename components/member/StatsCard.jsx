@@ -10,7 +10,7 @@ const StatsCard = ({ title, value, Icon, description }) => {
           <CardTitle className="text-sm font-medium text-muted-foreground">
             {title}
           </CardTitle>
-          <Icon className="h-4 w-4 text-primary" />
+          <Icon className="h-4 w-4 text-[#045e32]" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-foreground">{value}</div>
