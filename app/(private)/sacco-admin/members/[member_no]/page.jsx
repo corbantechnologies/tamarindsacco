@@ -80,13 +80,13 @@ function MemberDetail() {
   );
 
   const roles = [
-    { key: "is_staff", label: "Staff", active: member.is_staff },
-    { key: "is_member", label: "Member", active: member.is_member },
-    { key: "is_superuser", label: "Superuser", active: member.is_superuser },
+    { key: "is_staff", label: "Staff", active: member?.is_staff },
+    { key: "is_member", label: "Member", active: member?.is_member },
+    { key: "is_superuser", label: "Superuser", active: member?.is_superuser },
     {
       key: "is_system_admin",
       label: "System Admin",
-      active: member.is_system_admin,
+      active: member?.is_system_admin,
     },
   ].filter((role) => role.active);
 
@@ -95,16 +95,6 @@ function MemberDetail() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8 max-w-7xl">
-        {/* Back */}
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={() => router.back()}
-            className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-          >
-            <ArrowBigLeft />
-            Back
-          </Button>
-        </div>
         {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
           <CardContent className="p-8">
