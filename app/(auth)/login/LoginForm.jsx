@@ -30,6 +30,7 @@ function LoginForm() {
       const session = await getSession();
       if (response?.error) {
         toast?.error("Invalid member number or password");
+        setLoading(false);
       } else {
         toast?.success("Login successful! Redirecting...");
         if (session?.user?.is_staff === true) {
@@ -43,6 +44,7 @@ function LoginForm() {
         }
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
       toast?.error("Login failed. Please try again.");
     }
@@ -117,6 +119,14 @@ function LoginForm() {
           >
             {loading ? "Logging in..." : "Login"}
           </Button>
+
+          {/* Register Link */}
+          <p className="text-center">
+            Don&apos;t have an account?{" "}
+            <a href="/register" className="text-[#cc5500] hover:underline">
+              Register now
+            </a>
+          </p>
         </form>
       </div>
     </div>
