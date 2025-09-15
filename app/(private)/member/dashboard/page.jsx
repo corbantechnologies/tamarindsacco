@@ -4,6 +4,7 @@ import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import InfoCard from "@/components/member/InfoCard";
 import StatsCard from "@/components/member/StatsCard";
 import { Button } from "@/components/ui/button";
+import CreateSavingsAccount from "@/forms/savings/CreateSavingsAccount";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchMember } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
@@ -94,6 +95,16 @@ function MemberDashboard() {
               description="Available saving products"
             />
           </div>
+
+          {/* Tables section: Savings */}
+
+          {/* Modal */}
+          <CreateSavingsAccount
+            isOpen={savingsCreateModal}
+            onClose={() => setSavingsCreateModal(false)}
+            refetchSavings={refetchSavings}
+            savingTypes={savingTypes}
+          />
         </div>
       </div>
     </>
