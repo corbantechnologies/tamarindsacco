@@ -26,6 +26,9 @@ export const tailwindConfig = {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
         },
+        greenStroke: {
+          DEFAULT: "var(--greenStroke)",
+        },
         secondary: {
           DEFAULT: "var(--secondary)",
           foreground: "var(--secondary-foreground)",

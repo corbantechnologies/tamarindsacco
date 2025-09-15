@@ -64,7 +64,7 @@ const MembersTable = ({ members, refetchMembers, router }) => (
                   <Button
                     size="sm"
                     onClick={() => {
-                      router?.push(`sacco-admin/members/${member.member_no}`);
+                      router?.push(`/sacco-admin/members/${member.member_no}`);
                     }}
                     className="bg-primary hover:bg-primary/90"
                   >
