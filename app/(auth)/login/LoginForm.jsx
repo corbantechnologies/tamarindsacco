@@ -30,6 +30,7 @@ function LoginForm() {
       const session = await getSession();
       if (response?.error) {
         toast?.error("Invalid member number or password");
+        setLoading(false);
       } else {
         toast?.success("Login successful! Redirecting...");
         if (session?.user?.is_staff === true) {
@@ -43,6 +44,7 @@ function LoginForm() {
         }
       }
     } catch (error) {
+      setLoading(false);
       console.log(error);
       toast?.error("Login failed. Please try again.");
     }

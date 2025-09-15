@@ -1,9 +1,9 @@
-import React from 'react'
+"use client";
+
+import React from "react";
 
 function MemberDashboard() {
-  return (
-    <div>MemberDashboard</div>
-  )
+  return <div>MemberDashboard</div>;
 }
 
-export default MemberDashboard
+export default MemberDashboard;
