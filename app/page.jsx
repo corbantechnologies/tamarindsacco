@@ -19,16 +19,16 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-black">
       {/* Header */}
-      <header className="bg-[#cc5500] text-white sticky top-0 z-50">
+      <header className="bg-[#045e32] text-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Image
+            {/* <Image
               src="/logo.png"
               alt="Tamarind SACCO Logo"
               width={50}
               height={50}
-              className="rounded-full"
-            />
+              // className="rounded-full"
+            /> */}
             <h1 className="text-xl md:text-2xl font-bold">Tamarind SACCO</h1>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -47,7 +47,7 @@ function LandingPage() {
           </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white text-white hover:bg-white hover:text-[#cc5500]"
+            className="md:hidden border-white text-white hover:bg-white hover:text-[#045e32]"
             onClick={() => setIsMenuOpen(true)}
           >
             <MenuIcon className="h-5 w-5" />
@@ -60,11 +60,11 @@ function LandingPage() {
       <div
         className={`fixed inset-y-0 right-0 z-50 w-[200px] sm:w-[300px] bg-white text-black transform ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out md:hidden border-l border-[#cc5500] shadow-lg`}
+        } transition-transform duration-300 ease-in-out md:hidden border-l border-[#045e32] shadow-lg`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-[#cc5500]">Menu</h2>
+            <h2 className="text-lg font-semibold text-[#045e32]">Menu</h2>
             <Button
               variant="ghost"
               className="p-2 hover:bg-gray-100"
@@ -77,28 +77,28 @@ function LandingPage() {
           <nav className="flex flex-col gap-6 p-4">
             <Link
               href="#features"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:text-[#045e32]"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
               href="#about"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:text-[#045e32]"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <Link
               href="/login"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:text-[#045e32]"
               onClick={() => setIsMenuOpen(false)}
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:text-[#045e32]"
               onClick={() => setIsMenuOpen(false)}
             >
               Join Now
@@ -116,15 +116,15 @@ function LandingPage() {
       )}
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-[#cc5500] to-[#e66b00] text-white py-20">
+      <section className="bg-gradient-to-b from-[#045e32] to-[#e66b00] text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <Image
+          {/* <Image
             src="/logo.png"
             alt="Tamarind SACCO Logo"
             width={120}
             height={120}
             className="mx-auto mb-6 rounded-full"
-          />
+          /> */}
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             Welcome to Tamarind SACCO
           </h2>
@@ -135,14 +135,14 @@ function LandingPage() {
           <div className="flex justify-center gap-4">
             <Button
               asChild
-              className="bg-white text-[#cc5500] hover:bg-gray-100"
+              className="bg-white text-[#045e32] hover:bg-gray-100"
             >
               <Link href="/register">Get Started</Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-[#cc5500]"
+              className="border-white text-white hover:bg-white hover:text-[#045e32]"
             >
               <Link href="/login">Login</Link>
             </Button>
@@ -153,13 +153,13 @@ function LandingPage() {
       {/* Features Section */}
       <section id="features" className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-[#cc5500] mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-[#045e32] mb-12">
             Why Choose Tamarind SACCO?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="border-[#cc5500] shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-[#045e32] shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-[#cc5500]">
+                <CardTitle className="flex items-center gap-2 text-[#045e32]">
                   <Wallet className="h-6 w-6" />
                   Flexible Savings Plans
                 </CardTitle>
@@ -171,9 +171,9 @@ function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-[#cc5500] shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-[#045e32] shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-[#cc5500]">
+                <CardTitle className="flex items-center gap-2 text-[#045e32]">
                   <Users className="h-6 w-6" />
                   Community-Driven
                 </CardTitle>
@@ -185,9 +185,9 @@ function LandingPage() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-[#cc5500] shadow-md hover:shadow-lg transition-shadow">
+            <Card className="border-[#045e32] shadow-md hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-[#cc5500]">
+                <CardTitle className="flex items-center gap-2 text-[#045e32]">
                   <Lock className="h-6 w-6" />
                   Secure Platform
                 </CardTitle>
@@ -206,7 +206,7 @@ function LandingPage() {
       {/* About Section */}
       <section id="about" className="py-16 bg-[#f5f5f5]">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#cc5500] mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#045e32] mb-6">
             About Tamarind SACCO
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8">
@@ -218,7 +218,7 @@ function LandingPage() {
           </p>
           <Button
             asChild
-            className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+            className="bg-[#045e32] hover:bg-[#e66b00] text-white"
           >
             <Link href="/register">Join Our Community</Link>
           </Button>
@@ -226,7 +226,7 @@ function LandingPage() {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-16 bg-[#cc5500] text-white">
+      <section className="py-16 bg-[#045e32] text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Take Control of Your Finances?
@@ -235,7 +235,7 @@ function LandingPage() {
             Sign up today and start your journey with Tamarind SACCO. Experience
             the benefits of cooperative savings and financial growth.
           </p>
-          <Button asChild className="bg-white text-[#cc5500] hover:bg-gray-100">
+          <Button asChild className="bg-white text-[#045e32] hover:bg-gray-100">
             <Link href="/register">Sign Up Now</Link>
           </Button>
         </div>
