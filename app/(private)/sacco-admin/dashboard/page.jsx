@@ -4,11 +4,13 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import MembersTable from "@/components/members/MembersTables";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
+import SavingsTable from "@/components/savings/SavingsTable";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
 import CreateMember from "@/forms/members/CreateMember";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
+import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { DoorOpen, Plus, User, Users, Wallet } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -35,7 +37,14 @@ function SaccoAdminDashboard() {
     refetch: refetchSavingTypes,
   } = useFetchSavingsTypes();
 
-  if (isLoadingMember || isLoadingMembers || isLoadingSavingTypes) {
+  const {
+      isLoading: isLoadingSavings,
+      data: savings,
+      refetch: refetchSavings,
+      error: savingsError,
+    } = useFetchSavings();
+
+  if (isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingSavings) {
     return <LoadingSpinner />;
   }
 
@@ -101,6 +110,14 @@ function SaccoAdminDashboard() {
             router={router}
           />
           <SavingsTypesTable savingTypes={savingTypes} />
+        </div>
+
+        {/* Savings Table */}
+        <div className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#045e32]">
+            Your Savings Accounts
+          </h2>
+          <SavingsTable savings={savings} isLoading={isLoadingSavings} />
         </div>
 
         {/* Modals */}
