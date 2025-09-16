@@ -14,17 +14,17 @@ const AdminInfoCard = ({ member }) => (
     </CardHeader>
     <CardContent className="space-y-2">
       <div className="text-sm">
-        <span className="font-medium">Name:</span> {member.salutation}{" "}
-        {member.first_name} {member.last_name}
+        <span className="font-medium">Name:</span> {member?.salutation}{" "}
+        {member?.first_name} {member?.last_name}
       </div>
       <div className="text-sm">
-        <span className="font-medium">Email:</span> {member.email}
+        <span className="font-medium">Email:</span> {member?.email}
       </div>
       <div className="text-sm">
-        <span className="font-medium">Member No:</span> {member.member_no}
+        <span className="font-medium">Member No:</span> {member?.member_no}
       </div>
       <div className="text-sm">
-        <span className="font-medium">Phone:</span> {member.phone}
+        <span className="font-medium">Phone:</span> {member?.phone}
       </div>
     </CardContent>
   </Card>

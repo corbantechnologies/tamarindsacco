@@ -28,12 +28,12 @@ function SaccoMembersTable({ members }) {
   const filteredMembers =
     members?.filter((member) => {
       const fullName =
-        `${member.salutation} ${member.first_name} ${member.last_name}`.toLowerCase();
+        `${member?.salutation} ${member?.first_name} ${member?.last_name}`.toLowerCase();
       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
       const matchesStatus =
         statusFilter === "all" ||
-        (statusFilter === "approved" && member.is_approved) ||
-        (statusFilter === "pending" && !member.is_approved);
+        (statusFilter === "approved" && member?.is_approved) ||
+        (statusFilter === "pending" && !member?.is_approved);
       return matchesSearch && matchesStatus;
     }) || [];
 
@@ -119,31 +119,33 @@ function SaccoMembersTable({ members }) {
                 </TableHeader>
                 <TableBody>
                   {paginatedMembers.map((member) => (
-                    <TableRow key={member.reference}>
+                    <TableRow key={member?.reference}>
                       <TableCell className="font-medium">
-                        {member.member_no}
+                        {member?.member_no}
                       </TableCell>
                       <TableCell>
-                        {member.salutation} {member.first_name}{" "}
-                        {member.last_name}
+                        {member?.salutation} {member?.first_name}{" "}
+                        {member?.last_name}
                       </TableCell>
-                      <TableCell>{member.email}</TableCell>
-                      <TableCell>{member.phone}</TableCell>
+                      <TableCell>{member?.email}</TableCell>
+                      <TableCell>{member?.phone}</TableCell>
                       <TableCell>
                         <Badge
-                          variant={member.is_approved ? "default" : "secondary"}
+                          variant={
+                            member?.is_approved ? "default" : "secondary"
+                          }
                           className={
-                            member.is_approved
+                            member?.is_approved
                               ? "bg-[#045e32] text-white"
                               : "bg-gray-200 text-gray-800"
                           }
                         >
-                          {member.is_approved ? (
+                          {member?.is_approved ? (
                             <CheckCircle className="h-3 w-3 mr-1" />
                           ) : (
                             <Clock className="h-3 w-3 mr-1" />
                           )}
-                          {member.is_approved ? "Approved" : "Pending"}
+                          {member?.is_approved ? "Approved" : "Pending"}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -151,7 +153,7 @@ function SaccoMembersTable({ members }) {
                           size="sm"
                           onClick={() => {
                             router.push(
-                              `/sacco-admin/members/${member.member_no}`
+                              `/sacco-admin/members/${member?.member_no}`
                             );
                           }}
                           className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
