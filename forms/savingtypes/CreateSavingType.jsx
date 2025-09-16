@@ -45,7 +45,6 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                 refetchSavingTypes();
               });
             } catch (error) {
-              console.error(error);
               toast?.error("Failed to create saving type!");
             }
           }}

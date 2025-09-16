@@ -70,7 +70,6 @@ function RegisterForm() {
               toast.success("Registration successful!");
               router.push("/success");
             } catch (error) {
-              console.error(error);
               toast.error("Registration failed. Please try again.");
             } finally {
               setLoading(false);

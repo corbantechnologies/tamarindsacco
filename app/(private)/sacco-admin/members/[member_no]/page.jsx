@@ -48,7 +48,6 @@ function MemberDetail() {
       toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
-      console.error("Approve error:", error);
       toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
