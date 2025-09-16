@@ -52,14 +52,6 @@ function MemberDashboard() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            {savingTypes?.length > 0 && (
-              <Button
-                className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-                onClick={() => setSavingsCreateModal(true)}
-              >
-                Create Savings Account
-              </Button>
-            )}
             <Button
               variant="outline"
               className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"

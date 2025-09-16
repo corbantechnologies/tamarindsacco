@@ -47,7 +47,6 @@ function AccountActivation() {
                 router.push("/login");
               });
             } catch (error) {
-              console.error(error);
               toast?.error("Failed to activate account!");
             }
           }}

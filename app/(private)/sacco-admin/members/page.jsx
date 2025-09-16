@@ -21,7 +21,7 @@ function Members() {
 
   // Calculate pending approvals
   const pendingApprovals =
-    members?.filter((member) => !member.is_approved).length || 0;
+    members?.filter((member) => !member?.is_approved).length || 0;
 
   return (
     <div className="min-h-screen bg-gray-100">

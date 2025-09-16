@@ -48,8 +48,7 @@ function MemberDetail() {
       toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
-      console.error("Approve error:", error);
-      toast.error("Failed to approve member. Please try again");
+      toast.error("Failed to approve member?. Please try again");
     } finally {
       setIsApproving(false);
     }
@@ -130,35 +129,35 @@ function MemberDetail() {
 
                 <div className="flex flex-wrap gap-3">
                   <Badge
-                    variant={member.is_approved ? "default" : "secondary"}
+                    variant={member?.is_approved ? "default" : "secondary"}
                     className={`${
-                      member.is_approved
+                      member?.is_approved
                         ? "bg-success text-success-foreground hover:bg-success/90"
                         : "bg-warning text-warning-foreground hover:bg-warning/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
-                    {member.is_approved ? (
+                    {member?.is_approved ? (
                       <CheckCircle className="h-4 w-4 mr-1" />
                     ) : (
                       <Clock className="h-4 w-4 mr-1" />
                     )}
-                    {member.is_approved ? "Approved" : "Pending Approval"}
+                    {member?.is_approved ? "Approved" : "Pending Approval"}
                   </Badge>
 
                   <Badge
-                    variant={member.is_active ? "default" : "secondary"}
+                    variant={member?.is_active ? "default" : "secondary"}
                     className={`${
-                      member.is_active
+                      member?.is_active
                         ? "bg-success text-success-foreground hover:bg-success/90"
                         : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
-                    {member.is_active ? "Active" : "Inactive"}
+                    {member?.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
               </div>
 
-              {!member.is_approved && (
+              {!member?.is_approved && (
                 <Button
                   onClick={() => handleApprove()}
                   disabled={isApproving}
@@ -187,24 +186,28 @@ function MemberDetail() {
                 <InfoField
                   icon={Mail}
                   label="Email Address"
-                  value={member.email}
+                  value={member?.email}
                 />
                 <InfoField
                   icon={Phone}
                   label="Phone Number"
-                  value={member.phone}
+                  value={member?.phone}
                 />
                 <InfoField
                   icon={Calendar}
                   label="Date of Birth"
-                  value={formatDate(member.dob)}
+                  value={formatDate(member?.dob)}
                 />
-                <InfoField icon={User} label="Gender" value={member.gender} />
-                <InfoField icon={MapPin} label="County" value={member.county} />
+                <InfoField icon={User} label="Gender" value={member?.gender} />
+                <InfoField
+                  icon={MapPin}
+                  label="County"
+                  value={member?.county}
+                />
                 <InfoField
                   icon={CreditCard}
                   label="Reference Code"
-                  value={member.reference}
+                  value={member?.reference}
                 />
               </CardContent>
             </Card>
@@ -221,17 +224,17 @@ function MemberDetail() {
                 <InfoField
                   icon={Building}
                   label="Employment Type"
-                  value={member.employment_type}
+                  value={member?.employment_type}
                 />
                 <InfoField
                   icon={Building}
                   label="Employer"
-                  value={member.employer}
+                  value={member?.employer}
                 />
                 <InfoField
                   icon={User}
                   label="Job Title"
-                  value={member.job_title}
+                  value={member?.job_title}
                 />
               </CardContent>
             </Card>
@@ -251,17 +254,17 @@ function MemberDetail() {
                 <InfoField
                   icon={CreditCard}
                   label="ID Type"
-                  value={member.id_type}
+                  value={member?.id_type}
                 />
                 <InfoField
                   icon={CreditCard}
                   label="ID Number"
-                  value={member.id_number}
+                  value={member?.id_number}
                 />
                 <InfoField
                   icon={CreditCard}
                   label="Tax PIN"
-                  value={member.tax_pin}
+                  value={member?.tax_pin}
                 />
               </CardContent>
             </Card>
@@ -318,7 +321,7 @@ function MemberDetail() {
                       Account Created
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(member.created_at)}
+                      {formatDate(member?.created_at)}
                     </p>
                   </div>
                 </div>
@@ -329,7 +332,7 @@ function MemberDetail() {
                       Last Updated
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(member.updated_at)}
+                      {formatDate(member?.updated_at)}
                     </p>
                   </div>
                 </div>

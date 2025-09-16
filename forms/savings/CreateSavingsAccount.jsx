@@ -45,7 +45,6 @@ function CreateSavingsAccount({
                 refetchSavings();
               });
             } catch (error) {
-              console.error(error);
               toast?.error("Failed to create savings account!");
             }
           }}

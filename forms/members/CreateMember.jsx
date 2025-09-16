@@ -13,16 +13,18 @@ import { Label } from "@/components/ui/label";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { addMember } from "@/services/members";
 import { Field, Form, Formik } from "formik";
+import { Eye, EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function CreateMember({ closeModal, refetchMembers, openModal }) {
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const token = useAxiosAuth();
 
   return (
     <Dialog open={openModal} onOpenChange={closeModal}>
-      <DialogContent className="w-full h-full sm:h-[98vh] p-4 sm:p-6 bg-white overflow-y-auto">
+      <DialogContent className="w-full h-auto sm:h-auto p-4 sm:p-6 bg-white overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#cc5500]">
             Create New Member
@@ -33,17 +35,13 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
           initialValues={{
             salutation: "",
             first_name: "",
-            middle_name: "",
             last_name: "",
             email: "",
             phone: "",
             gender: "",
-            id_type: "",
-            id_number: "",
-            tax_pin: "",
             employment_type: "",
             member_no: "",
-            password: null,
+            password: "",
           }}
           onSubmit={async (values) => {
             try {
@@ -53,7 +51,6 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
               closeModal();
               refetchMembers();
             } catch (error) {
-              console.error(error);
               toast?.error("Failed to create member!");
             } finally {
               setLoading(false);
@@ -105,23 +102,6 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
 
                 <div className="space-y-2">
                   <Label
-                    htmlFor="middle_name"
-                    className="text-base text-black font-medium"
-                  >
-                    Middle Name
-                  </Label>
-                  <Field
-                    as={Input}
-                    type="text"
-                    name="middle_name"
-                    id="middle_name"
-                    placeholder="John"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
                     htmlFor="last_name"
                     className="text-base text-black font-medium"
                   >
@@ -133,40 +113,6 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
                     name="last_name"
                     id="last_name"
                     placeholder="Doe"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-base text-black font-medium"
-                  >
-                    Email
-                  </Label>
-                  <Field
-                    as={Input}
-                    type="email"
-                    name="email"
-                    id="email"
-                    placeholder="jdoe@example.com"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="phone"
-                    className="text-base text-black font-medium"
-                  >
-                    Phone
-                  </Label>
-                  <Field
-                    as={Input}
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    placeholder="123-456-7890"
                     className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
                   />
                 </div>
@@ -188,59 +134,6 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </Field>
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="id_type"
-                    className="text-base text-black font-medium"
-                  >
-                    ID Type
-                  </Label>
-                  <Field
-                    as="select"
-                    name="id_type"
-                    id="id_type"
-                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
-                  >
-                    <option value="">Select ID Type</option>
-                    <option value="National ID">National ID</option>
-                    <option value="Passport">Passport</option>
-                  </Field>
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="id_number"
-                    className="text-base text-black font-medium"
-                  >
-                    ID Number
-                  </Label>
-                  <Field
-                    as={Input}
-                    type="text"
-                    name="id_number"
-                    id="id_number"
-                    placeholder="1234567890"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="tax_pin"
-                    className="text-base text-black font-medium"
-                  >
-                    Tax Pin
-                  </Label>
-                  <Field
-                    as={Input}
-                    type="text"
-                    name="tax_pin"
-                    id="tax_pin"
-                    placeholder="1234567890"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
-                  />
                 </div>
 
                 <div className="space-y-2">
@@ -283,6 +176,58 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
                       />
                     </div>
                   )}
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="text-base text-black font-medium"
+                  >
+                    Email
+                  </Label>
+                  <Field
+                    as={Input}
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="jdoe@example.com"
+                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                  />
+                </div>
+                {/* if no email provided, show the password input */}
+                {values.email === "" && (
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="password"
+                      className="text-base text-black font-medium"
+                    >
+                      Password
+                    </Label>
+                    <div className="relative">
+                      <Field
+                        as={Input}
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        id="password"
+                        placeholder="Enter password"
+                        className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4 text-gray-500" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-gray-500" />
+                        )}
+                        <span className="sr-only">
+                          {showPassword ? "Hide password" : "Show password"}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
               <DialogFooter className="flex flex-col sm:flex-row gap-3 mt-6">
                 <Button

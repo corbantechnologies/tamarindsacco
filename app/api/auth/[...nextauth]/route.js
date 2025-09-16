@@ -30,11 +30,6 @@ export const authOptions = {
             }
           );
           if (!response.ok) {
-            console.error(
-              "Backend API error:",
-              response.status,
-              response.statusText
-            );
             return null;
           }
           const user = await response.json();
@@ -43,7 +38,6 @@ export const authOptions = {
           }
           return null;
         } catch (error) {
-          console.error("Authorize error:", error);
           return null;
         }
       },
