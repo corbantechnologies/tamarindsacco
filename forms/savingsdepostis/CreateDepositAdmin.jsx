@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Field, Form, Formik } from "formik";
 import { createSavingsDeposit } from "@/services/savingsdeposits";
+import toast from "react-hot-toast";
 
 function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
   const [loading, setLoading] = useTransition();
@@ -86,7 +87,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                   className="border-black focus:ring-[#cc5500]"
                   placeholder="Enter deposit amount"
                   required
-                  min="1"
+                  min="0.01"
                   step="0.01"
                 />
               </div>
