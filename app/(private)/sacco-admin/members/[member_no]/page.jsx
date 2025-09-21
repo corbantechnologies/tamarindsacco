@@ -22,10 +22,10 @@ import {
   CreditCard,
   Shield,
   Settings,
-  ArrowBigLeft,
   Wallet,
 } from "lucide-react";
 import { apiActions } from "@/tools/axios";
+import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -40,8 +40,6 @@ function MemberDetail() {
   const [isApproving, setIsApproving] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
 
-  console.log(member);
-
   const handleApprove = async () => {
     try {
       setIsApproving(true);
@@ -53,7 +51,7 @@ function MemberDetail() {
       toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
-      toast.error("Failed to approve member?. Please try again");
+      toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
     }
@@ -96,8 +94,6 @@ function MemberDetail() {
       active: member?.is_system_admin,
     },
   ].filter((role) => role?.active);
-
-  console.log(token);
 
   if (isLoadingMember) return <LoadingSpinner />;
 
@@ -254,15 +250,28 @@ function MemberDetail() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {member?.savings_accounts?.length > 0 ? (
-                  member?.savings_accounts.map((account) => (
-                    <div key={account?.reference} className="space-y-2">
-                      <InfoField
-                        icon={CreditCard}
-                        label={`${account?.account_type} - ${account?.account_number}`}
-                        value={`${account?.balance}KES`}
-                      />
-                    </div>
-                  ))
+                  <>
+                    {member?.savings_accounts.map((account) => (
+                      <div key={account?.reference} className="space-y-2">
+                        <InfoField
+                          icon={CreditCard}
+                          label={`${account?.account_type} - ${account?.account_number}`}
+                          value={`${account?.balance} ${
+                            account?.currency || "KES"
+                          }`}
+                        />
+                      </div>
+                    ))}
+                    {member?.is_approved && (
+                      <Button
+                        onClick={() => setDepositModal(true)}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Create Deposit
+                      </Button>
+                    )}
+                  </>
                 ) : (
                   <p className="text-muted-foreground text-center py-4">
                     No savings accounts found.
@@ -372,6 +381,13 @@ function MemberDetail() {
             </Card>
           </div>
         </div>
+
+        <CreateDepositAdmin
+          isOpen={depositModal}
+          onClose={() => setDepositModal(false)}
+          refetchMember={refetchMember}
+          accounts={member?.savings_accounts}
+        />
       </div>
     </div>
   );
