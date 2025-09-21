@@ -24,6 +24,14 @@ import {
   Settings,
   Wallet,
 } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { apiActions } from "@/tools/axios";
 import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 
@@ -100,6 +108,30 @@ function MemberDetail() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+        {/* Breadcrumbs */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/sacco-admin/dashboard">
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              </BreadcrumbLink>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/sacco-admin/members">
+                <BreadcrumbPage>Members</BreadcrumbPage>
+              </BreadcrumbLink>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#">
+                <BreadcrumbPage>
+                  {member?.first_name} {member?.last_name}
+                </BreadcrumbPage>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
           <CardContent className="p-8">
