@@ -23,6 +23,7 @@ import {
   Shield,
   Settings,
   ArrowBigLeft,
+  Wallet,
 } from "lucide-react";
 import { apiActions } from "@/tools/axios";
 
@@ -35,7 +36,11 @@ function MemberDetail() {
     error,
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
+  // states
   const [isApproving, setIsApproving] = useState(false);
+  const [depositModal, setDepositModal] = useState(false);
+
+  console.log(member);
 
   const handleApprove = async () => {
     try {
@@ -236,6 +241,33 @@ function MemberDetail() {
                   label="Job Title"
                   value={member?.job_title}
                 />
+              </CardContent>
+            </Card>
+
+            {/* Savings Accounts */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Savings Accounts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {member?.savings_accounts?.length > 0 ? (
+                  member?.savings_accounts.map((account) => (
+                    <div key={account?.reference} className="space-y-2">
+                      <InfoField
+                        icon={CreditCard}
+                        label={`${account?.account_type} - ${account?.account_number}`}
+                        value={`${account?.balance}KES`}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No savings accounts found.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
