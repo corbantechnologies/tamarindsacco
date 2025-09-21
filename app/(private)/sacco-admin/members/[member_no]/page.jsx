@@ -22,9 +22,18 @@ import {
   CreditCard,
   Shield,
   Settings,
-  ArrowBigLeft,
+  Wallet,
 } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { apiActions } from "@/tools/axios";
+import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -35,7 +44,9 @@ function MemberDetail() {
     error,
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
+  // states
   const [isApproving, setIsApproving] = useState(false);
+  const [depositModal, setDepositModal] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -48,7 +59,7 @@ function MemberDetail() {
       toast.success("Member approved successfully");
       refetchMember();
     } catch (error) {
-      toast.error("Failed to approve member?. Please try again");
+      toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
     }
@@ -92,13 +103,35 @@ function MemberDetail() {
     },
   ].filter((role) => role?.active);
 
-  console.log(token);
-
   if (isLoadingMember) return <LoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+        {/* Breadcrumbs */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/sacco-admin/dashboard">
+                <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              </BreadcrumbLink>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/sacco-admin/members">
+                <BreadcrumbPage>Members</BreadcrumbPage>
+              </BreadcrumbLink>
+              <BreadcrumbSeparator />
+            </BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#">
+                <BreadcrumbPage>
+                  {member?.first_name} {member?.last_name}
+                </BreadcrumbPage>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
           <CardContent className="p-8">
@@ -238,6 +271,46 @@ function MemberDetail() {
                 />
               </CardContent>
             </Card>
+
+            {/* Savings Accounts */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Savings Accounts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {member?.savings_accounts?.length > 0 ? (
+                  <>
+                    {member?.savings_accounts.map((account) => (
+                      <div key={account?.reference} className="space-y-2">
+                        <InfoField
+                          icon={CreditCard}
+                          label={`${account?.account_type} - ${account?.account_number}`}
+                          value={`${account?.balance} ${
+                            account?.currency || "KES"
+                          }`}
+                        />
+                      </div>
+                    ))}
+                    {member?.is_approved && (
+                      <Button
+                        onClick={() => setDepositModal(true)}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Create Deposit
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No savings accounts found.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
@@ -340,6 +413,13 @@ function MemberDetail() {
             </Card>
           </div>
         </div>
+
+        <CreateDepositAdmin
+          isOpen={depositModal}
+          onClose={() => setDepositModal(false)}
+          refetchMember={refetchMember}
+          accounts={member?.savings_accounts}
+        />
       </div>
     </div>
   );
