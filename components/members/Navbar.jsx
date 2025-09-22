@@ -33,7 +33,7 @@ function MemberNavbar() {
             >
               Dashboard
             </Link>
-            <Link href="/member/savings" className="hover:underline text-base">
+            {/* <Link href="/member/savings" className="hover:underline text-base">
               Savings
             </Link>
             <Link href="/member/loans" className="hover:underline text-base">
@@ -41,7 +41,7 @@ function MemberNavbar() {
             </Link>
             <Link href="/member/profile" className="hover:underline text-base">
               Profile
-            </Link>
+            </Link> */}
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
@@ -96,7 +96,7 @@ function MemberNavbar() {
             >
               Dashboard
             </Link>
-            <Link
+            {/* <Link
               href="/member/savings"
               className="text-lg hover:text-[#067a46]"
               onClick={() => setIsMenuOpen(false)}
@@ -116,7 +116,7 @@ function MemberNavbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Profile
-            </Link>
+            </Link> */}
             <Button
               variant="outline"
               onClick={() => {
