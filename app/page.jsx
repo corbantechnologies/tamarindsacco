@@ -142,7 +142,7 @@ function LandingPage() {
             <Button
               asChild
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-[#045e32]"
+              className="border-white text-black hover:bg-white hover:text-[#045e32]"
             >
               <Link href="/login">Login</Link>
             </Button>

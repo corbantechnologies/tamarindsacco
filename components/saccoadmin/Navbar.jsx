@@ -37,14 +37,14 @@ function SaccoAdminNavbar() {
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="border-white text-white hover:bg-white hover:text-[#cc5500] text-base py-1"
+              className="border-white text-black hover:bg-white hover:text-[#cc5500] text-base py-1"
             >
               Logout
             </Button>
           </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white text-white hover:bg-white hover:text-[#cc5500]"
+            className="md:hidden border-white cursor-pointer text-black hover:bg-white hover:text-[#cc5500]"
             onClick={() => setIsMenuOpen(true)}
           >
             <MenuIcon className="h-5 w-5" />

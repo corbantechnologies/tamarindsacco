@@ -45,14 +45,14 @@ function MemberNavbar() {
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="border-white text-white hover:bg-white hover:text-[#045e32] text-base py-1"
+              className="border-white text-black cursor-pointer hover:bg-white hover:text-[#045e32] text-base py-1"
             >
               Logout
             </Button>
           </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white text-white hover:bg-white hover:text-[#045e32]"
+            className="md:hidden border-white text-black hover:bg-white hover:text-[#045e32]"
             onClick={() => setIsMenuOpen(true)}
             aria-label="Open menu"
           >
