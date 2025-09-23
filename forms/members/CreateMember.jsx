@@ -14,6 +14,7 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { addMember } from "@/services/members";
 import { Field, Form, Formik } from "formik";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -21,6 +22,7 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const token = useAxiosAuth();
+  const router = useRouter();
 
   return (
     <Dialog open={openModal} onOpenChange={closeModal}>
@@ -46,10 +48,11 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
           onSubmit={async (values) => {
             try {
               setLoading(true);
-              await addMember(values, token);
+              const response = await addMember(values, token);
               toast?.success("Member created successfully!");
               closeModal();
               refetchMembers();
+              router.push(`/sacco-admin/members/${response?.data?.member_no}`);
             } catch (error) {
               toast?.error("Failed to create member!");
             } finally {
