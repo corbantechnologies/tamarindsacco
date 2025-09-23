@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-function CreateMember({ closeModal, refetchMembers, openModal }) {
+function CreateMember({ closeModal,  openModal }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const token = useAxiosAuth();
@@ -51,7 +51,7 @@ function CreateMember({ closeModal, refetchMembers, openModal }) {
               const response = await addMember(values, token);
               toast?.success("Member created successfully!");
               closeModal();
-              refetchMembers();
+              // refetchMembers();
               router.push(`/sacco-admin/members/${response?.data?.member_no}`);
             } catch (error) {
               toast?.error("Failed to create member!");

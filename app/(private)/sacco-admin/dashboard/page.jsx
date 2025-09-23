@@ -130,7 +130,6 @@ function SaccoAdminDashboard() {
         <CreateMember
           openModal={memberCreateModal}
           closeModal={() => setMemberCreateModal(false)}
-          refetchMembers={refetchMembers}
         />
       </div>
     </div>
