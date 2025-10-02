@@ -3,6 +3,7 @@
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
 import MembersTable from "@/components/members/MembersTables";
+import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTable from "@/components/savings/SavingsTable";
@@ -127,10 +128,9 @@ function SaccoAdminDashboard() {
 
         {/* Tables Section */}
         <div className="space-y-6">
-          <MembersTable
+          <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
-            router={router}
           />
           <SavingsTypesTable savingTypes={savingTypes} />
           <LoanTypesTable loanTypes={loanTypes} />
@@ -157,8 +157,8 @@ function SaccoAdminDashboard() {
         />
 
         <CreateLoanType
-          openModal={loanTypeModal}
-          closeModal={() => setLoanTypeModal(false)}
+          isOpen={loanTypeModal}
+          onClose={() => setLoanTypeModal(false)}
           refetchLoanTypes={refetchLoanTypes}
         />
       </div>

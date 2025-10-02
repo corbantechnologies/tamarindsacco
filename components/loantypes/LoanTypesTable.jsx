@@ -80,7 +80,7 @@ function LoanTypesTable({ loanTypes }) {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className=" rounded-lg shadow-md overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#cc5500] hover:bg-[#cc5500]">
