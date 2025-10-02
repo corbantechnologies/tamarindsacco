@@ -1,7 +1,7 @@
 "use client";
 
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,10 +14,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
-import { createLoanAccount } from "@/services/loans";
+import { adminCreateLoanForMember } from "@/services/loans";
 
-function CreateLoanAccountAdmin({ isOpen, onClose, refetchMember, loanTypes }) {
-  const [loading, setLoading] = useTransition();
+function CreateLoanAccountAdmin({
+  isOpen,
+  onClose,
+  refetchMember,
+  loanTypes,
+  member,
+}) {
+  const [loading, setLoading] = useState(false);
   const token = useAxiosAuth();
 
   return (
@@ -30,25 +36,43 @@ function CreateLoanAccountAdmin({ isOpen, onClose, refetchMember, loanTypes }) {
         <Formik
           initialValues={{
             loan_type: loanTypes?.name || "",
+            member_no: member?.member_no || "",
             loan_amount: 0,
             is_active: true,
             is_approved: true,
           }}
           onSubmit={async (values) => {
+            setLoading(true);
             try {
-              setLoading(async () => {
-                await createLoanAccount(values, token);
-                toast?.success("Loan created successfully!");
-                onClose();
-                refetchMember();
-              });
+              await adminCreateLoanForMember(values, token);
+              toast?.success("Loan created successfully!");
+              setLoading(false);
+              onClose();
+              refetchMember();
             } catch (error) {
+              console.log(error);
               toast?.error("Failed to create loan!");
+            } finally {
+              setLoading(false);
             }
           }}
         >
           {({ values }) => (
             <Form className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="member_no" className="text-black">
+                  Member
+                </Label>
+                <Field
+                  as={Input}
+                  type="text"
+                  name="member_no"
+                  placeholder={`${member?.member_no}`}
+                  value={`${member?.member_no}`}
+                  disabled
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors bg-gray-100"
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="loan_type" className="text-black">
                   Loan Type

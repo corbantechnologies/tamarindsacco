@@ -16,3 +16,13 @@ export const getLoan = async (identity, token) => {
   const response = await apiActions?.get(`/api/v1/loans/${identity}/`, token);
   return response?.data;
 };
+
+// Admin creates a loan for a member
+export const adminCreateLoanForMember = async (values, token) => {
+  const response = await apiActions?.post(
+    `/api/v1/loans/create/loan/`,
+    values,
+    token
+  );
+  return response?.data;
+};
