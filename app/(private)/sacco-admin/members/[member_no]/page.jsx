@@ -54,8 +54,6 @@ function MemberDetail() {
     refetch: refetchLoanTypes,
   } = useFetchLoanTypes();
 
-  console.log(member);
-
   // states
   const [isApproving, setIsApproving] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
