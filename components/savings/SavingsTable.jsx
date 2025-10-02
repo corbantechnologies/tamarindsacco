@@ -59,9 +59,14 @@ function SavingsTable({ savings, isLoading }) {
 
   if (!savings || savings.length === 0) {
     return (
-      <div className="text-center text-gray-700">
-        No savings accounts found.
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl text-[#045e32]">My Savings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-gray-700">No savings found.</div>
+        </CardContent>
+      </Card>
     );
   }
 

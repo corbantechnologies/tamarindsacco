@@ -77,7 +77,16 @@ function LoansTable({ loans, isLoading }) {
   }
 
   if (!loans || loans.length === 0) {
-    return <div className="text-center text-gray-700">No loans found.</div>;
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl text-[#045e32]">My Loans</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-gray-700">No loans found.</div>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
