@@ -84,28 +84,28 @@ function SaccoAdminDashboard() {
               onClick={() => setMemberCreateModal(true)}
               className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <User className="h-4 w-4 mr-2" /> New Member
+              <User className="h-4 w-4 mr-2" /> Member
             </Button>
             <Button
               onClick={() => setSavingTypeModal(true)}
               className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <Wallet2 className="h-4 w-4 mr-2" /> New Saving Type
+              <Wallet2 className="h-4 w-4 mr-2" /> Saving Type
             </Button>
             <Button
               onClick={() => setLoanTypeModal(true)}
               className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <Plus className="h-4 w-4 mr-2" /> New Loan Type
+              <Plus className="h-4 w-4 mr-2" /> Loan Type
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
               onClick={() => signOut()}
             >
               <DoorOpen className="h-4 w-4 mr-2" />
               Log out
-            </Button>
+            </Button> */}
           </div>
         </div>
 

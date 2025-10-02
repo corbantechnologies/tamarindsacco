@@ -23,6 +23,7 @@ import {
   Shield,
   Settings,
   Wallet,
+  Wallet2,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { apiActions } from "@/tools/axios";
 import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
+import CreateLoanAccountAdmin from "@/forms/loans/CreateLoanAdmin";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -47,6 +49,7 @@ function MemberDetail() {
   // states
   const [isApproving, setIsApproving] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
+  const [loanModal, setLoanModal] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -286,7 +289,7 @@ function MemberDetail() {
                     {member?.savings_accounts.map((account) => (
                       <div key={account?.reference} className="space-y-2">
                         <InfoField
-                          icon={CreditCard}
+                          icon={Wallet2}
                           label={`${account?.account_type} - ${account?.account_number}`}
                           value={`${account?.balance} ${
                             account?.currency || "KES"
@@ -307,6 +310,46 @@ function MemberDetail() {
                 ) : (
                   <p className="text-muted-foreground text-center py-4">
                     No savings accounts found.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Loan Accounts */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Loan Accounts
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {member?.loans?.length > 0 ? (
+                  <>
+                    {member?.loans.map((account) => (
+                      <div key={account?.reference} className="space-y-2">
+                        <InfoField
+                          icon={CreditCard}
+                          label={`${account?.account_type} - ${account?.account_number}`}
+                          value={`${account?.balance} ${
+                            account?.currency || "KES"
+                          }`}
+                        />
+                      </div>
+                    ))}
+                    {member?.is_approved && (
+                      <Button
+                        onClick={() => setLoanModal(true)}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Create Loan
+                      </Button>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No loan accounts found.
                   </p>
                 )}
               </CardContent>
@@ -419,6 +462,13 @@ function MemberDetail() {
           onClose={() => setDepositModal(false)}
           refetchMember={refetchMember}
           accounts={member?.savings_accounts}
+        />
+
+        <CreateLoanAccountAdmin
+          isOpen={loanModal}
+          onClose={() => setLoanModal(false)}
+          refetchMember={refetchMember}
+          loanTypes={member?.loans}
         />
       </div>
     </div>
