@@ -1,26 +1,33 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import MembersTable from "@/components/members/MembersTables";
+import LoansTable from "@/components/loans/LoansTable";
+import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
+import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTable from "@/components/savings/SavingsTable";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
+import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
+import { useFetchLoans } from "@/hooks/loans/actions";
+import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { DoorOpen, Plus, User, Users, Wallet } from "lucide-react";
+import { DoorOpen, Plus, User, Users, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
+  const [loanTypeModal, setLoanTypeModal] = useState(false);
   const [memberCreateModal, setMemberCreateModal] = useState(false);
   const router = useRouter();
+
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -38,13 +45,31 @@ function SaccoAdminDashboard() {
   } = useFetchSavingsTypes();
 
   const {
-      isLoading: isLoadingSavings,
-      data: savings,
-      refetch: refetchSavings,
-      error: savingsError,
-    } = useFetchSavings();
+    isLoading: isLoadingSavings,
+    data: savings,
+    refetch: refetchSavings,
+    error: savingsError,
+  } = useFetchSavings();
 
-  if (isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingSavings) {
+  const {
+    isLoading: isLoadingLoanTypes,
+    data: loanTypes,
+    refetch: refetchLoanTypes,
+  } = useFetchLoanTypes();
+
+  const {
+    isLoading: isLoadingLoans,
+    data: loans,
+    refetch: refetchLoans,
+  } = useFetchLoans();
+
+  if (
+    isLoadingMember ||
+    isLoadingMembers ||
+    isLoadingSavingTypes ||
+    isLoadingSavings ||
+    isLoadingLoanTypes || isLoadingLoans
+  ) {
     return <LoadingSpinner />;
   }
 
@@ -58,7 +83,7 @@ function SaccoAdminDashboard() {
               Welcome, {member?.salutation} {member?.last_name}
             </h1>
             <p className="text-gray-500 mt-1">
-              Manage your members and saving types
+              Manage your members, saving types, savings and loan types
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -66,22 +91,28 @@ function SaccoAdminDashboard() {
               onClick={() => setMemberCreateModal(true)}
               className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <User className="h-4 w-4 mr-2" /> New Member
+              <User className="h-4 w-4 mr-2" /> Member
             </Button>
             <Button
               onClick={() => setSavingTypeModal(true)}
               className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <Plus className="h-4 w-4 mr-2" /> New Saving Type
+              <Wallet2 className="h-4 w-4 mr-2" /> Saving Type
             </Button>
             <Button
+              onClick={() => setLoanTypeModal(true)}
+              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Loan Type
+            </Button>
+            {/* <Button
               variant="outline"
               className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
               onClick={() => signOut()}
             >
               <DoorOpen className="h-4 w-4 mr-2" />
               Log out
-            </Button>
+            </Button> */}
           </div>
         </div>
 
@@ -104,20 +135,26 @@ function SaccoAdminDashboard() {
 
         {/* Tables Section */}
         <div className="space-y-6">
-          <MembersTable
+          {/* Put these tables side by side and stack over each other on smaller screens */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SavingsTypesTable savingTypes={savingTypes} />
+            <LoanTypesTable loanTypes={loanTypes} />
+          </div>
+
+          {/* Members Table */}
+          <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
-            router={router}
           />
-          <SavingsTypesTable savingTypes={savingTypes} />
         </div>
 
-        {/* Savings Table */}
+        {/* Savings and loans Table */}
         <div className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#045e32]">
-            Your Savings Accounts
-          </h2>
           <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+        </div>
+
+        <div className="space-y-4">
+          <LoansTable loans={loans} isLoading={isLoadingLoans} />
         </div>
 
         {/* Modals */}
@@ -130,6 +167,12 @@ function SaccoAdminDashboard() {
         <CreateMember
           openModal={memberCreateModal}
           closeModal={() => setMemberCreateModal(false)}
+        />
+
+        <CreateLoanType
+          isOpen={loanTypeModal}
+          onClose={() => setLoanTypeModal(false)}
+          refetchLoanTypes={refetchLoanTypes}
         />
       </div>
     </div>

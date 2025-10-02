@@ -111,8 +111,8 @@ function SaccoMembersTable({ members }) {
                   <TableRow>
                     <TableHead className="text-black">Member No</TableHead>
                     <TableHead className="text-black">Name</TableHead>
-                    <TableHead className="text-black">Email</TableHead>
-                    <TableHead className="text-black">Phone</TableHead>
+                    {/* <TableHead className="text-black">Email</TableHead>
+                    <TableHead className="text-black">Phone</TableHead> */}
                     <TableHead className="text-black">Status</TableHead>
                     <TableHead className="text-black">Actions</TableHead>
                   </TableRow>
@@ -127,8 +127,8 @@ function SaccoMembersTable({ members }) {
                         {member?.salutation} {member?.first_name}{" "}
                         {member?.last_name}
                       </TableCell>
-                      <TableCell>{member?.email}</TableCell>
-                      <TableCell>{member?.phone}</TableCell>
+                      {/* <TableCell>{member?.email}</TableCell>
+                      <TableCell>{member?.phone}</TableCell> */}
                       <TableCell>
                         <Badge
                           variant={
