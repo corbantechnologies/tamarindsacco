@@ -14,6 +14,7 @@ import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { DoorOpen, Plus, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import LoansTable from "@/components/loans/LoansTable";
+import { useFetchLoans } from "@/hooks/loans/actions";
 
 function MemberDashboard() {
   const token = useAxiosAuth();
@@ -23,6 +24,12 @@ function MemberDashboard() {
     data: member,
     refetch: refetchMember,
   } = useFetchMember();
+
+  const {
+    isLoading: isLoadingLoans,
+    data: loans,
+    refetch: refetchLoans,
+  } = useFetchLoans();
 
   const {
     isLoading: isLoadingSavingTypes,
@@ -37,7 +44,12 @@ function MemberDashboard() {
     error: savingsError,
   } = useFetchSavings();
 
-  if (isLoadingMember || isLoadingSavingTypes || isLoadingSavings)
+  if (
+    isLoadingMember ||
+    isLoadingSavingTypes ||
+    isLoadingSavings ||
+    isLoadingLoans
+  )
     return <MemberLoadingSpinner />;
 
   return (

@@ -68,7 +68,7 @@ function SaccoAdminDashboard() {
     isLoadingMembers ||
     isLoadingSavingTypes ||
     isLoadingSavings ||
-    isLoadingLoanTypes
+    isLoadingLoanTypes || isLoadingLoans
   ) {
     return <LoadingSpinner />;
   }
