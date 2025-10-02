@@ -13,6 +13,7 @@ import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { DoorOpen, Plus, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import LoansTable from "@/components/loans/LoansTable";
 
 function MemberDashboard() {
   const token = useAxiosAuth();
@@ -82,12 +83,13 @@ function MemberDashboard() {
 
         {/* Savings Table */}
         <div className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#045e32]">
-            Your Savings Accounts
-          </h2>
           <SavingsTable savings={savings} isLoading={isLoadingSavings} />
         </div>
 
+        {/* Loans Table */}
+        <div className="space-y-4">
+          <LoansTable loans={loans} isLoading={isLoadingLoans} />
+        </div>
         {/* Modal */}
         <CreateSavingsAccount
           isOpen={savingsCreateModal}

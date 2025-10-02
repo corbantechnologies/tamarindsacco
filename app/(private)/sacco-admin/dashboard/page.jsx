@@ -1,8 +1,8 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
+import LoansTable from "@/components/loans/LoansTable";
 import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
-import MembersTable from "@/components/members/MembersTables";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
+import { useFetchLoans } from "@/hooks/loans/actions";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
@@ -56,6 +57,12 @@ function SaccoAdminDashboard() {
     refetch: refetchLoanTypes,
   } = useFetchLoanTypes();
 
+  const {
+    isLoading: isLoadingLoans,
+    data: loans,
+    refetch: refetchLoans,
+  } = useFetchLoans();
+
   if (
     isLoadingMember ||
     isLoadingMembers ||
@@ -76,7 +83,7 @@ function SaccoAdminDashboard() {
               Welcome, {member?.salutation} {member?.last_name}
             </h1>
             <p className="text-gray-500 mt-1">
-              Manage your members and saving types
+              Manage your members, saving types, savings and loan types
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -141,12 +148,13 @@ function SaccoAdminDashboard() {
           />
         </div>
 
-        {/* Savings Table */}
+        {/* Savings and loans Table */}
         <div className="space-y-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-[#045e32]">
-            Your Savings Accounts
-          </h2>
           <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+        </div>
+
+        <div className="space-y-4">
+          <LoansTable loans={loans} isLoading={isLoadingLoans} />
         </div>
 
         {/* Modals */}

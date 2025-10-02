@@ -21,27 +21,27 @@ import {
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
-function SavingsTable({ savings, isLoading }) {
+function LoansTable({ loans, isLoading }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("All");
   const itemsPerPage = 5;
 
-  // Get unique account types for filter
-  const accountTypes = useMemo(() => {
-    const types = new Set(savings?.map((item) => item.account_type));
+  // Get unique loan types for filter
+  const loanTypes = useMemo(() => {
+    const types = new Set(loans?.map((item) => item.loan_type));
     return ["All", ...types];
-  }, [savings]);
+  }, [loans]);
 
-  // Filter savings by account_type
-  const filteredSavings = useMemo(() => {
-    if (filterType === "All") return savings;
-    return savings?.filter((item) => item.account_type === filterType);
-  }, [savings, filterType]);
+  // Filter loans by loan_type
+  const filteredLoans = useMemo(() => {
+    if (filterType === "All") return loans;
+    return loans?.filter((item) => item.loan_type === filterType);
+  }, [loans, filterType]);
 
   // Pagination logic
-  const totalItems = filteredSavings?.length || 0;
+  const totalItems = filteredLoans?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedSavings = filteredSavings?.slice(
+  const paginatedLoans = filteredLoans?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -53,32 +53,47 @@ function SavingsTable({ savings, isLoading }) {
     }
   };
 
+  // Status badge logic
+  const getStatus = (loan) => {
+    if (!loan.is_approved) return "Pending";
+    return loan.is_active ? "Active" : "Inactive";
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Active":
+        return "bg-green-100 text-green-700";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "Inactive":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
   if (isLoading) {
-    return <div className="text-center text-gray-700">Loading savings...</div>;
+    return <div className="text-center text-gray-700">Loading loans...</div>;
   }
 
-  if (!savings || savings.length === 0) {
-    return (
-      <div className="text-center text-gray-700">
-        No savings accounts found.
-      </div>
-    );
+  if (!loans || loans.length === 0) {
+    return <div className="text-center text-gray-700">No loans found.</div>;
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#045e32]">My Savings</CardTitle>
+        <CardTitle className="text-xl text-[#045e32]">My Loans</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {/* Filter */}
           <div className="flex items-center gap-4">
             <Label
-              htmlFor="account-type-filter"
+              htmlFor="loan-type-filter"
               className="text-sm font-medium text-gray-700"
             >
-              Filter by Account Type
+              Filter by Loan Type
             </Label>
             <Select
               value={filterType}
@@ -88,14 +103,14 @@ function SavingsTable({ savings, isLoading }) {
               }}
             >
               <SelectTrigger
-                id="account-type-filter"
+                id="loan-type-filter"
                 className="w-[200px] border-gray-300 focus:ring-[#045e32] focus:border-[#045e32]"
-                aria-label="Filter by account type"
+                aria-label="Filter by loan type"
               >
-                <SelectValue placeholder="Select account type" />
+                <SelectValue placeholder="Select loan type" />
               </SelectTrigger>
               <SelectContent>
-                {accountTypes.map((type) => (
+                {loanTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
                   </SelectItem>
@@ -110,50 +125,63 @@ function SavingsTable({ savings, isLoading }) {
               <TableHeader>
                 <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
                   <TableHead className="text-white font-semibold text-base">
-                    Account Type
+                    Loan Type
                   </TableHead>
                   <TableHead className="text-white font-semibold text-base">
                     Account Number
                   </TableHead>
                   <TableHead className="text-white font-semibold text-base">
-                    Balance
+                    Loan Amount
+                  </TableHead>
+                  <TableHead className="text-white font-semibold text-base">
+                    Outstanding Balance
                   </TableHead>
                   <TableHead className="text-white font-semibold text-base">
                     Status
                   </TableHead>
+                  {/* TODO: sort this out */}
+                  {/* <TableHead className="text-white font-semibold text-base">
+                    Approved By
+                  </TableHead> */}
                   <TableHead className="text-white font-semibold text-base">
-                    Created At
+                    Approval Date
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedSavings?.map((saving) => (
+                {paginatedLoans?.map((loan) => (
                   <TableRow
-                    key={saving.identity}
+                    key={loan.identity}
                     className="border-b border-gray-200"
                   >
                     <TableCell className="text-sm text-gray-700">
-                      {saving.account_type}
+                      {loan.loan_type}
                     </TableCell>
                     <TableCell className="text-sm text-gray-700">
-                      {saving.account_number}
+                      {loan.account_number}
                     </TableCell>
                     <TableCell className="text-sm text-gray-700">
-                      KES {parseFloat(saving.balance).toFixed(2)}
+                      KES {parseFloat(loan.loan_amount).toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-700">
+                      KES {parseFloat(loan.outstanding_balance).toFixed(2)}
                     </TableCell>
                     <TableCell className="text-sm">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          saving.is_active
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                          getStatus(loan)
+                        )}`}
                       >
-                        {saving.is_active ? "Active" : "Inactive"}
+                        {getStatus(loan)}
                       </span>
                     </TableCell>
+                    {/* <TableCell className="text-sm text-gray-700">
+                      {loan.approved_by}
+                    </TableCell> */}
                     <TableCell className="text-sm text-gray-700">
-                      {format(new Date(saving.created_at), "MM/dd/yyyy")}
+                      {loan.approval_date
+                        ? format(new Date(loan.approval_date), "MM/dd/yyyy")
+                        : "N/A"}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -210,4 +238,4 @@ function SavingsTable({ savings, isLoading }) {
   );
 }
 
-export default SavingsTable;
+export default LoansTable;
