@@ -1,26 +1,31 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
+import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
 import MembersTable from "@/components/members/MembersTables";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTable from "@/components/savings/SavingsTable";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
+import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
+import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { DoorOpen, Plus, User, Users, Wallet } from "lucide-react";
+import { DoorOpen, Plus, User, Users, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
+  const [loanTypeModal, setLoanTypeModal] = useState(false);
   const [memberCreateModal, setMemberCreateModal] = useState(false);
   const router = useRouter();
+
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -38,13 +43,25 @@ function SaccoAdminDashboard() {
   } = useFetchSavingsTypes();
 
   const {
-      isLoading: isLoadingSavings,
-      data: savings,
-      refetch: refetchSavings,
-      error: savingsError,
-    } = useFetchSavings();
+    isLoading: isLoadingSavings,
+    data: savings,
+    refetch: refetchSavings,
+    error: savingsError,
+  } = useFetchSavings();
 
-  if (isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingSavings) {
+  const {
+    isLoading: isLoadingLoanTypes,
+    data: loanTypes,
+    refetch: refetchLoanTypes,
+  } = useFetchLoanTypes();
+
+  if (
+    isLoadingMember ||
+    isLoadingMembers ||
+    isLoadingSavingTypes ||
+    isLoadingSavings ||
+    isLoadingLoanTypes
+  ) {
     return <LoadingSpinner />;
   }
 
@@ -72,7 +89,13 @@ function SaccoAdminDashboard() {
               onClick={() => setSavingTypeModal(true)}
               className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <Plus className="h-4 w-4 mr-2" /> New Saving Type
+              <Wallet2 className="h-4 w-4 mr-2" /> New Saving Type
+            </Button>
+            <Button
+              onClick={() => setLoanTypeModal(true)}
+              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+            >
+              <Plus className="h-4 w-4 mr-2" /> New Loan Type
             </Button>
             <Button
               variant="outline"
@@ -110,6 +133,7 @@ function SaccoAdminDashboard() {
             router={router}
           />
           <SavingsTypesTable savingTypes={savingTypes} />
+          <LoanTypesTable loanTypes={loanTypes} />
         </div>
 
         {/* Savings Table */}
@@ -130,6 +154,12 @@ function SaccoAdminDashboard() {
         <CreateMember
           openModal={memberCreateModal}
           closeModal={() => setMemberCreateModal(false)}
+        />
+
+        <CreateLoanType
+          openModal={loanTypeModal}
+          closeModal={() => setLoanTypeModal(false)}
+          refetchLoanTypes={refetchLoanTypes}
         />
       </div>
     </div>

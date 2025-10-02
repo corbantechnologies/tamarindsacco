@@ -15,23 +15,23 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Search } from "lucide-react";
 
-function SavingsTypesTable({ savingTypes }) {
+function LoanTypesTable({ loanTypes }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 5;
 
-  // Filter saving types by search term (name)
-  const filteredSavingTypes = useMemo(() => {
-    if (!searchTerm) return savingTypes;
-    return savingTypes?.filter((type) =>
+  // Filter loan types by search term (name)
+  const filteredLoanTypes = useMemo(() => {
+    if (!searchTerm) return loanTypes;
+    return loanTypes?.filter((type) =>
       type.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [savingTypes, searchTerm]);
+  }, [loanTypes, searchTerm]);
 
   // Pagination logic
-  const totalItems = filteredSavingTypes?.length || 0;
+  const totalItems = filteredLoanTypes?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedSavingTypes = filteredSavingTypes?.slice(
+  const paginatedLoanTypes = filteredLoanTypes?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -43,11 +43,11 @@ function SavingsTypesTable({ savingTypes }) {
     }
   };
 
-  if (!savingTypes || savingTypes.length === 0) {
+  if (!loanTypes || loanTypes.length === 0) {
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <p className="text-muted-foreground">No savings types found.</p>
+          <p className="text-muted-foreground">No loan types found.</p>
         </CardContent>
       </Card>
     );
@@ -56,7 +56,7 @@ function SavingsTypesTable({ savingTypes }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#cc5500]">Savings Types</CardTitle>
+        <CardTitle className="text-xl text-[#cc5500]">Loan Types</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Search Filter */}
@@ -68,7 +68,7 @@ function SavingsTypesTable({ savingTypes }) {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
             <Input
               id="search"
-              placeholder="Search savings types..."
+              placeholder="Search loan types..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -96,7 +96,7 @@ function SavingsTypesTable({ savingTypes }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedSavingTypes?.map((type) => (
+              {paginatedLoanTypes?.map((type) => (
                 <TableRow
                   key={type.reference}
                   className="border-b border-gray-200"
@@ -166,4 +166,4 @@ function SavingsTypesTable({ savingTypes }) {
   );
 }
 
-export default SavingsTypesTable;
+export default LoanTypesTable;

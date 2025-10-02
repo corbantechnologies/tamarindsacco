@@ -1,5 +1,8 @@
 "use client";
 
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import React, { useTransition } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,14 +14,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
-import { createSavingType } from "@/services/savingstypes";
 import { Field, Form, Formik } from "formik";
-import React, { useTransition } from "react";
+import { createLoanType } from "@/services/loantypes";
 import toast from "react-hot-toast";
 
-const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
+function CreateLoanType({ isOpen, onClose, refetchLoanTypes }) {
   const [loading, setLoading] = useTransition();
   const token = useAxiosAuth();
 
@@ -27,7 +27,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-[#cc5500]">
-            Create New Saving Type
+            Create New Loan Type
           </DialogTitle>
         </DialogHeader>
         <Formik
@@ -39,10 +39,10 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
           onSubmit={async (values) => {
             try {
               setLoading(async () => {
-                await createSavingType(values, token);
+                await createLoanType(values, token);
                 toast?.success("Saving type created successfully!");
                 onClose();
-                refetchSavingTypes();
+                refetchLoanTypes();
               });
             } catch (error) {
               toast?.error("Failed to create saving type!");
@@ -59,8 +59,9 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   as={Input}
                   id="name"
                   name="name"
-                  className="border-black focus:ring-[#cc5500]"
+                  type="text"
                   required
+                  className="border-black focus:ring-[#cc5500]"
                 />
               </div>
               <div className="space-y-2">
@@ -73,6 +74,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   id="interest_rate"
                   name="interest_rate"
                   className="border-black focus:ring-[#cc5500]"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -110,6 +112,6 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
-export default CreateSavingTypeModal;
+export default CreateLoanType;
