@@ -128,12 +128,17 @@ function SaccoAdminDashboard() {
 
         {/* Tables Section */}
         <div className="space-y-6">
+          {/* Put these tables side by side and stack over each other on smaller screens */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SavingsTypesTable savingTypes={savingTypes} />
+            <LoanTypesTable loanTypes={loanTypes} />
+          </div>
+
+          {/* Members Table */}
           <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
           />
-          <SavingsTypesTable savingTypes={savingTypes} />
-          <LoanTypesTable loanTypes={loanTypes} />
         </div>
 
         {/* Savings Table */}

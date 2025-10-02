@@ -90,9 +90,9 @@ function LoanTypesTable({ loanTypes }) {
                 <TableHead className="text-white font-semibold text-base">
                   Interest Rate
                 </TableHead>
-                <TableHead className="text-white font-semibold text-base">
+                {/* <TableHead className="text-white font-semibold text-base">
                   Description
-                </TableHead>
+                </TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -107,9 +107,9 @@ function LoanTypesTable({ loanTypes }) {
                   <TableCell className="font-semibold text-green-600">
                     {type.interest_rate}%
                   </TableCell>
-                  <TableCell className="text-gray-600">
+                  {/* <TableCell className="text-gray-600">
                     {type.description}
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
