@@ -22,7 +22,7 @@ function SaccoMembersTable({ members }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   // Filter members by search term and status
   const filteredMembers =
