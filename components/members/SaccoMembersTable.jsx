@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { CheckCircle, Clock, Search } from "lucide-react";
+import Link from "next/link";
 
 function SaccoMembersTable({ members }) {
   const router = useRouter();
@@ -124,8 +125,11 @@ function SaccoMembersTable({ members }) {
                         {member?.member_no}
                       </TableCell>
                       <TableCell>
-                        {member?.salutation} {member?.first_name}{" "}
-                        {member?.last_name}
+                        <Link
+                          href={`/sacco-admin/members/${member?.member_no}`}
+                        >
+                          {member?.first_name} {member?.last_name}
+                        </Link>
                       </TableCell>
                       {/* <TableCell>{member?.email}</TableCell>
                       <TableCell>{member?.phone}</TableCell> */}
