@@ -4,7 +4,6 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchMember } from "@/hooks/members/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -128,7 +127,7 @@ function AccountSettings() {
                   <Button
                     onClick={() => setPasswordModal(true)}
                     size="sm"
-                    className="bg-[#045e32] hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
+                    className="bg-red-500 hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
                   >
                     Change Password
                   </Button>

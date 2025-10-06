@@ -28,12 +28,12 @@ function SaccoAdminNavbar() {
             >
               Members
             </Link>
-            {/* <Link
-              href="/sacco-admin/dashboard"
+            <Link
+              href="/sacco-admin/settings"
               className="hover:underline text-base"
             >
-              Settings
-            </Link> */}
+              Profile
+            </Link>
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
@@ -86,13 +86,13 @@ function SaccoAdminNavbar() {
             >
               Members
             </Link>
-            {/* <Link
-              href="/sacco-admin/dashboard"
+            <Link
+              href="/sacco-admin/settings"
               className="text-lg hover:text-[#cc5500]"
               onClick={() => setIsMenuOpen(false)}
             >
               Settings
-            </Link> */}
+            </Link>
             <Button
               variant="outline"
               onClick={() => {

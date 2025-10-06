@@ -4,7 +4,6 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchMember } from "@/hooks/members/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -19,7 +18,6 @@ import {
   Clock,
   Wallet,
   Wallet2,
-  Settings,
   CheckCircle,
 } from "lucide-react";
 import {
@@ -30,8 +28,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import ChangePassword from "@/forms/member/ChangePassword";
 import UpdateAccount from "@/forms/member/UpdateAccount";
+import ChangePassword from "@/forms/member/ChangePassword";
 
 function AccountSettings() {
   const {
@@ -60,7 +58,7 @@ function AccountSettings() {
 
   const InfoField = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 hover:bg-secondary/80 transition-colors">
-      <Icon className="h-5 w-5 text-[#cc5500] mt-0.5" />
+      <Icon className="h-5 w-5 text-[#045e32] mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <p className="text-base font-semibold text-foreground truncate">
@@ -72,20 +70,9 @@ function AccountSettings() {
 
   if (isLoadingMember) return <LoadingSpinner />;
 
-  if (!member) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground text-center py-4">
-          No member data found.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8 max-w-7xl">
-        {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -102,19 +89,18 @@ function AccountSettings() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Header Card */}
-        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#cc5500]/5 to-[#cc5500]/10">
-          <CardContent className="p-8">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-              <Avatar className="h-24 w-24 border-4 border-[#cc5500]/20">
-                <AvatarFallback className="bg-[#cc5500] text-white text-2xl font-bold">
+        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#045e32]/5 to-[#045e32]/10">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col items-start gap-6">
+              <Avatar className="h-24 w-24 border-4 border-[#045e32]/20">
+                <AvatarFallback className="bg-[#045e32] text-white text-2xl font-bold">
                   {getInitials(member?.first_name, member?.last_name)}
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex-1 space-y-4">
+              <div className="flex-1 space-y-4 w-full">
                 <div>
-                  <h1 className="text-4xl font-bold text-foreground mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                     {member?.salutation} {member?.first_name}{" "}
                     {member?.middle_name} {member?.last_name}
                   </h1>
@@ -130,65 +116,33 @@ function AccountSettings() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Badge
-                    variant={member?.is_approved ? "default" : "secondary"}
-                    className={`${
-                      member?.is_approved
-                        ? "bg-[#cc5500] text-white hover:bg-[#e66b00]/90"
-                        : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => setUpdateModal(true)}
+                    size="sm"
+                    className="bg-[#045e32] hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
                   >
-                    {member?.is_approved ? (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    ) : (
-                      <Clock className="h-4 w-4 mr-1" />
-                    )}
-                    {member?.is_approved ? "Approved" : "Pending Approval"}
-                  </Badge>
-
-                  <Badge
-                    variant={member?.is_active ? "default" : "secondary"}
-                    className={`${
-                      member?.is_active
-                        ? "bg-[#cc5500] text-white hover:bg-[#e66b00]/90"
-                        : "bg-red-100 text-red-700 hover:bg-red-100/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                    Update Account
+                  </Button>
+                  <Button
+                    onClick={() => setPasswordModal(true)}
+                    size="sm"
+                    className="bg-red-500 hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
                   >
-                    {member?.is_active ? "Active" : "Inactive"}
-                  </Badge>
+                    Change Password
+                  </Button>
                 </div>
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setUpdateModal(true)}
-                  size="sm"
-                  className="bg-[#cc5500] hover:bg-[#e66b00] text-white px-8"
-                >
-                  Update Account
-                </Button>
-                <Button
-                  onClick={() => setPasswordModal(true)}
-                  size="sm"
-                  className="bg-[#cc5500] hover:bg-[#e66b00] text-white px-8"
-                >
-                  Change Password
-                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Content Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Personal Information */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <User className="h-6 w-6 text-[#cc5500]" />
+                  <User className="h-6 w-6 text-[#045e32]" />
                   Personal Information
                 </CardTitle>
               </CardHeader>
@@ -222,11 +176,10 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Employment Information */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Building className="h-6 w-6 text-[#cc5500]" />
+                  <Building className="h-6 w-6 text-[#045e32]" />
                   Employment Details
                 </CardTitle>
               </CardHeader>
@@ -249,11 +202,10 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Savings Accounts */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Wallet className="h-6 w-6 text-[#cc5500]" />
+                  <Wallet className="h-6 w-6 text-[#045e32]" />
                   Savings Accounts
                 </CardTitle>
               </CardHeader>
@@ -280,11 +232,10 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Loan Accounts */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Wallet className="h-6 w-6 text-[#cc5500]" />
+                  <Wallet className="h-6 w-6 text-[#045e32]" />
                   Loan Accounts
                 </CardTitle>
               </CardHeader>
@@ -312,13 +263,11 @@ function AccountSettings() {
             </Card>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-8">
-            {/* Identification */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Shield className="h-5 w-5 text-[#cc5500]" />
+                  <Shield className="h-5 w-5 text-[#045e32]" />
                   Identification
                 </CardTitle>
               </CardHeader>
@@ -341,17 +290,16 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Account Timeline */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Clock className="h-5 w-5 text-[#cc5500]" />
+                  <Clock className="h-5 w-5 text-[#045e32]" />
                   Account Timeline
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
-                  <div className="h-3 w-3 rounded-full bg-[#cc5500]"></div>
+                  <div className="h-3 w-3 rounded-full bg-[#045e32]"></div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Account Created
@@ -362,7 +310,7 @@ function AccountSettings() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
-                  <div className="h-3 w-3 rounded-full bg-[#cc5500]"></div>
+                  <div className="h-3 w-3 rounded-full bg-[#045e32]"></div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Last Updated
@@ -377,7 +325,6 @@ function AccountSettings() {
           </div>
         </div>
 
-        {/* Modals */}
         <UpdateAccount
           isOpen={updateModal}
           onClose={() => setUpdateModal(false)}
