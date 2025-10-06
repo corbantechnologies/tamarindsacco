@@ -91,17 +91,17 @@ function AccountSettings() {
         </Breadcrumb>
 
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#045e32]/5 to-[#045e32]/10">
-          <CardContent className="p-8">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col items-start gap-6">
               <Avatar className="h-24 w-24 border-4 border-[#045e32]/20">
                 <AvatarFallback className="bg-[#045e32] text-white text-2xl font-bold">
                   {getInitials(member?.first_name, member?.last_name)}
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex-1 space-y-4">
+              <div className="flex-1 space-y-4 w-full">
                 <div>
-                  <h1 className="text-4xl font-bold text-foreground mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                     {member?.salutation} {member?.first_name}{" "}
                     {member?.middle_name} {member?.last_name}
                   </h1>
@@ -117,51 +117,22 @@ function AccountSettings() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Badge
-                    variant={member?.is_approved ? "default" : "secondary"}
-                    className={`${
-                      member?.is_approved
-                        ? "bg-[#045e32] text-white hover:bg-[#022007]/90"
-                        : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    onClick={() => setUpdateModal(true)}
+                    size="sm"
+                    className="bg-[#045e32] hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
                   >
-                    {member?.is_approved ? (
-                      <CheckCircle className="h-4 w-4 mr-1" />
-                    ) : (
-                      <Clock className="h-4 w-4 mr-1" />
-                    )}
-                    {member?.is_approved ? "Approved" : "Pending Approval"}
-                  </Badge>
-
-                  <Badge
-                    variant={member?.is_active ? "default" : "secondary"}
-                    className={`${
-                      member?.is_active
-                        ? "bg-[#045e32] text-white hover:bg-[#022007]/90"
-                        : "bg-red-100 text-red-700 hover:bg-red-100/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                    Update Account
+                  </Button>
+                  <Button
+                    onClick={() => setPasswordModal(true)}
+                    size="sm"
+                    className="bg-[#045e32] hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
                   >
-                    {member?.is_active ? "Active" : "Inactive"}
-                  </Badge>
+                    Change Password
+                  </Button>
                 </div>
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setUpdateModal(true)}
-                  size="sm"
-                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
-                >
-                  Update Account
-                </Button>
-                <Button
-                  onClick={() => setPasswordModal(true)}
-                  size="sm"
-                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
-                >
-                  Change Password
-                </Button>
               </div>
             </div>
           </CardContent>

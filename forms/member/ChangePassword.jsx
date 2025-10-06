@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import toast from "react-hot-toast";
@@ -46,8 +45,12 @@ function ChangePassword({ onClose, isOpen }) {
               toast?.success("Password changed successfully!");
               onClose();
             } catch (error) {
-              console.log(error);
-              toast?.error("Failed to change password. Please try again.");
+              console.log(error?.response?.data?.old_password[0]);
+              if (error?.response?.data?.old_password[0]) {
+                toast?.error(error?.response?.data?.old_password[0]);
+              } else {
+                toast?.error("Failed to change password. Please try again.");
+              }
             } finally {
               setLoading(false);
             }
@@ -61,11 +64,12 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
+                    component="input"
                     type={showOldPassword ? "text" : "password"}
                     name="old_password"
                     id="old_password"
                     placeholder="Enter old password"
-                    className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base pr-10"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -98,11 +102,12 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
+                    component="input"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     id="password"
                     placeholder="Enter password"
-                    className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base pr-10"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -135,11 +140,12 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
+                    component="input"
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     id="confirmPassword"
                     placeholder="Confirm password"
-                    className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base pr-10"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"

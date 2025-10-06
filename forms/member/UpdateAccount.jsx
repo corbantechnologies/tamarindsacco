@@ -25,7 +25,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[#045e32] text-2xl">
             Update Account
@@ -88,8 +88,8 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
           }}
         >
           {({ values, setFieldValue }) => (
-            <Form className="space-y-6 p-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Form className="space-y-6 p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <Label
                     htmlFor="salutation"
@@ -125,7 +125,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="avatar"
                     id="avatar"
                     onChange={(e) => setFieldValue("avatar", e.target.files[0])}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -142,7 +142,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="first_name"
                     id="first_name"
                     value={values.first_name}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -159,7 +159,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="middle_name"
                     id="middle_name"
                     value={values.middle_name}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -176,7 +176,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="last_name"
                     id="last_name"
                     value={values.last_name}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -193,7 +193,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="email"
                     id="email"
                     value={values.email}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -210,7 +210,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="dob"
                     id="dob"
                     value={values.dob}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -227,7 +227,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="phone"
                     id="phone"
                     value={values.phone}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -282,7 +282,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="id_number"
                     id="id_number"
                     value={values.id_number}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -299,7 +299,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="tax_pin"
                     id="tax_pin"
                     value={values.tax_pin}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
 
@@ -362,7 +362,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                         name="employer"
                         id="employer"
                         value={values.employer}
-                        className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                        className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                       />
                     </div>
                   )}
@@ -380,7 +380,7 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
                     name="job_title"
                     id="job_title"
                     value={values.job_title}
-                    className="border-black focus:ring-[#045e32] focus:border-[#045e32] rounded-md text-base py-2"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
                   />
                 </div>
               </div>
