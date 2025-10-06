@@ -63,52 +63,36 @@ function MemberDashboard() {
             </h1>
             <p className="text-gray-500 mt-1">Welcome to your dashboard</p>
           </div>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Button
-              variant="outline"
-              className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-              onClick={() => signOut()}
-            >
-              <DoorOpen className="h-4 w-4 mr-2" />
-              Log out
-            </Button>
+        <section>
+          {/* Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <InfoCard member={member} />
+            <StatsCard
+              title="Total Savings"
+              value={savings?.length || 0}
+              Icon={Wallet}
+              description="Number of savings accounts created"
+            />
+            <StatsCard
+              title="Savings Types"
+              value={savingTypes?.length}
+              Icon={Wallet2}
+              description="Available saving products"
+            />
           </div>
-        </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <InfoCard member={member} />
-          <StatsCard
-            title="Total Savings"
-            value={savings?.length || 0}
-            Icon={Wallet}
-            description="Number of savings accounts created"
-          />
-          <StatsCard
-            title="Savings Types"
-            value={savingTypes?.length}
-            Icon={Wallet2}
-            description="Available saving products"
-          />
-        </div>
+          {/* Savings Table */}
+          <div className="space-y-4">
+            <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+          </div>
 
-        {/* Savings Table */}
-        <div className="space-y-4">
-          <SavingsTable savings={savings} isLoading={isLoadingSavings} />
-        </div>
-
-        {/* Loans Table */}
-        <div className="space-y-4">
-          <LoansTable loans={loans} isLoading={isLoadingLoans} />
-        </div>
-        {/* Modal */}
-        <CreateSavingsAccount
-          isOpen={savingsCreateModal}
-          onClose={() => setSavingsCreateModal(false)}
-          refetchSavings={refetchSavings}
-          savingTypes={savingTypes}
-        />
+          {/* Loans Table */}
+          <div className="space-y-4">
+            <LoansTable loans={loans} isLoading={isLoadingLoans} />
+          </div>
+        </section>
       </div>
     </div>
   );
