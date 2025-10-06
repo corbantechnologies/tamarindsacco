@@ -64,16 +64,7 @@ function MemberDashboard() {
             <p className="text-gray-500 mt-1">Welcome to your dashboard</p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Button
-              variant="outline"
-              className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-              onClick={() => signOut()}
-            >
-              <DoorOpen className="h-4 w-4 mr-2" />
-              Log out
-            </Button>
-          </div>
+          
         </div>
 
         {/* Statistics */}

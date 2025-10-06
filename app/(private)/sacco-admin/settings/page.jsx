@@ -60,7 +60,7 @@ function AccountSettings() {
 
   const InfoField = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 p-4 rounded-lg bg-secondary/50 hover:bg-secondary/80 transition-colors">
-      <Icon className="h-5 w-5 text-[#045e32] mt-0.5" />
+      <Icon className="h-5 w-5 text-[#cc5500] mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
         <p className="text-base font-semibold text-foreground truncate">
@@ -71,6 +71,16 @@ function AccountSettings() {
   );
 
   if (isLoadingMember) return <LoadingSpinner />;
+
+  if (!member) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground text-center py-4">
+          No member data found.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,11 +103,11 @@ function AccountSettings() {
         </Breadcrumb>
 
         {/* Header Card */}
-        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#045e32]/5 to-[#045e32]/10">
+        <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#cc5500]/5 to-[#cc5500]/10">
           <CardContent className="p-8">
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-              <Avatar className="h-24 w-24 border-4 border-[#045e32]/20">
-                <AvatarFallback className="bg-[#045e32] text-white text-2xl font-bold">
+              <Avatar className="h-24 w-24 border-4 border-[#cc5500]/20">
+                <AvatarFallback className="bg-[#cc5500] text-white text-2xl font-bold">
                   {getInitials(member?.first_name, member?.last_name)}
                 </AvatarFallback>
               </Avatar>
@@ -125,7 +135,7 @@ function AccountSettings() {
                     variant={member?.is_approved ? "default" : "secondary"}
                     className={`${
                       member?.is_approved
-                        ? "bg-[#045e32] text-white hover:bg-[#e66b00]/90"
+                        ? "bg-[#cc5500] text-white hover:bg-[#e66b00]/90"
                         : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
@@ -141,7 +151,7 @@ function AccountSettings() {
                     variant={member?.is_active ? "default" : "secondary"}
                     className={`${
                       member?.is_active
-                        ? "bg-[#045e32] text-white hover:bg-[#e66b00]/90"
+                        ? "bg-[#cc5500] text-white hover:bg-[#e66b00]/90"
                         : "bg-red-100 text-red-700 hover:bg-red-100/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
@@ -154,14 +164,14 @@ function AccountSettings() {
                 <Button
                   onClick={() => setUpdateModal(true)}
                   size="sm"
-                  className="bg-[#045e32] hover:bg-[#e66b00] text-white px-8"
+                  className="bg-[#cc5500] hover:bg-[#e66b00] text-white px-8"
                 >
                   Update Account
                 </Button>
                 <Button
                   onClick={() => setPasswordModal(true)}
                   size="sm"
-                  className="bg-[#045e32] hover:bg-[#e66b00] text-white px-8"
+                  className="bg-[#cc5500] hover:bg-[#e66b00] text-white px-8"
                 >
                   Change Password
                 </Button>
@@ -178,7 +188,7 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <User className="h-6 w-6 text-[#045e32]" />
+                  <User className="h-6 w-6 text-[#cc5500]" />
                   Personal Information
                 </CardTitle>
               </CardHeader>
@@ -216,7 +226,7 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Building className="h-6 w-6 text-[#045e32]" />
+                  <Building className="h-6 w-6 text-[#cc5500]" />
                   Employment Details
                 </CardTitle>
               </CardHeader>
@@ -243,7 +253,7 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Wallet className="h-6 w-6 text-[#045e32]" />
+                  <Wallet className="h-6 w-6 text-[#cc5500]" />
                   Savings Accounts
                 </CardTitle>
               </CardHeader>
@@ -274,7 +284,7 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Wallet className="h-6 w-6 text-[#045e32]" />
+                  <Wallet className="h-6 w-6 text-[#cc5500]" />
                   Loan Accounts
                 </CardTitle>
               </CardHeader>
@@ -308,7 +318,7 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Shield className="h-5 w-5 text-[#045e32]" />
+                  <Shield className="h-5 w-5 text-[#cc5500]" />
                   Identification
                 </CardTitle>
               </CardHeader>
@@ -335,13 +345,13 @@ function AccountSettings() {
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Clock className="h-5 w-5 text-[#045e32]" />
+                  <Clock className="h-5 w-5 text-[#cc5500]" />
                   Account Timeline
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
-                  <div className="h-3 w-3 rounded-full bg-[#045e32]"></div>
+                  <div className="h-3 w-3 rounded-full bg-[#cc5500]"></div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Account Created
@@ -352,7 +362,7 @@ function AccountSettings() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
-                  <div className="h-3 w-3 rounded-full bg-[#045e32]"></div>
+                  <div className="h-3 w-3 rounded-full bg-[#cc5500]"></div>
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       Last Updated

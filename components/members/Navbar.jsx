@@ -24,14 +24,14 @@ function MemberNavbar() {
             </h1>
           </Link>
           <nav className="hidden md:flex gap-6 items-center">
-            <Link href="/" className="hover:underline text-base">
-              Home
-            </Link>
             <Link
               href="/member/dashboard"
               className="hover:underline text-base"
             >
               Dashboard
+            </Link>
+            <Link href="/member/settings" className="hover:underline text-base">
+              Profile
             </Link>
             {/* <Link href="/member/savings" className="hover:underline text-base">
               Savings
@@ -39,9 +39,7 @@ function MemberNavbar() {
             <Link href="/member/loans" className="hover:underline text-base">
               Loans
             </Link>
-            <Link href="/member/profile" className="hover:underline text-base">
-              Profile
-            </Link> */}
+             */}
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
@@ -96,6 +94,13 @@ function MemberNavbar() {
             >
               Dashboard
             </Link>
+            <Link
+              href="/member/settings"
+              className="text-lg hover:text-[#067a46]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Profile
+            </Link>
             {/* <Link
               href="/member/savings"
               className="text-lg hover:text-[#067a46]"
@@ -110,13 +115,7 @@ function MemberNavbar() {
             >
               Loans
             </Link>
-            <Link
-              href="/member/profile"
-              className="text-lg hover:text-[#067a46]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Profile
-            </Link> */}
+             */}
             <Button
               variant="outline"
               onClick={() => {
