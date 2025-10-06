@@ -19,7 +19,6 @@ import {
   Clock,
   Wallet,
   Wallet2,
-  Settings,
   CheckCircle,
 } from "lucide-react";
 import {
@@ -30,8 +29,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import ChangePassword from "@/forms/member/ChangePassword";
 import UpdateAccount from "@/forms/member/UpdateAccount";
+import ChangePassword from "@/forms/member/ChangePassword";
 
 function AccountSettings() {
   const {
@@ -75,7 +74,6 @@ function AccountSettings() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8 max-w-7xl">
-        {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -92,7 +90,6 @@ function AccountSettings() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-[#045e32]/5 to-[#045e32]/10">
           <CardContent className="p-8">
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
@@ -125,7 +122,7 @@ function AccountSettings() {
                     variant={member?.is_approved ? "default" : "secondary"}
                     className={`${
                       member?.is_approved
-                        ? "bg-[#045e32] text-white hover:bg-[#e66b00]/90"
+                        ? "bg-[#045e32] text-white hover:bg-[#022007]/90"
                         : "bg-yellow-100 text-yellow-700 hover:bg-yellow-100/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
@@ -141,7 +138,7 @@ function AccountSettings() {
                     variant={member?.is_active ? "default" : "secondary"}
                     className={`${
                       member?.is_active
-                        ? "bg-[#045e32] text-white hover:bg-[#e66b00]/90"
+                        ? "bg-[#045e32] text-white hover:bg-[#022007]/90"
                         : "bg-red-100 text-red-700 hover:bg-red-100/90"
                     } px-3 py-1 text-sm font-semibold`}
                   >
@@ -154,14 +151,14 @@ function AccountSettings() {
                 <Button
                   onClick={() => setUpdateModal(true)}
                   size="sm"
-                  className="bg-[#045e32] hover:bg-[#e66b00] text-white px-8"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
                 >
                   Update Account
                 </Button>
                 <Button
                   onClick={() => setPasswordModal(true)}
                   size="sm"
-                  className="bg-[#045e32] hover:bg-[#e66b00] text-white px-8"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
                 >
                   Change Password
                 </Button>
@@ -170,11 +167,8 @@ function AccountSettings() {
           </CardContent>
         </Card>
 
-        {/* Content Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Personal Information */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -212,7 +206,6 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Employment Information */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -239,7 +232,6 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Savings Accounts */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -270,7 +262,6 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Loan Accounts */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -302,9 +293,7 @@ function AccountSettings() {
             </Card>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-8">
-            {/* Identification */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -331,7 +320,6 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
-            {/* Account Timeline */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -367,7 +355,6 @@ function AccountSettings() {
           </div>
         </div>
 
-        {/* Modals */}
         <UpdateAccount
           isOpen={updateModal}
           onClose={() => setUpdateModal(false)}
