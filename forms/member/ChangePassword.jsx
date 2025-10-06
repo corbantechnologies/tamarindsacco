@@ -61,8 +61,7 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
-                    as={Input}
-                    type={showPassword ? "text" : "password"}
+                    type={showOldPassword ? "text" : "password"}
                     name="old_password"
                     id="old_password"
                     placeholder="Enter old password"
@@ -99,7 +98,6 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
-                    as={Input}
                     type={showPassword ? "text" : "password"}
                     name="password"
                     id="password"
@@ -137,7 +135,6 @@ function ChangePassword({ onClose, isOpen }) {
                 </Label>
                 <div className="relative">
                   <Field
-                    as={Input}
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     id="confirmPassword"
