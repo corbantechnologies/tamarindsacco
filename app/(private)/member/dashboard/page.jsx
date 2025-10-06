@@ -65,34 +65,32 @@ function MemberDashboard() {
           </div>
         </div>
 
-        <section>
-          {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-            <InfoCard member={member} />
-            <StatsCard
-              title="Total Savings"
-              value={savings?.length || 0}
-              Icon={Wallet}
-              description="Number of savings accounts created"
-            />
-            <StatsCard
-              title="Savings Types"
-              value={savingTypes?.length}
-              Icon={Wallet2}
-              description="Available saving products"
-            />
-          </div>
+        {/* Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <InfoCard member={member} />
+          <StatsCard
+            title="Total Savings"
+            value={savings?.length || 0}
+            Icon={Wallet}
+            description="Number of savings accounts created"
+          />
+          <StatsCard
+            title="Savings Types"
+            value={savingTypes?.length}
+            Icon={Wallet2}
+            description="Available saving products"
+          />
+        </div>
 
-          {/* Savings Table */}
-          <div className="space-y-4">
-            <SavingsTable savings={savings} isLoading={isLoadingSavings} />
-          </div>
+        {/* Savings Table */}
+        <div className="space-y-4">
+          <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+        </div>
 
-          {/* Loans Table */}
-          <div className="space-y-4">
-            <LoansTable loans={loans} isLoading={isLoadingLoans} />
-          </div>
-        </section>
+        {/* Loans Table */}
+        <div className="space-y-4">
+          <LoansTable loans={loans} isLoading={isLoadingLoans} />
+        </div>
       </div>
     </div>
   );
