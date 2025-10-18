@@ -16,6 +16,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import CreateWithdrawal from "@/forms/savingswithdrawals/CreateWithdrawal";
 
+import { format } from "date-fns";
+import SavingsWithdrawalsTable from "@/components/savings/SavingsWithdrawalsTable";
+import SavingsDepositsTable from "@/components/savings/SavingsDeposits";
+
 function SavingsDetail() {
   const { identity } = useParams();
   const [withdrawalModal, setWithdrawalModal] = useState(false);
@@ -26,13 +30,11 @@ function SavingsDetail() {
     refetch: refetchSaving,
   } = useFetchSavingDetail(identity);
 
-  console.log(saving);
-
   if (isLoadingSaving) return <MemberLoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 space-y-8">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6 max-w-7xl">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -41,46 +43,69 @@ function SavingsDetail() {
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            {/* <BreadcrumbItem>
-                        <BreadcrumbLink href="/member/savings">Savings</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator /> */}
             <BreadcrumbItem>
               <BreadcrumbPage>{saving?.account_type}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* Details section */}
-        <Card className="mt-4 border-l-4 border-l-[#045e32]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-2xl font-bold tracking-tight">
+        {/* Account Details */}
+        <Card className="border-l-4 border-l-[#045e32] shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-2xl font-bold text-[#045e32]">
               {saving?.account_type}
             </CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                className="bg-red-500 hover:bg-[#022007] text-white px-8 w-full sm:w-auto"
-                onClick={() => setWithdrawalModal(true)}
-              >
-                Withdraw
-              </Button>
-            </div>
+            <Button
+              size="sm"
+              className="bg-[#045e32] hover:bg-[#022007] text-white"
+              onClick={() => setWithdrawalModal(true)}
+            >
+              Withdraw
+            </Button>
           </CardHeader>
-          <CardContent>
-            <p className="text-base mb-2 font-medium leading-none">
-              Account Number: {saving?.account_number}
+          <CardContent className="space-y-2">
+            <p className="text-base font-medium">
+              Account Number:{" "}
+              <span className="font-normal">{saving?.account_number}</span>
             </p>
-            <p className="text-base mb-2 leading-none">
-              Account Type: {saving?.account_type}
+            <p className="text-base font-medium">
+              Balance:{" "}
+              <span className="font-normal text-[#045e32]">
+                KES {parseFloat(saving?.balance).toFixed(2)}
+              </span>
             </p>
-            <p className="text-base mb-2 leading-none">
-              Account Balance: {saving?.balance}
+            <p className="text-base font-medium">
+              Status:{" "}
+              <span
+                className={`font-normal ${
+                  saving?.is_active ? "text-green-600" : "text-red-600"
+                }`}
+              >
+                {saving?.is_active ? "Active" : "Inactive"}
+              </span>
+            </p>
+            <p className="text-base font-medium">
+              Created At:{" "}
+              <span className="font-normal">
+                {format(new Date(saving?.created_at), "PPP")}
+              </span>
             </p>
           </CardContent>
         </Card>
 
-        {/* modals */}
+        {/* Deposits Table */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-[#045e32]">Deposits</h2>
+          <SavingsDepositsTable deposits={saving?.deposits || []} />
+        </div>
+
+        {/* Withdrawals Table */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-[#045e32]">Withdrawals</h2>
+          <SavingsWithdrawalsTable withdrawals={saving?.withdrawals || []} />
+        </div>
+
+        {/* Modal */}
         <CreateWithdrawal
           isOpen={withdrawalModal}
           onClose={() => setWithdrawalModal(false)}

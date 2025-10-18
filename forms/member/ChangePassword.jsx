@@ -45,7 +45,6 @@ function ChangePassword({ onClose, isOpen }) {
               toast?.success("Password changed successfully!");
               onClose();
             } catch (error) {
-              console.log(error?.response?.data?.old_password[0]);
               if (error?.response?.data?.old_password[0]) {
                 toast?.error(error?.response?.data?.old_password[0]);
               } else {

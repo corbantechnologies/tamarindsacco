@@ -50,7 +50,6 @@ function CreateLoanAccountAdmin({
               onClose();
               refetchMember();
             } catch (error) {
-              console.log(error);
               toast?.error("Failed to create loan!");
             } finally {
               setLoading(false);

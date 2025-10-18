@@ -45,7 +45,6 @@ function LoginForm() {
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
       toast?.error("Login failed. Please try again.");
     }
   };

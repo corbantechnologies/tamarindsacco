@@ -80,7 +80,6 @@ function UpdateAccount({ member, isOpen, onClose, refetchMember }) {
               toast.success("Account updated successfully!");
               refetchMember();
             } catch (error) {
-              console.log(error);
               toast.error("Failed to update account. Please try again.");
             } finally {
               setLoading(false);
