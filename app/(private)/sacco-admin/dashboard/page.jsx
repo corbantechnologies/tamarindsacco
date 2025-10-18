@@ -156,16 +156,15 @@ function SaccoAdminDashboard() {
         </div>
 
         {/* Savings and loans Table */}
-        <div className="space-y-4">
-          <SavingsTable
-            savings={savings}
-            isLoading={isLoadingSavings}
-            route="sacco-admin"
-          />
-        </div>
-
-        <div className="space-y-4">
-          <LoansTable loans={loans} isLoading={isLoadingLoans} />
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <SavingsTable
+              savings={savings}
+              isLoading={isLoadingSavings}
+              route="sacco-admin"
+            />
+            <LoansTable loans={loans} isLoading={isLoadingLoans} />
+          </div>
         </div>
 
         {/* Modals */}

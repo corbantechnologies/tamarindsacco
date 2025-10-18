@@ -29,6 +29,12 @@ function SaccoAdminNavbar() {
               Members
             </Link>
             <Link
+              href="/sacco-admin/withdrawals"
+              className="hover:underline text-base"
+            >
+              Withdrawals
+            </Link>
+            <Link
               href="/sacco-admin/settings"
               className="hover:underline text-base"
             >
@@ -85,6 +91,13 @@ function SaccoAdminNavbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Members
+            </Link>
+            <Link
+              href="/sacco-admin/withdrawals"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Withdrawals
             </Link>
             <Link
               href="/sacco-admin/settings"
