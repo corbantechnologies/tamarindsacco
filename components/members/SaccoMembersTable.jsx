@@ -112,8 +112,6 @@ function SaccoMembersTable({ members }) {
                   <TableRow>
                     <TableHead className="text-black">Member No</TableHead>
                     <TableHead className="text-black">Name</TableHead>
-                    {/* <TableHead className="text-black">Email</TableHead>
-                    <TableHead className="text-black">Phone</TableHead> */}
                     <TableHead className="text-black">Status</TableHead>
                     <TableHead className="text-black">Actions</TableHead>
                   </TableRow>
@@ -122,7 +120,11 @@ function SaccoMembersTable({ members }) {
                   {paginatedMembers.map((member) => (
                     <TableRow key={member?.reference}>
                       <TableCell className="font-medium">
-                        {member?.member_no}
+                        <Link
+                          href={`/sacco-admin/members/${member?.member_no}`}
+                        >
+                          {member?.member_no}
+                        </Link>
                       </TableCell>
                       <TableCell>
                         <Link
@@ -131,8 +133,7 @@ function SaccoMembersTable({ members }) {
                           {member?.first_name} {member?.last_name}
                         </Link>
                       </TableCell>
-                      {/* <TableCell>{member?.email}</TableCell>
-                      <TableCell>{member?.phone}</TableCell> */}
+
                       <TableCell>
                         <Badge
                           variant={
