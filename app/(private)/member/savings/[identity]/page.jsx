@@ -18,7 +18,7 @@ import CreateWithdrawal from "@/forms/savingswithdrawals/CreateWithdrawal";
 
 import { format } from "date-fns";
 import SavingsWithdrawalsTable from "@/components/savings/SavingsWithdrawalsTable";
-import SavingsDepositsTable from "@/components/savings/SavingsDeposits";
+import SavingsDepositsTable from "@/components/savings/SavingsDepositsTable";
 
 function SavingsDetail() {
   const { identity } = useParams();
@@ -94,16 +94,28 @@ function SavingsDetail() {
         </Card>
 
         {/* Deposits Table */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#045e32]">Deposits</h2>
-          <SavingsDepositsTable deposits={saving?.deposits || []} />
-        </div>
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#045e32]">
+              Deposits
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SavingsDepositsTable deposits={saving?.deposits || []} />
+          </CardContent>
+        </Card>
 
         {/* Withdrawals Table */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-[#045e32]">Withdrawals</h2>
-          <SavingsWithdrawalsTable withdrawals={saving?.withdrawals || []} />
-        </div>
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#045e32]">
+              Withdrawals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SavingsWithdrawalsTable withdrawals={saving?.withdrawals || []} />
+          </CardContent>
+        </Card>
 
         {/* Modal */}
         <CreateWithdrawal

@@ -12,14 +12,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-function SavingsWithdrawalsTable({ withdrawals }) {
+function SavingsDepositsTable({ deposits }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   // Pagination logic
-  const totalItems = withdrawals?.length || 0;
+  const totalItems = deposits?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedWithdrawals = withdrawals?.slice(
+  const paginatedDeposits = deposits?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -30,10 +30,10 @@ function SavingsWithdrawalsTable({ withdrawals }) {
     }
   };
 
-  if (!withdrawals || withdrawals.length === 0) {
+  if (!deposits || deposits.length === 0) {
     return (
       <div className="p-6 text-center text-muted-foreground">
-        No withdrawals found.
+        No deposits found.
       </div>
     );
   }
@@ -47,7 +47,7 @@ function SavingsWithdrawalsTable({ withdrawals }) {
               <TableHead className="text-white font-semibold">Date</TableHead>
               <TableHead className="text-white font-semibold">Amount</TableHead>
               <TableHead className="text-white font-semibold">
-                Withdrawn By
+                Deposited By
               </TableHead>
               <TableHead className="text-white font-semibold">
                 Payment Method
@@ -56,31 +56,29 @@ function SavingsWithdrawalsTable({ withdrawals }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedWithdrawals?.map((withdrawal) => (
-              <TableRow key={withdrawal.reference} className="border-b">
+            {paginatedDeposits?.map((deposit) => (
+              <TableRow key={deposit.reference} className="border-b">
                 <TableCell className="text-sm text-gray-700">
-                  {format(new Date(withdrawal.created_at), "PPP")}
+                  {format(new Date(deposit.created_at), "PPP")}
                 </TableCell>
                 <TableCell className="text-sm text-gray-700">
-                  KES {parseFloat(withdrawal.amount).toFixed(2)}
+                  KES {parseFloat(deposit.amount).toFixed(2)}
                 </TableCell>
                 <TableCell className="text-sm text-gray-700">
-                  {withdrawal.withdrawn_by}
+                  {deposit.deposited_by}
                 </TableCell>
                 <TableCell className="text-sm text-gray-700">
-                  {withdrawal.payment_method}
+                  {deposit.payment_method}
                 </TableCell>
                 <TableCell className="text-sm">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
-                      withdrawal.transaction_status === "Completed"
+                      deposit.transaction_status === "Completed"
                         ? "bg-green-100 text-green-700"
-                        : withdrawal.transaction_status === "Processing"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
-                    {withdrawal.transaction_status}
+                    {deposit.transaction_status}
                   </span>
                 </TableCell>
               </TableRow>
@@ -133,4 +131,4 @@ function SavingsWithdrawalsTable({ withdrawals }) {
   );
 }
 
-export default SavingsWithdrawalsTable;
+export default SavingsDepositsTable;
