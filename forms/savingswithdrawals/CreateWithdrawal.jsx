@@ -85,9 +85,8 @@ function CreateWithdrawal({ isOpen, onClose, account, refetchAccount }) {
                   <option value="Cash">Cash</option>
                   <option value="Mpesa">Mpesa</option>
                   <option value="Bank Transfer">Bank Transfer</option>
+                  <option value="Mobile Transfer">Mobile Transfer</option>
                   <option value="Cheque">Cheque</option>
-                  <option value="Mobile Banking">Mobile Banking</option>
-                  <option value="Standing Order">Standing Order</option>
                 </Field>
               </div>
 
