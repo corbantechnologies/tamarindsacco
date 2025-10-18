@@ -84,7 +84,7 @@ function MemberDashboard() {
 
         {/* Savings Table */}
         <div className="space-y-4">
-          <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+          <SavingsTable savings={savings} isLoading={isLoadingSavings} route="member" />
         </div>
 
         {/* Loans Table */}

@@ -68,7 +68,8 @@ function SaccoAdminDashboard() {
     isLoadingMembers ||
     isLoadingSavingTypes ||
     isLoadingSavings ||
-    isLoadingLoanTypes || isLoadingLoans
+    isLoadingLoanTypes ||
+    isLoadingLoans
   ) {
     return <LoadingSpinner />;
   }
@@ -156,7 +157,11 @@ function SaccoAdminDashboard() {
 
         {/* Savings and loans Table */}
         <div className="space-y-4">
-          <SavingsTable savings={savings} isLoading={isLoadingSavings} />
+          <SavingsTable
+            savings={savings}
+            isLoading={isLoadingSavings}
+            route="sacco-admin"
+          />
         </div>
 
         <div className="space-y-4">
