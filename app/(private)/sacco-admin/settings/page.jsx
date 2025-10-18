@@ -18,7 +18,6 @@ import {
   Clock,
   Wallet,
   Wallet2,
-  CheckCircle,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -72,7 +71,7 @@ function AccountSettings() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      <div className="container mx-auto p-6 space-y-8">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

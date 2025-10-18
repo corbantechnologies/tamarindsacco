@@ -8,7 +8,7 @@ export const createSavingsWithdrawals = async (values, token) => {
 
 export const getSavingsWithdrawals = async (token) => {
   const response = await apiActions?.get("/api/v1/savingswithdrawals/", token);
-  return response?.data;
+  return response?.data?.results;
 };
 
 export const getSavingsWithdrawal = async (reference, token) => {
@@ -22,7 +22,7 @@ export const getSavingsWithdrawal = async (reference, token) => {
 // SACCO Admins
 export const updateWithdrawal = async (identity, values, token) => {
   const response = await apiActions?.patch(
-    `/api/v1/savingswithdrawals/${identity}/`,
+    `/api/v1/savingswithdrawals/${identity}/update/`,
     values,
     token
   );
