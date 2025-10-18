@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Link from "next/link";
 
-function SavingsTable({ savings, isLoading }) {
+function SavingsTable({ savings, isLoading, route }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("All");
   const itemsPerPage = 5;
@@ -127,7 +128,7 @@ function SavingsTable({ savings, isLoading }) {
                     Status
                   </TableHead>
                   <TableHead className="text-white font-semibold text-base">
-                    Created At
+                    Action
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -158,7 +159,12 @@ function SavingsTable({ savings, isLoading }) {
                       </span>
                     </TableCell>
                     <TableCell className="text-sm text-gray-700">
-                      {format(new Date(saving.created_at), "MM/dd/yyyy")}
+                      <Link
+                        href={`/${route}/savings/${saving.identity}`}
+                        className="text-[#045e32] hover:underline cursor-pointer"
+                      >
+                        View
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
