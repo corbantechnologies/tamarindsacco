@@ -17,6 +17,7 @@ import {
 import CreateWithdrawal from "@/forms/savingswithdrawals/CreateWithdrawal";
 import SavingsDepositsTable from "@/components/savings/SavingsDepositsTable";
 import SavingsWithdrawalsTable from "@/components/savings/SavingsWithdrawalsTable";
+import SavingsTransactions from "@/components/savings/SavingsTransactions";
 import { format } from "date-fns";
 
 function SavingsDetail() {
@@ -113,6 +114,21 @@ function SavingsDetail() {
           </CardHeader>
           <CardContent>
             <SavingsWithdrawalsTable withdrawals={saving?.withdrawals || []} />
+          </CardContent>
+        </Card>
+
+        {/* Transactions Table */}
+        <Card className="shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#045e32]">
+              All Transactions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SavingsTransactions
+              deposits={saving?.deposits || []}
+              withdrawals={saving?.withdrawals || []}
+            />
           </CardContent>
         </Card>
 
