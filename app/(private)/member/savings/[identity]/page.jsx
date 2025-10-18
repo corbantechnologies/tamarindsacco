@@ -15,10 +15,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import CreateWithdrawal from "@/forms/savingswithdrawals/CreateWithdrawal";
-
-import { format } from "date-fns";
-import SavingsWithdrawalsTable from "@/components/savings/SavingsWithdrawalsTable";
 import SavingsDepositsTable from "@/components/savings/SavingsDepositsTable";
+import SavingsWithdrawalsTable from "@/components/savings/SavingsWithdrawalsTable";
+import { format } from "date-fns";
 
 function SavingsDetail() {
   const { identity } = useParams();
@@ -34,7 +33,7 @@ function SavingsDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6 max-w-7xl">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

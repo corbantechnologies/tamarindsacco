@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { format } from "date-fns";
+import React, { useState, useMemo } from "react";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -11,15 +18,76 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Label } from "@/components/ui/label";
 
 function SavingsDepositsTable({ deposits }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [specificDate, setSpecificDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [month, setMonth] = useState("");
+  const [depositType, setDepositType] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const itemsPerPage = 5;
 
+  // Filter deposits
+  const filteredDeposits = useMemo(() => {
+    return deposits?.filter((deposit) => {
+      const depositDate = new Date(deposit.created_at);
+
+      // Specific Date Filter
+      if (specificDate) {
+        const selectedDate = new Date(specificDate);
+        if (!isSameDay(depositDate, selectedDate)) return false;
+      }
+
+      // Date Range Filter
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (!isWithinInterval(depositDate, { start, end })) return false;
+      }
+
+      // Month Filter
+      if (month) {
+        const [year, monthIndex] = month.split("-").map(Number);
+        const startOfSelectedMonth = startOfMonth(
+          new Date(year, monthIndex - 1)
+        );
+        const endOfSelectedMonth = endOfMonth(new Date(year, monthIndex - 1));
+        if (
+          !isWithinInterval(depositDate, {
+            start: startOfSelectedMonth,
+            end: endOfSelectedMonth,
+          })
+        ) {
+          return false;
+        }
+      }
+
+      // Deposit Type Filter
+      if (depositType && deposit.deposit_type !== depositType) return false;
+
+      // Payment Method Filter
+      if (paymentMethod && deposit.payment_method !== paymentMethod)
+        return false;
+
+      return true;
+    });
+  }, [
+    deposits,
+    specificDate,
+    startDate,
+    endDate,
+    month,
+    depositType,
+    paymentMethod,
+  ]);
+
   // Pagination logic
-  const totalItems = deposits?.length || 0;
+  const totalItems = filteredDeposits?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedDeposits = deposits?.slice(
+  const paginatedDeposits = filteredDeposits?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -30,62 +98,240 @@ function SavingsDepositsTable({ deposits }) {
     }
   };
 
-  if (!deposits || deposits.length === 0) {
-    return (
-      <div className="p-6 text-center text-muted-foreground">
-        No deposits found.
-      </div>
-    );
-  }
+  const resetFilters = () => {
+    setSpecificDate("");
+    setStartDate("");
+    setEndDate("");
+    setMonth("");
+    setDepositType("");
+    setPaymentMethod("");
+    setCurrentPage(1);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   return (
     <div>
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
-              <TableHead className="text-white font-semibold">Date</TableHead>
-              <TableHead className="text-white font-semibold">Amount</TableHead>
-              <TableHead className="text-white font-semibold">
-                Deposited By
-              </TableHead>
-              <TableHead className="text-white font-semibold">
+      {/* Filter Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-[#045e32]">
+            Filter Deposits
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="specificDate"
+                className="text-sm font-medium text-gray-700"
+              >
+                Specific Date
+              </Label>
+              <input
+                type="date"
+                id="specificDate"
+                value={specificDate}
+                onChange={(e) => {
+                  setSpecificDate(e.target.value);
+                  setStartDate("");
+                  setEndDate("");
+                  setMonth("");
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="startDate"
+                className="text-sm font-medium text-gray-700"
+              >
+                Start Date
+              </Label>
+              <input
+                type="date"
+                id="startDate"
+                value={startDate}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  setSpecificDate("");
+                  setMonth("");
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="endDate"
+                className="text-sm font-medium text-gray-700"
+              >
+                End Date
+              </Label>
+              <input
+                type="date"
+                id="endDate"
+                value={endDate}
+                onChange={(e) => {
+                  setEndDate(e.target.value);
+                  setSpecificDate("");
+                  setMonth("");
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="month"
+                className="text-sm font-medium text-gray-700"
+              >
+                Month
+              </Label>
+              <input
+                type="month"
+                id="month"
+                value={month}
+                onChange={(e) => {
+                  setMonth(e.target.value);
+                  setSpecificDate("");
+                  setStartDate("");
+                  setEndDate("");
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="depositType"
+                className="text-sm font-medium text-gray-700"
+              >
+                Deposit Type
+              </Label>
+              <select
+                id="depositType"
+                value={depositType}
+                onChange={(e) => {
+                  setDepositType(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              >
+                <option value="">All Types</option>
+                <option value="Opening Balance">Opening Balance</option>
+                <option value="Payroll Deduction">Payroll Deduction</option>
+                <option value="Group Deposit">Group Deposit</option>
+                <option value="Dividend Deposit">Dividend Deposit</option>
+                <option value="Member Deposit">Member Deposit</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="paymentMethod"
+                className="text-sm font-medium text-gray-700"
+              >
                 Payment Method
-              </TableHead>
-              <TableHead className="text-white font-semibold">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {paginatedDeposits?.map((deposit) => (
-              <TableRow key={deposit.reference} className="border-b">
-                <TableCell className="text-sm text-gray-700">
-                  {format(new Date(deposit.created_at), "PPP")}
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">
-                  KES {parseFloat(deposit.amount).toFixed(2)}
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">
-                  {deposit.deposited_by}
-                </TableCell>
-                <TableCell className="text-sm text-gray-700">
-                  {deposit.payment_method}
-                </TableCell>
-                <TableCell className="text-sm">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      deposit.transaction_status === "Completed"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {deposit.transaction_status}
-                  </span>
-                </TableCell>
+              </Label>
+              <select
+                id="paymentMethod"
+                value={paymentMethod}
+                onChange={(e) => {
+                  setPaymentMethod(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+              >
+                <option value="">All Methods</option>
+                <option value="Cash">Cash</option>
+                <option value="Mpesa">Mpesa</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Mobile Banking">Mobile Banking</option>
+                <option value="Standing Order">Standing Order</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <Button
+                onClick={resetFilters}
+                className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                Reset Filters
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Empty State */}
+      {(!filteredDeposits || filteredDeposits.length === 0) && (
+        <div className="p-6 text-center text-muted-foreground">
+          No deposits found.
+        </div>
+      )}
+
+      {/* Table */}
+      {filteredDeposits && filteredDeposits.length > 0 && (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
+                <TableHead className="text-white font-semibold">Date</TableHead>
+                <TableHead className="text-white font-semibold">
+                  Amount
+                </TableHead>
+                <TableHead className="text-white font-semibold">
+                  Deposited By
+                </TableHead>
+                <TableHead className="text-white font-semibold">
+                  Payment Method
+                </TableHead>
+                <TableHead className="text-white font-semibold">
+                  Status
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {paginatedDeposits?.map((deposit) => (
+                <TableRow key={deposit.reference} className="border-b">
+                  <TableCell className="text-sm text-gray-700">
+                    {formatDate(deposit.created_at)}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    KES {parseFloat(deposit.amount).toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {deposit.deposited_by}
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-700">
+                    {deposit.payment_method}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        deposit.transaction_status === "Completed"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {deposit.transaction_status}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (
