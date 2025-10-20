@@ -3,9 +3,11 @@
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import LoansTable from "@/components/loans/LoansTable";
 import SavingsTable from "@/components/savings/SavingsTable";
+import VenturesTable from "@/components/ventures/VenturesTable";
 import { useFetchLoans } from "@/hooks/loans/actions";
 import { useFetchMember } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
+import { useFetchVentures } from "@/hooks/ventures/actions";
 import React from "react";
 
 function PersonalDashboard() {
@@ -22,13 +24,26 @@ function PersonalDashboard() {
   } = useFetchSavings();
 
   const {
+    isLoading: isLoadingVentures,
+    data: ventures,
+    refetch: refetchVentures,
+  } = useFetchVentures();
+
+  const {
     isLoading: isLoadingLoans,
     data: loans,
     refetch: refetchLoans,
   } = useFetchLoans();
 
-  if (isLoadingMember || isLoadingSavings || isLoadingLoans)
+  if (
+    isLoadingMember ||
+    isLoadingSavings ||
+    isLoadingLoans ||
+    isLoadingVentures
+  )
     return <LoadingSpinner />;
+
+  console.log(ventures);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -56,6 +71,15 @@ function PersonalDashboard() {
         {/* Loans Table */}
         <div className="space-y-4">
           <LoansTable loans={loans} isLoading={isLoadingLoans} />
+        </div>
+
+        {/* Ventures Table */}
+        <div className="space-y-4">
+          <VenturesTable
+            ventures={ventures}
+            isLoading={isLoadingVentures}
+            route="sacco-admin"
+          />
         </div>
       </div>
     </div>
