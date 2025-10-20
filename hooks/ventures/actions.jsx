@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "../authentication/useAxiosAuth";
-import { getVentureDetail, getVentures } from "@/services/ventures";
+import { getVenture, getVentures } from "@/services/ventures";
 
 export function useFetchVentures() {
   const token = useAxiosAuth();
@@ -18,7 +18,7 @@ export function useFetchVentureDetail(identity) {
 
   return useQuery({
     queryKey: ["venture", identity],
-    queryFn: () => getVentureDetail(identity, token),
+    queryFn: () => getVenture(identity, token),
     enabled: !!identity,
   });
 }
