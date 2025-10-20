@@ -219,6 +219,140 @@ function MemberDetail() {
           </CardContent>
         </Card>
 
+        {/* Key Actions Grid */}
+        <div className="space-y-8">
+          {/* Savings Accounts */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Savings Accounts
+                </CardTitle>
+                {member?.is_approved && (
+                  <Button
+                    onClick={() => setDepositModal(true)}
+                    size="sm"
+                    className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                  >
+                    Deposit
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {member?.savings_accounts?.length > 0 ? (
+                <>
+                  {member?.savings_accounts.map((account) => (
+                    <div key={account?.reference} className="space-y-2">
+                      <InfoField
+                        icon={Wallet2}
+                        label={`${account?.account_type} - ${account?.account_number}`}
+                        value={`${account?.balance} ${
+                          account?.currency || "KES"
+                        }`}
+                      />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">
+                  No savings accounts found.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Venture Accounts */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Venture Accounts
+                </CardTitle>
+                {member?.is_approved && (
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setVentureDepositModal(true)}
+                      size="sm"
+                      className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                    >
+                      Deposit
+                    </Button>
+                    <Button
+                      onClick={() => setVenturePaymentModal(true)}
+                      size="sm"
+                      className="bg-[#cc5500] hover:bg-[#e66b00] text-white mt-4"
+                    >
+                      Pay
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {member?.venture_accounts?.length > 0 ? (
+                <>
+                  {member?.venture_accounts.map((account) => (
+                    <div key={account?.reference} className="space-y-2">
+                      <InfoField
+                        icon={Wallet2}
+                        label={`${account?.venture_type} - ${account?.account_number}`}
+                        value={`${account?.balance} KES`}
+                      />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">
+                  No venture accounts found.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Loan Accounts */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Wallet className="h-6 w-6 text-primary" />
+                  Loan Accounts
+                </CardTitle>
+                {member?.is_approved && (
+                  <Button
+                    onClick={() => setLoanModal(true)}
+                    size="sm"
+                    className="bg-[#045e32] hover:bg-[#022007] text-white"
+                  >
+                    Create Loan
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {member?.loans?.length > 0 ? (
+                <>
+                  {member?.loans?.map((account) => (
+                    <div key={account?.reference} className="space-y-2">
+                      <InfoField
+                        icon={CreditCard}
+                        label={`${account?.loan_type} - ${account?.account_number}`}
+                        value={`${account?.outstanding_balance} KES`}
+                      />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p className="text-muted-foreground text-center py-4">
+                  No loan accounts found.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Content Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Personal Information */}
@@ -284,137 +418,6 @@ function MemberDetail() {
                   label="Job Title"
                   value={member?.job_title}
                 />
-              </CardContent>
-            </Card>
-
-            {/* Savings Accounts */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Savings Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <Button
-                      onClick={() => setDepositModal(true)}
-                      size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                    >
-                      Deposit
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {member?.savings_accounts?.length > 0 ? (
-                  <>
-                    {member?.savings_accounts.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={Wallet2}
-                          label={`${account?.account_type} - ${account?.account_number}`}
-                          value={`${account?.balance} ${
-                            account?.currency || "KES"
-                          }`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No savings accounts found.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Venture Accounts */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Venture Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => setVentureDepositModal(true)}
-                        size="sm"
-                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                      >
-                        Deposit
-                      </Button>
-                      <Button
-                        onClick={() => setVenturePaymentModal(true)}
-                        size="sm"
-                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                      >
-                        Pay
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {member?.venture_accounts?.length > 0 ? (
-                  <>
-                    {member?.venture_accounts.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={Wallet2}
-                          label={`${account?.venture_type} - ${account?.account_number}`}
-                          value={`${account?.balance} KES`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No venture accounts found.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Loan Accounts */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Loan Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <Button
-                      onClick={() => setLoanModal(true)}
-                      size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white"
-                    >
-                      Create Loan
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {member?.loans?.length > 0 ? (
-                  <>
-                    {member?.loans?.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={CreditCard}
-                          label={`${account?.loan_type} - ${account?.account_number}`}
-                          value={`${account?.outstanding_balance} KES`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No loan accounts found.
-                  </p>
-                )}
               </CardContent>
             </Card>
           </div>
