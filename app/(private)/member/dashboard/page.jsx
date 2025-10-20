@@ -15,10 +15,11 @@ import { DoorOpen, Plus, Wallet, Wallet2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import LoansTable from "@/components/loans/LoansTable";
 import { useFetchLoans } from "@/hooks/loans/actions";
+import { useFetchVentures } from "@/hooks/ventures/actions";
+import VenturesTable from "@/components/ventures/VenturesTable";
 
 function MemberDashboard() {
   const token = useAxiosAuth();
-  const [savingsCreateModal, setSavingsCreateModal] = useState(false);
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -43,6 +44,12 @@ function MemberDashboard() {
     refetch: refetchSavings,
     error: savingsError,
   } = useFetchSavings();
+
+  const {
+    isLoading: isLoadingVentures,
+    data: ventures,
+    refetch: refetchVentures,
+  } = useFetchVentures();
 
   if (
     isLoadingMember ||
@@ -84,12 +91,21 @@ function MemberDashboard() {
 
         {/* Savings Table */}
         <div className="space-y-4">
-          <SavingsTable savings={savings} isLoading={isLoadingSavings} route="member" />
+          <SavingsTable
+            savings={savings}
+            isLoading={isLoadingSavings}
+            route="member"
+          />
         </div>
 
         {/* Loans Table */}
         <div className="space-y-4">
           <LoansTable loans={loans} isLoading={isLoadingLoans} />
+        </div>
+
+        {/* Ventures Table */}
+        <div className="space-y-4">
+          <VenturesTable ventures={ventures} isLoading={isLoadingVentures} route="member" />
         </div>
       </div>
     </div>

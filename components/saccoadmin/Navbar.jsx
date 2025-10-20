@@ -23,6 +23,12 @@ function SaccoAdminNavbar() {
               Dashboard
             </Link>
             <Link
+              href="/sacco-admin/personal"
+              className="hover:underline text-base"
+            >
+              Personal
+            </Link>
+            <Link
               href="/sacco-admin/members"
               className="hover:underline text-base"
             >
@@ -84,6 +90,13 @@ function SaccoAdminNavbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
+            </Link>
+            <Link
+              href="/sacco-admin/personal"
+              className="text-lg hover:text-[#cc5500]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Personal
             </Link>
             <Link
               href="/sacco-admin/members"

@@ -1,32 +1,39 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import LoansTable from "@/components/loans/LoansTable";
 import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
-import SavingsTable from "@/components/savings/SavingsTable";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
+import VentureTypesTable from "@/components/venturetypes/VentureTypesTable";
 import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
+import CreateVentureType from "@/forms/venturetypes/CreateVentureType";
 import { useFetchLoans } from "@/hooks/loans/actions";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { DoorOpen, Plus, User, Users, Wallet, Wallet2 } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useFetchVentureTypes } from "@/hooks/venturetypes/actions";
+import {
+  DoorOpen,
+  Plus,
+  ShoppingCart,
+  User,
+  Users,
+  Wallet,
+  Wallet2,
+} from "lucide-react";
 import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
   const [loanTypeModal, setLoanTypeModal] = useState(false);
   const [memberCreateModal, setMemberCreateModal] = useState(false);
-  const router = useRouter();
+  const [ventureTypeModal, setVentureTypeModal] = useState(false);
 
   const {
     isLoading: isLoadingMember,
@@ -63,13 +70,20 @@ function SaccoAdminDashboard() {
     refetch: refetchLoans,
   } = useFetchLoans();
 
+  const {
+    isLoading: isLoadingVentureTypes,
+    data: ventureTypes,
+    refetch: refetchVentureTypes,
+  } = useFetchVentureTypes();
+
   if (
     isLoadingMember ||
     isLoadingMembers ||
     isLoadingSavingTypes ||
     isLoadingSavings ||
     isLoadingLoanTypes ||
-    isLoadingLoans
+    isLoadingLoans ||
+    isLoadingVentureTypes
   ) {
     return <LoadingSpinner />;
   }
@@ -87,6 +101,8 @@ function SaccoAdminDashboard() {
               Manage your members, saving types, savings and loan types
             </p>
           </div>
+
+          {/* Header Actions */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Button
               onClick={() => setMemberCreateModal(true)}
@@ -106,19 +122,17 @@ function SaccoAdminDashboard() {
             >
               <Plus className="h-4 w-4 mr-2" /> Loan Type
             </Button>
-            {/* <Button
-              variant="outline"
-              className="border-black text-black hover:bg-gray-100 text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-              onClick={() => signOut()}
+            <Button
+              onClick={() => setVentureTypeModal(true)}
+              className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <DoorOpen className="h-4 w-4 mr-2" />
-              Log out
-            </Button> */}
+              <ShoppingCart className="h-4 w-4 mr-2" /> Venture Type
+            </Button>
           </div>
         </div>
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
           <AdminInfoCard member={member} />
           <StatsCard
             title="Total Members"
@@ -138,14 +152,21 @@ function SaccoAdminDashboard() {
             Icon={Wallet2}
             description="Available loan products"
           />
+          <StatsCard
+            title="Venture Types"
+            value={ventureTypes?.length}
+            Icon={ShoppingCart}
+            description="Available venture products"
+          />
         </div>
 
         {/* Tables Section */}
         <div className="space-y-6">
           {/* Put these tables side by side and stack over each other on smaller screens */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <SavingsTypesTable savingTypes={savingTypes} />
             <LoanTypesTable loanTypes={loanTypes} />
+            <VentureTypesTable ventureTypes={ventureTypes} />
           </div>
 
           {/* Members Table */}
@@ -153,18 +174,6 @@ function SaccoAdminDashboard() {
             members={members}
             refetchMembers={refetchMembers}
           />
-        </div>
-
-        {/* Savings and loans Table */}
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <SavingsTable
-              savings={savings}
-              isLoading={isLoadingSavings}
-              route="sacco-admin"
-            />
-            <LoansTable loans={loans} isLoading={isLoadingLoans} />
-          </div>
         </div>
 
         {/* Modals */}
@@ -183,6 +192,12 @@ function SaccoAdminDashboard() {
           isOpen={loanTypeModal}
           onClose={() => setLoanTypeModal(false)}
           refetchLoanTypes={refetchLoanTypes}
+        />
+
+        <CreateVentureType
+          isOpen={ventureTypeModal}
+          onClose={() => setVentureTypeModal(false)}
+          refetchVentureTypes={refetchVentureTypes}
         />
       </div>
     </div>

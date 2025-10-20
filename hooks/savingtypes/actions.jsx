@@ -19,5 +19,6 @@ export function useFetchSavingsTypeDetail(reference) {
   return useQuery({
     queryKey: ["savingstype", reference],
     queryFn: () => getSavingTypeDetail(reference, token),
+    enabled: !!reference,
   });
 }
