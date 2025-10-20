@@ -18,7 +18,6 @@ import { useFetchLoans } from "@/hooks/loans/actions";
 
 function MemberDashboard() {
   const token = useAxiosAuth();
-  const [savingsCreateModal, setSavingsCreateModal] = useState(false);
   const {
     isLoading: isLoadingMember,
     data: member,
