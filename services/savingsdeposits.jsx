@@ -1,6 +1,7 @@
 "use client";
 import { apiActions } from "@/tools/axios";
 
+// Should not be used
 export const createSavingsDeposit = async (values, token) => {
   await apiActions?.post("/api/v1/savingsdeposits/", values, token);
 };
