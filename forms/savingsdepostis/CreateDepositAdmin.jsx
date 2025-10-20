@@ -25,7 +25,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-[#cc5500]">
-            Create New Deposit
+            Create New Savings Deposit
           </DialogTitle>
         </DialogHeader>
 
