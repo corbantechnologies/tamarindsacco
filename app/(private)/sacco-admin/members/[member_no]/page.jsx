@@ -1,12 +1,12 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { useFetchMemberDetail, useVerifyMember } from "@/hooks/members/actions";
+import { useFetchMemberDetail } from "@/hooks/members/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -36,6 +36,8 @@ import {
 import { apiActions } from "@/tools/axios";
 import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 import CreateLoanAccountAdmin from "@/forms/loans/CreateLoanAdmin";
+import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits";
+import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 
 function MemberDetail() {
@@ -58,6 +60,8 @@ function MemberDetail() {
   const [isApproving, setIsApproving] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
   const [loanModal, setLoanModal] = useState(false);
+  const [ventureDepositModal, setVentureDepositModal] = useState(false);
+  const [venturePaymentModal, setVenturePaymentModal] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -325,6 +329,55 @@ function MemberDetail() {
               </CardContent>
             </Card>
 
+            {/* Venture Accounts */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Wallet className="h-6 w-6 text-primary" />
+                    Venture Accounts
+                  </CardTitle>
+                  {member?.is_approved && (
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => setVentureDepositModal(true)}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Deposit
+                      </Button>
+                      <Button
+                        onClick={() => setVenturePaymentModal(true)}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Pay
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {member?.venture_accounts?.length > 0 ? (
+                  <>
+                    {member?.venture_accounts.map((account) => (
+                      <div key={account?.reference} className="space-y-2">
+                        <InfoField
+                          icon={Wallet2}
+                          label={`${account?.venture_type} - ${account?.account_number}`}
+                          value={`${account?.balance} KES`}
+                        />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No venture accounts found.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Loan Accounts */}
             <Card className="shadow-md">
               <CardHeader>
@@ -352,7 +405,7 @@ function MemberDetail() {
                         <InfoField
                           icon={CreditCard}
                           label={`${account?.loan_type} - ${account?.account_number}`}
-                          value={`${account?.outstanding_balance} ${"KES"}`}
+                          value={`${account?.outstanding_balance} KES`}
                         />
                       </div>
                     ))}
@@ -480,6 +533,20 @@ function MemberDetail() {
           refetchMember={refetchMember}
           loanTypes={loanTypes}
           member={member}
+        />
+
+        <CreateVentureDeposits
+          isOpen={ventureDepositModal}
+          onClose={() => setVentureDepositModal(false)}
+          refetchMember={refetchMember}
+          ventures={member?.venture_accounts}
+        />
+
+        <CreateVenturePayment
+          isOpen={venturePaymentModal}
+          onClose={() => setVenturePaymentModal(false)}
+          refetchMember={refetchMember}
+          ventures={member?.venture_accounts}
         />
       </div>
     </div>
