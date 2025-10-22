@@ -36,38 +36,37 @@ function BulkSavingsAccountsDepositUpload({
       formData.append("file", values.file);
       const response = await createBulkSavingsDeposits(formData, token);
 
-      const { success_count, error_count, errors, log_reference } =
-        response.data;
-      if (success_count > 0) {
-        toast.success(
-          `Successfully uploaded ${success_count} deposits. Reference: ${log_reference}`
-        );
-        if (error_count > 0) {
-          toast.error(
-            `${error_count} errors occurred. Check the log for details.`
-          );
-          errors.forEach((error) => {
-            toast.error(
-              `Row ${error.row}: ${error.error || JSON.stringify(error.errors)}`
-            );
-          });
-        }
+      if (response && response.status === 201) {
+        toast.success("Successfully uploaded deposits");
         resetForm();
         refetchTransactions();
         onClose();
-      } else {
-        toast.error("No deposits processed. Check the CSV format.");
-        errors.forEach((error) => {
-          toast.error(
-            `Row ${error.row}: ${error.error || JSON.stringify(error.errors)}`
-          );
-        });
+        return;
       }
     } catch (error) {
       console.error("Bulk upload error:", error);
-      toast.error("Failed to upload CSV");
+      toast.error(
+        "Failed to upload CSV. Check the CSV format or server status."
+      );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBulkUpdate = async (values) => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+
+      if (values.file) {
+        formData.append("file", values.file);
+      }
+      await createBulkSavingsDeposits(formData, token);
+      toast.success("Bulk savings deposits uploaded successfully");
+      refetchTransactions();
+      onClose();
+    } catch (error) {
+      toast.error("Failed to upload bulk savings deposits. Please try again.");
     }
   };
 
@@ -79,27 +78,33 @@ function BulkSavingsAccountsDepositUpload({
             Bulk Savings Accounts Deposit Upload
           </DialogTitle>
         </DialogHeader>
-        <Formik initialValues={{ file: null }} onSubmit={handleSubmit}>
+        <Formik initialValues={{ file: null }} onSubmit={handleBulkUpdate}>
           {({ setFieldValue }) => (
             <Form>
               <div className="space-y-4 py-4">
                 <div>
-                  <Label htmlFor="file">Upload CSV File</Label>
-                  <Input
+                  <Label htmlFor="file" className="mb-3">
+                    Upload CSV File
+                  </Label>
+                  <input
                     id="file"
                     type="file"
                     accept=".csv"
                     onChange={(event) => {
                       setFieldValue("file", event.currentTarget.files[0]);
                     }}
-                    className="mt-1"
+                    // className="mt-1"
+                    disabled={loading}
+                    className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <p className="text-sm text-gray-500 mt-2">
                     CSV should include columns:{" "}
                     <code>&lt;Savings Type&gt; Account</code>,{" "}
                     <code>&lt;Savings Type&gt; Amount</code> (e.g., "Members
-                    Contribution Account", "Members Contribution Amount").
-                    Optional: <code>Payment Method</code> (defaults to "Cash").
+                    Contribution Account", "Members Contribution Amount",
+                    "Holiday Savings Account", "Holiday Savings Amount").
+                    Optional: <code>Payment Method</code> (defaults to "Cash").{" "}
+                    <strong>You can reuse the same CSV multiple times.</strong>{" "}
                     Download the account list as a template.
                   </p>
                 </div>
