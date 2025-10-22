@@ -93,7 +93,7 @@ function Transactions() {
                   Actions
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-56">
+              <PopoverContent className="w-auto p-0">
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={handleDownload}
