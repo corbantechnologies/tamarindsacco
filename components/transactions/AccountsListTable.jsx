@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Check, ChevronsUpDown, Search, X } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -119,6 +119,15 @@ const AccountsListTable = ({ accountsList }) => {
     );
   };
 
+  // Clear all filters and search
+  const handleClearFilters = () => {
+    setSelectedSavingsTypes([]);
+    setSelectedVentureTypes([]);
+    setSearchTerm("");
+    setOpenSavings(false);
+    setOpenVentures(false);
+  };
+
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
@@ -132,7 +141,7 @@ const AccountsListTable = ({ accountsList }) => {
             className="pl-10"
           />
         </div>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           {/* Savings Types Dropdown */}
           <div>
             <Popover open={openSavings} onOpenChange={setOpenSavings}>
@@ -227,6 +236,15 @@ const AccountsListTable = ({ accountsList }) => {
               </PopoverContent>
             </Popover>
           </div>
+          {/* Clear Filters Button */}
+          <Button
+            variant="outline"
+            onClick={handleClearFilters}
+            className="h-10 px-4"
+          >
+            <X className="mr-2 h-4 w-4" />
+            Clear Filters
+          </Button>
         </div>
       </div>
 
