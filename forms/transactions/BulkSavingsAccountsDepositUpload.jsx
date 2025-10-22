@@ -24,35 +24,6 @@ function BulkSavingsAccountsDepositUpload({
   const token = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values, { resetForm }) => {
-    if (!values.file) {
-      toast.error("Please select a CSV file");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", values.file);
-      const response = await createBulkSavingsDeposits(formData, token);
-
-      if (response && response.status === 201) {
-        toast.success("Successfully uploaded deposits");
-        resetForm();
-        refetchTransactions();
-        onClose();
-        return;
-      }
-    } catch (error) {
-      console.error("Bulk upload error:", error);
-      toast.error(
-        "Failed to upload CSV. Check the CSV format or server status."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleBulkUpdate = async (values) => {
     setLoading(true);
     try {
