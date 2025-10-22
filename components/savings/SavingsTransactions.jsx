@@ -298,7 +298,7 @@ function SavingsTransactions({ deposits = [], withdrawals = [] }) {
                 <option value="Other">Other</option>
               </select>
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label
                 htmlFor="status"
                 className="text-sm font-medium text-gray-700"
@@ -320,7 +320,7 @@ function SavingsTransactions({ deposits = [], withdrawals = [] }) {
                 <option value="Completed">Completed</option>
                 <option value="Failed">Failed</option>
               </select>
-            </div>
+            </div> */}
             <div className="space-y-2">
               <Label
                 htmlFor="paymentMethod"

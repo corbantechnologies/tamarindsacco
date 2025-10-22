@@ -122,7 +122,7 @@ function MemberDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-8 max-w-7xl">
+      <div className="container mx-auto p-6 space-y-8">
         {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
