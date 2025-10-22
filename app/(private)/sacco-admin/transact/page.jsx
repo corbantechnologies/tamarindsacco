@@ -12,15 +12,17 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import AccountsListTable from "@/components/transactions/AccountsListTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { downloadAccountsListCSV } from "@/services/transactions";
 import toast from "react-hot-toast";
+import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAccountsDepositUpload";
 
 function Transactions() {
   const token = useAxiosAuth();
   const [loading, setLoading] = useState(false);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
@@ -81,6 +83,13 @@ function Transactions() {
               <Download className="mr-2 h-4 w-4" />
               {loading ? "Downloading..." : "Download Account List"}
             </Button>
+            <Button
+              onClick={() => setIsUploadDialogOpen(true)}
+              className="bg-[#cc5500] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Bulk Deposit Upload
+            </Button>
           </div>
         </div>
 
@@ -90,6 +99,13 @@ function Transactions() {
         ) : (
           <div className="text-center text-gray-500">No accounts available</div>
         )}
+
+        {/* Bulk Upload Dialog */}
+        <BulkSavingsAccountsDepositUpload
+          isOpen={isUploadDialogOpen}
+          onClose={() => setIsUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
       </div>
     </div>
   );

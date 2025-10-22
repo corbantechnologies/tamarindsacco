@@ -1,5 +1,5 @@
 "use client";
-import { apiActions } from "@/tools/axios";
+import { apiActions, apiMultipartActions } from "@/tools/axios";
 
 // Should not be used
 export const createSavingsDeposit = async (values, token) => {
@@ -17,4 +17,12 @@ export const getSavingsDeposit = async (reference, token) => {
     token
   );
   return response?.data;
+};
+
+export const createBulkSavingsDeposits = async (formData, token) => {
+  await apiMultipartActions.post(
+    "/api/v1/savingsdeposits/bulk/upload/",
+    formData,
+    token
+  );
 };
