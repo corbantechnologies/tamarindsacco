@@ -55,13 +55,13 @@ function SavingsDetail() {
             <CardTitle className="text-2xl font-bold text-[#045e32]">
               {saving?.account_type}
             </CardTitle>
-            <Button
+            {/* <Button
               size="sm"
               className="bg-[#045e32] hover:bg-[#022007] text-white"
               onClick={() => setWithdrawalModal(true)}
             >
               Withdraw
-            </Button>
+            </Button> */}
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-base font-medium">
@@ -94,7 +94,7 @@ function SavingsDetail() {
         </Card>
 
         {/* Deposits Table */}
-        <Card className="shadow-md">
+        {/* <Card className="shadow-md">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-[#045e32]">
               Deposits
@@ -103,10 +103,10 @@ function SavingsDetail() {
           <CardContent>
             <SavingsDepositsTable deposits={saving?.deposits || []} />
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Withdrawals Table */}
-        <Card className="shadow-md">
+        {/* <Card className="shadow-md">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-[#045e32]">
               Withdrawals
@@ -115,7 +115,7 @@ function SavingsDetail() {
           <CardContent>
             <SavingsWithdrawalsTable withdrawals={saving?.withdrawals || []} />
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Transactions Table */}
         <Card className="shadow-md">

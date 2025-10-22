@@ -96,7 +96,7 @@ function Transactions() {
                   disabled={loading}
                 >
                   <Menu className="mr-2 h-4 w-4" />
-                  Actions
+                  Transaction Actions
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -116,7 +116,7 @@ function Transactions() {
                     className="justify-start text-left"
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    Bulk Savings Deposit Upload
+                    Savings Deposit Upload
                   </Button>
                   <Button
                     onClick={() => setIsVentureUploadDialogOpen(true)}
@@ -124,7 +124,7 @@ function Transactions() {
                     className="justify-start text-left"
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    Bulk Venture Deposit Upload
+                    Venture Deposit Upload
                   </Button>
                   <Button
                     onClick={() => setIsVenturePaymentUploadDialogOpen(true)}
@@ -132,7 +132,7 @@ function Transactions() {
                     className="justify-start text-left"
                   >
                     <Upload className="mr-2 h-4 w-4" />
-                    Bulk Venture Payment Upload
+                    Venture Payment Upload
                   </Button>
                 </div>
               </PopoverContent>
