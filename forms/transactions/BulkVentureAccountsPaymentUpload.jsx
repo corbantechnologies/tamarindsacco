@@ -30,35 +30,12 @@ function BulkVentureAccountsPaymentUpload({
       if (values.file) {
         formData.append("file", values.file);
       }
-      const response = await createBulkVenturePayments(formData, token);
-      const { success_count, error_count, errors, log_reference } =
-        response?.data || {};
-
-      if (success_count > 0) {
-        toast.success(
-          `Successfully uploaded ${success_count} venture payments. Reference: ${
-            log_reference || "N/A"
-          }`
-        );
-        if (error_count > 0) {
-          toast.error(
-            `${error_count} errors occurred. Check the log for details.`
-          );
-          errors?.forEach((error) => {
-            toast.error(`Row ${error.row}: ${error.error}`);
-          });
-        }
-      } else {
-        toast.error("No payments processed. Check the CSV format.");
-        errors?.forEach((error) => {
-          toast.error(`Row ${error.row}: ${error.error}`);
-        });
-      }
+      await createBulkVenturePayments(formData, token);
+      toast.success("Bulk venture payments uploaded successfully");
       resetForm();
       refetchTransactions();
       onClose();
     } catch (error) {
-      console.error("Bulk venture payment upload error:", error);
       toast.error("Failed to upload bulk venture payments. Please try again.");
     } finally {
       setLoading(false);
