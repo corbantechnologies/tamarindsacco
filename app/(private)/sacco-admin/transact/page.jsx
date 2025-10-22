@@ -12,17 +12,25 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { Download, Upload } from "lucide-react";
+import { Download, Upload, Menu } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import AccountsListTable from "@/components/transactions/AccountsListTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { downloadAccountsListCSV } from "@/services/transactions";
 import toast from "react-hot-toast";
 import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAccountsDepositUpload";
+import BulkVentureAccountsDepositUpload from "@/forms/transactions/BulkVentureAccountsDepositUpload";
 
 function Transactions() {
   const token = useAxiosAuth();
   const [loading, setLoading] = useState(false);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isVentureUploadDialogOpen, setIsVentureUploadDialogOpen] =
+    useState(false);
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
@@ -75,21 +83,46 @@ function Transactions() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Button
-              onClick={handleDownload}
-              disabled={loading}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              {loading ? "Downloading..." : "Download Account List"}
-            </Button>
-            <Button
-              onClick={() => setIsUploadDialogOpen(true)}
-              className="bg-[#cc5500] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <Upload className="mr-2 h-4 w-4" />
-              Bulk Deposit Upload
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+                  disabled={loading}
+                >
+                  <Menu className="mr-2 h-4 w-4" />
+                  Actions
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={handleDownload}
+                    disabled={loading}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Account List
+                  </Button>
+                  <Button
+                    onClick={() => setIsUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Savings Deposit Upload
+                  </Button>
+                  <Button
+                    onClick={() => setIsVentureUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Venture Deposit Upload
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
@@ -100,10 +133,15 @@ function Transactions() {
           <div className="text-center text-gray-500">No accounts available</div>
         )}
 
-        {/* Bulk Upload Dialog */}
+        {/* Bulk Upload Dialogs */}
         <BulkSavingsAccountsDepositUpload
           isOpen={isUploadDialogOpen}
           onClose={() => setIsUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkVentureAccountsDepositUpload
+          isOpen={isVentureUploadDialogOpen}
+          onClose={() => setIsVentureUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
       </div>
