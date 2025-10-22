@@ -24,13 +24,19 @@ import { downloadAccountsListCSV } from "@/services/transactions";
 import toast from "react-hot-toast";
 import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAccountsDepositUpload";
 import BulkVentureAccountsDepositUpload from "@/forms/transactions/BulkVentureAccountsDepositUpload";
+import BulkVentureAccountsPaymentUpload from "@/forms/transactions/BulkVentureAccountsPaymentUpload";
 
 function Transactions() {
   const token = useAxiosAuth();
   const [loading, setLoading] = useState(false);
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isSavingsUploadDialogOpen, setIsSavingsUploadDialogOpen] =
+    useState(false);
   const [isVentureUploadDialogOpen, setIsVentureUploadDialogOpen] =
     useState(false);
+  const [
+    isVenturePaymentUploadDialogOpen,
+    setIsVenturePaymentUploadDialogOpen,
+  ] = useState(false);
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
@@ -93,7 +99,7 @@ function Transactions() {
                   Actions
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-56">
                 <div className="flex flex-col gap-2">
                   <Button
                     onClick={handleDownload}
@@ -105,7 +111,7 @@ function Transactions() {
                     Download Account List
                   </Button>
                   <Button
-                    onClick={() => setIsUploadDialogOpen(true)}
+                    onClick={() => setIsSavingsUploadDialogOpen(true)}
                     variant="ghost"
                     className="justify-start text-left"
                   >
@@ -119,6 +125,14 @@ function Transactions() {
                   >
                     <Upload className="mr-2 h-4 w-4" />
                     Bulk Venture Deposit Upload
+                  </Button>
+                  <Button
+                    onClick={() => setIsVenturePaymentUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Venture Payment Upload
                   </Button>
                 </div>
               </PopoverContent>
@@ -135,13 +149,18 @@ function Transactions() {
 
         {/* Bulk Upload Dialogs */}
         <BulkSavingsAccountsDepositUpload
-          isOpen={isUploadDialogOpen}
-          onClose={() => setIsUploadDialogOpen(false)}
+          isOpen={isSavingsUploadDialogOpen}
+          onClose={() => setIsSavingsUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
         <BulkVentureAccountsDepositUpload
           isOpen={isVentureUploadDialogOpen}
           onClose={() => setIsVentureUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkVentureAccountsPaymentUpload
+          isOpen={isVenturePaymentUploadDialogOpen}
+          onClose={() => setIsVenturePaymentUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
       </div>

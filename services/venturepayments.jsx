@@ -1,6 +1,6 @@
 "use client";
 
-import { apiActions } from "@/tools/axios";
+import { apiActions, apiMultipartActions } from "@/tools/axios";
 
 // create
 export const createVenturePayment = async (values, token) => {
@@ -18,4 +18,12 @@ export const getVenturePayment = async (reference, token) => {
     token
   );
   return response?.data;
+};
+
+export const createBulkVenturePayments = async (formData, token) => {
+  await apiMultipartActions?.post(
+    "/api/v1/venturepayments/bulk/upload/",
+    formData,
+    token
+  );
 };

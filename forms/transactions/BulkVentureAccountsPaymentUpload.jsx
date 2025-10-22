@@ -13,9 +13,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
-import { createBulkVentureDeposits } from "@/services/venturedeposits";
+import { createBulkVenturePayments } from "@/services/venturepayments";
 
-function BulkVentureAccountsDepositUpload({
+function BulkVentureAccountsPaymentUpload({
   isOpen,
   onClose,
   refetchTransactions,
@@ -30,13 +30,13 @@ function BulkVentureAccountsDepositUpload({
       if (values.file) {
         formData.append("file", values.file);
       }
-      const response = await createBulkVentureDeposits(formData, token);
+      const response = await createBulkVenturePayments(formData, token);
       const { success_count, error_count, errors, log_reference } =
         response?.data || {};
 
       if (success_count > 0) {
         toast.success(
-          `Successfully uploaded ${success_count} venture deposits. Reference: ${
+          `Successfully uploaded ${success_count} venture payments. Reference: ${
             log_reference || "N/A"
           }`
         );
@@ -49,7 +49,7 @@ function BulkVentureAccountsDepositUpload({
           });
         }
       } else {
-        toast.error("No deposits processed. Check the CSV format.");
+        toast.error("No payments processed. Check the CSV format.");
         errors?.forEach((error) => {
           toast.error(`Row ${error.row}: ${error.error}`);
         });
@@ -58,8 +58,8 @@ function BulkVentureAccountsDepositUpload({
       refetchTransactions();
       onClose();
     } catch (error) {
-      console.error("Bulk venture deposit upload error:", error);
-      toast.error("Failed to upload bulk venture deposits. Please try again.");
+      console.error("Bulk venture payment upload error:", error);
+      toast.error("Failed to upload bulk venture payments. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ function BulkVentureAccountsDepositUpload({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-[#cc5500]">
-            Bulk Venture Accounts Deposit Upload
+            Bulk Venture Accounts Payment Upload
           </DialogTitle>
         </DialogHeader>
         <Formik initialValues={{ file: null }} onSubmit={handleBulkUpdate}>
@@ -94,9 +94,11 @@ function BulkVentureAccountsDepositUpload({
                   <p className="text-sm text-gray-500 mt-2">
                     CSV should include columns for each venture type, e.g.,{" "}
                     <code>&lt;Venture Type&gt; Account</code>,{" "}
-                    <code>&lt;Venture Type&gt; Amount</code> (like "Venture A
-                    Account", "Venture A Amount"). Optional:{" "}
-                    <code>Payment Method</code> (defaults to "Cash").{" "}
+                    <code>&lt;Venture Type&gt; Payment Amount</code> (like
+                    "Venture A Account", "Venture A Payment Amount"). Optional:{" "}
+                    <code>Payment Method</code> (defaults to "Cash"),{" "}
+                    <code>Payment Type</code> (defaults to "Individual
+                    Settlement").{" "}
                     <strong>You can reuse the same CSV multiple times.</strong>{" "}
                     Download the account list as a template.
                   </p>
@@ -127,4 +129,4 @@ function BulkVentureAccountsDepositUpload({
   );
 }
 
-export default BulkVentureAccountsDepositUpload;
+export default BulkVentureAccountsPaymentUpload;
