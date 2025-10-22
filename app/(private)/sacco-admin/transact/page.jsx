@@ -2,7 +2,7 @@
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchAccountsList } from "@/hooks/transactions/actions";
-import React from "react";
+import React, { useState } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,21 +14,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import AccountsListTable from "@/components/transactions/AccountsListTable";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import { downloadAccountsListCSV } from "@/services/transactions";
+import toast from "react-hot-toast";
 
 function Transactions() {
+  const token = useAxiosAuth();
+  const [loading, setLoading] = useState(false);
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
     refetch: refetchAccountsList,
   } = useFetchAccountsList();
 
-  const handleDownload = () => {
-    window.location.href = "/api/transactions/list/download/";
+  const handleDownload = async () => {
+    setLoading(true);
+    try {
+      await downloadAccountsListCSV(token);
+    } catch (error) {
+      toast.error(error.message || "Failed to download CSV");
+      console.error("Error downloading CSV:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isLoadingAccountsList) return <LoadingSpinner />;
-
-  console.log(accountsList)
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,15 +75,21 @@ function Transactions() {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Button
               onClick={handleDownload}
+              disabled={loading}
               className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
-              <Download className="mr-2 h-4 w-4" /> Download Account List
+              <Download className="mr-2 h-4 w-4" />
+              {loading ? "Downloading..." : "Download Account List"}
             </Button>
           </div>
         </div>
 
         {/* Accounts List Table */}
-        <AccountsListTable accountsList={accountsList} />
+        {accountsList ? (
+          <AccountsListTable accountsList={accountsList} />
+        ) : (
+          <div className="text-center text-gray-500">No accounts available</div>
+        )}
       </div>
     </div>
   );

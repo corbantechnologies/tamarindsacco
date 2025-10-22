@@ -8,9 +8,43 @@ export const getAccountsList = async (token) => {
 };
 
 export const downloadAccountsListCSV = async (token) => {
-  const response = await apiActions?.get(
-    "api/v1/transactions/list/download/",
-    token
-  );
-  return response?.data;
+  try {
+    const response = await apiActions.get(
+      "api/v1/transactions/list/download/",
+      token,
+      { responseType: "blob" }
+    );
+
+    // Create a Blob from the response data
+    const blob = new Blob([response.data], { type: "text/csv" });
+
+    // Extract filename from Content-Disposition header, if available
+    const contentDisposition = response.headers["content-disposition"];
+    let fileName = `account_list_${new Date()
+      .toISOString()
+      .slice(0, 10)
+      .replace(/-/g, "")}.csv`;
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+      if (fileNameMatch && fileNameMatch[1]) {
+        fileName = fileNameMatch[1];
+      }
+    }
+
+    // Create a temporary URL and trigger download
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      "Failed to download CSV: " + (error.message || "Unknown error")
+    );
+  }
 };
