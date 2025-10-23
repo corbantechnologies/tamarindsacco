@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAccountsDepositUpload";
 import BulkVentureAccountsDepositUpload from "@/forms/transactions/BulkVentureAccountsDepositUpload";
 import BulkVentureAccountsPaymentUpload from "@/forms/transactions/BulkVentureAccountsPaymentUpload";
+import BulkCombinedUpload from "@/forms/transactions/BulkCombinedUpload";
 
 function Transactions() {
   const token = useAxiosAuth();
@@ -37,6 +38,8 @@ function Transactions() {
     isVenturePaymentUploadDialogOpen,
     setIsVenturePaymentUploadDialogOpen,
   ] = useState(false);
+  const [isCombinedUploadDialogOpen, setIsCombinedUploadDialogOpen] =
+    useState(false);
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
@@ -134,6 +137,14 @@ function Transactions() {
                     <Upload className="mr-2 h-4 w-4" />
                     Venture Payment Upload
                   </Button>
+                  <Button
+                    onClick={() => setIsCombinedUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Combined Upload
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
@@ -161,6 +172,11 @@ function Transactions() {
         <BulkVentureAccountsPaymentUpload
           isOpen={isVenturePaymentUploadDialogOpen}
           onClose={() => setIsVenturePaymentUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkCombinedUpload
+          isOpen={isCombinedUploadDialogOpen}
+          onClose={() => setIsCombinedUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
       </div>
