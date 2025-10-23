@@ -210,7 +210,7 @@ function MemberDetail() {
                   onClick={() => handleApprove()}
                   disabled={isApproving}
                   size="sm"
-                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
+                  className="bg-primary hover:bg-[#022007] text-white px-8"
                 >
                   {isApproving ? "Approving..." : "Approve Member"}
                 </Button>
@@ -234,7 +234,7 @@ function MemberDetail() {
                     <Button
                       onClick={() => setDepositModal(true)}
                       size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      className="bg-primary hover:bg-[#022007] text-white mt-4"
                     >
                       Deposit
                     </Button>
@@ -279,7 +279,7 @@ function MemberDetail() {
                       <Button
                         onClick={() => setVentureDepositModal(true)}
                         size="sm"
-                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                        className="bg-primary hover:bg-[#022007] text-white mt-4"
                       >
                         Deposit
                       </Button>
@@ -329,7 +329,7 @@ function MemberDetail() {
                     <Button
                       onClick={() => setLoanModal(true)}
                       size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white"
+                      className="bg-primary hover:bg-[#022007] text-white"
                     >
                       Create Loan
                     </Button>

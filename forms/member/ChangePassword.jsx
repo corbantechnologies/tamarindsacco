@@ -28,7 +28,7 @@ function ChangePassword({ onClose, isOpen }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">Change Password</DialogTitle>
+          <DialogTitle className="">Change Password</DialogTitle>
         </DialogHeader>
 
         <Formik
@@ -68,7 +68,7 @@ function ChangePassword({ onClose, isOpen }) {
                     name="old_password"
                     id="old_password"
                     placeholder="Enter old password"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2   transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -106,7 +106,7 @@ function ChangePassword({ onClose, isOpen }) {
                     name="password"
                     id="password"
                     placeholder="Enter password"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2   transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -144,7 +144,7 @@ function ChangePassword({ onClose, isOpen }) {
                     name="confirmPassword"
                     id="confirmPassword"
                     placeholder="Confirm password"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors pr-10 placeholder-gray-400 focus:outline-none"
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-base focus:ring-2   transition-colors pr-10 placeholder-gray-400 focus:outline-none"
                   />
                   <button
                     type="button"
@@ -172,7 +172,7 @@ function ChangePassword({ onClose, isOpen }) {
             <DialogFooter>
               <Button
                 type="submit"
-                className="bg-[#045e32] hover:bg-[#022007] text-white text-base py-2 px-4 w-full sm:w-auto"
+                className="bg-primary hover:bg-[#022007] text-white text-base py-2 px-4 w-full sm:w-auto"
                 disabled={loading}
               >
                 Change Password

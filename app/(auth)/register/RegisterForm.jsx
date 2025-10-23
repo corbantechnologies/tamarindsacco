@@ -20,20 +20,20 @@ function RegisterForm() {
   const router = useRouter();
 
   return (
-    <Card className="w-full max-w-5xl bg-white/95 backdrop-blur-sm shadow-2xl border-0">
-      <CardContent className="p-8">
+    <div className="w-full">
+      <div className="p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image
-              src="/logo.png"
-              width={96}
-              height={96}
-              alt="Tamarind SACCO Logo"
-              className="w-24 h-24 rounded-full shadow-2xl"
-            />
+                        src="/auth-image-noBg-2.png"
+                        alt="Mzedu SACCO Logo"
+                        width={200}
+                        height={200}
+                        className="mx-auto"
+                      />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#cc5500] mb-2">
-            Tamarind SACCO
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2">
+            Mzedu SACCO
           </h1>
           <p className="text-lg text-gray-500">The SACCO for everyone</p>
         </div>
@@ -73,7 +73,7 @@ function RegisterForm() {
             <Form className="space-y-8">
               {/* Personal Details */}
               <section>
-                <h2 className="text-2xl font-bold text-[#cc5500] mb-6 flex items-center gap-2">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                   <UserPlus className="w-6 h-6" />
                   Personal Details
                 </h2>
@@ -89,7 +89,7 @@ function RegisterForm() {
                       as="select"
                       name="salutation"
                       id="salutation"
-                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                     >
                       <option value="">Select Salutation</option>
                       <option value="Mr">Mr</option>
@@ -118,7 +118,7 @@ function RegisterForm() {
                       name="first_name"
                       id="first_name"
                       placeholder="John"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300 rounded-md text-base"
                     />
                     <ErrorMessage
                       name="first_name"
@@ -139,7 +139,7 @@ function RegisterForm() {
                       name="middle_name"
                       id="middle_name"
                       placeholder="Middle name"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="middle_name"
@@ -160,7 +160,7 @@ function RegisterForm() {
                       name="last_name"
                       id="last_name"
                       placeholder="Doe"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="last_name"
@@ -181,7 +181,7 @@ function RegisterForm() {
                       name="email"
                       id="email"
                       placeholder="john.doe@example.com"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="email"
@@ -202,7 +202,7 @@ function RegisterForm() {
                       name="phone"
                       id="phone"
                       placeholder="0712345678"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="phone"
@@ -221,7 +221,7 @@ function RegisterForm() {
                       as="select"
                       name="gender"
                       id="gender"
-                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -238,7 +238,7 @@ function RegisterForm() {
 
               {/* Identification */}
               <section>
-                <h2 className="text-2xl font-bold text-[#cc5500] mb-6">
+                <h2 className="text-2xl font-bold  mb-6">
                   Identification
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -253,7 +253,7 @@ function RegisterForm() {
                       as="select"
                       name="id_type"
                       id="id_type"
-                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                     >
                       <option value="">Select ID Type</option>
                       <option value="National ID">National ID</option>
@@ -278,7 +278,7 @@ function RegisterForm() {
                       name="id_number"
                       id="id_number"
                       placeholder="12345678"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="id_number"
@@ -299,7 +299,7 @@ function RegisterForm() {
                       name="tax_pin"
                       id="tax_pin"
                       placeholder="A123456789Z"
-                      className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                      className="border-gray-300   rounded-md text-base"
                     />
                     <ErrorMessage
                       name="tax_pin"
@@ -312,7 +312,7 @@ function RegisterForm() {
 
               {/* Employment */}
               <section>
-                <h2 className="text-2xl font-bold text-[#cc5500] mb-6">
+                <h2 className="text-2xl font-bold  mb-6">
                   Employment
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -327,7 +327,7 @@ function RegisterForm() {
                       as="select"
                       name="employment_type"
                       id="employment_type"
-                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                      className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                     >
                       <option value="">Select Employment Type</option>
                       <option value="Permanent">Permanent</option>
@@ -358,7 +358,7 @@ function RegisterForm() {
                           name="member_no"
                           id="member_no"
                           placeholder="PAY12345"
-                          className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                          className="border-gray-300   rounded-md text-base"
                         />
                         <ErrorMessage
                           name="member_no"
@@ -372,7 +372,7 @@ function RegisterForm() {
 
               {/* Password */}
               <section>
-                <h2 className="text-2xl font-bold text-[#cc5500] mb-6">
+                <h2 className="text-2xl font-bold  mb-6">
                   Security
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -390,7 +390,7 @@ function RegisterForm() {
                         name="password"
                         id="password"
                         placeholder="Enter password"
-                        className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base pr-10"
+                        className="border-gray-300   rounded-md text-base pr-10"
                       />
                       <button
                         type="button"
@@ -427,7 +427,7 @@ function RegisterForm() {
                         name="confirmPassword"
                         id="confirmPassword"
                         placeholder="Confirm password"
-                        className="border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base pr-10"
+                        className="border-gray-300   rounded-md text-base pr-10"
                       />
                       <button
                         type="button"
@@ -461,7 +461,7 @@ function RegisterForm() {
               <div className="pt-6">
                 <Button
                   type="submit"
-                  className="w-full h-12 text-lg font-semibold bg-[#cc5500] hover:bg-[#e66b00] text-white transition-colors"
+                  className="w-full h-12 text-lg font-semibold text-white transition-colors"
                   disabled={loading}
                 >
                   {loading ? "Registering..." : "Register Now"}
@@ -470,8 +470,8 @@ function RegisterForm() {
             </Form>
           )}
         </Formik>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 

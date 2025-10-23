@@ -24,7 +24,7 @@ function CreateVentureDeposits({ isOpen, onClose, refetchMember, ventures }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">
+          <DialogTitle className="">
             Create New Venture Deposit
           </DialogTitle>
         </DialogHeader>
@@ -57,7 +57,7 @@ function CreateVentureDeposits({ isOpen, onClose, refetchMember, ventures }) {
                 <Field
                   as="select"
                   name="venture_account"
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                 >
                   <option value="" label="Select account" />
                   {ventures?.map((venture) => (
@@ -80,7 +80,7 @@ function CreateVentureDeposits({ isOpen, onClose, refetchMember, ventures }) {
                   type="number"
                   id="amount"
                   name="amount"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                   placeholder="Enter deposit amount"
                   required
                   min="0.01"
@@ -101,7 +101,7 @@ function CreateVentureDeposits({ isOpen, onClose, refetchMember, ventures }) {
                   type="submit"
                   size={"sm"}
                   disabled={loading}
-                  className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+                  className="bg-primary hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                 >
                   {loading ? "Depositing..." : "Deposit"}
                 </Button>

@@ -14,7 +14,7 @@ function SaccoAdminNavbar() {
       {/* Navbar */}
       <header className="bg-[#cc5500] text-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl md:text-2xl font-bold">Tamarind SACCO</h1>
+          <h1 className="text-xl md:text-2xl font-bold">Mzedu SACCO</h1>
           <nav className="hidden md:flex gap-6 items-center">
             <Link
               href="/sacco-admin/dashboard"
@@ -55,14 +55,14 @@ function SaccoAdminNavbar() {
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="border-white text-black hover:bg-white hover:text-[#cc5500] text-base py-1"
+              className="border-white text-black hover:bg-white hover: text-base py-1"
             >
               Logout
             </Button>
           </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white cursor-pointer text-black hover:bg-white hover:text-[#cc5500]"
+            className="md:hidden border-white cursor-pointer text-black hover:bg-white hover:"
             onClick={() => setIsMenuOpen(true)}
           >
             <MenuIcon className="h-5 w-5" />
@@ -79,7 +79,7 @@ function SaccoAdminNavbar() {
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-[#cc5500]">Menu</h2>
+            <h2 className="text-lg font-semibold ">Menu</h2>
             <Button
               variant="ghost"
               className="p-2 hover:bg-gray-100"
@@ -92,42 +92,42 @@ function SaccoAdminNavbar() {
           <nav className="flex flex-col gap-6 p-4">
             <Link
               href="/sacco-admin/dashboard"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
             </Link>
             <Link
               href="/sacco-admin/personal"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Personal
             </Link>
             <Link
               href="/sacco-admin/members"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Members
             </Link>
             <Link
               href="/sacco-admin/transact"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Transact
             </Link>
             <Link
               href="/sacco-admin/withdrawals"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Withdrawals
             </Link>
             <Link
               href="/sacco-admin/settings"
-              className="text-lg hover:text-[#cc5500]"
+              className="text-lg hover:"
               onClick={() => setIsMenuOpen(false)}
             >
               Settings
@@ -138,7 +138,7 @@ function SaccoAdminNavbar() {
                 setIsMenuOpen(false);
                 signOut({ callbackUrl: "/login" });
               }}
-              className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white text-base py-2"
+              className="border-primary text-primary hover:bg-primary hover:text-white text-base py-2"
             >
               Logout
             </Button>

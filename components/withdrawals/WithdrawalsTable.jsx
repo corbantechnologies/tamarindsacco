@@ -148,7 +148,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
       {/* Filter Section */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#cc5500]">
+          <CardTitle className="text-lg font-semibold ">
             Filter Withdrawal Requests
           </CardTitle>
         </CardHeader>
@@ -171,7 +171,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
                   setEndDate("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2   transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -190,7 +190,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
                   setSpecificDate("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2   transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -209,7 +209,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
                   setSpecificDate("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2   transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -226,7 +226,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
                   setStatus(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2   transition-colors"
               >
                 <option value="">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -338,7 +338,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle className="text-xl font-semibold text-[#cc5500]">
+              <DialogTitle className="text-xl font-semibold ">
                 Withdrawal Request Details
               </DialogTitle>
             </DialogHeader>
@@ -486,7 +486,7 @@ function WithdrawalsTable({ withdrawals, refetchWithdrawals }) {
                 className={`${
                   currentPage === page
                     ? "bg-[#cc5500] text-white"
-                    : "border-[#cc5500] text-[#cc5500] hover:bg-[#cc5500] hover:text-white"
+                    : "border-[#cc5500]  hover:bg-[#cc5500] hover:text-white"
                 } text-sm`}
               >
                 {page}

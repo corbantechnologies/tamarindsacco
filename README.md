@@ -1,1 +1,1 @@
-# Tamarind SACCO
+# Mzedu SACCO

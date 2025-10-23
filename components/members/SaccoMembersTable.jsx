@@ -54,7 +54,7 @@ function SaccoMembersTable({ members }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#cc5500]">Members List</CardTitle>
+        <CardTitle className="text-xl ">Members List</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Search and Filter Controls */}
@@ -76,7 +76,7 @@ function SaccoMembersTable({ members }) {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1); // Reset to first page on search
                 }}
-                className="pl-10 border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                className="pl-10 border-black   rounded-md text-base"
               />
             </div>
           </div>
@@ -94,7 +94,7 @@ function SaccoMembersTable({ members }) {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1); // Reset to first page on filter change
               }}
-              className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+              className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -141,7 +141,7 @@ function SaccoMembersTable({ members }) {
                           }
                           className={
                             member?.is_approved
-                              ? "bg-[#045e32] text-white"
+                              ? "bg-primary text-white"
                               : "bg-gray-200 text-gray-800"
                           }
                         >

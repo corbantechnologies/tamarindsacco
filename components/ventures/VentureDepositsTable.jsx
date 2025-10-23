@@ -109,7 +109,7 @@ function VentureDepositsTable({ deposits }) {
       {/* Filter Section */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#045e32]">
+          <CardTitle className="text-lg font-semibold text-primary">
             Filter Deposits
           </CardTitle>
         </CardHeader>
@@ -133,7 +133,7 @@ function VentureDepositsTable({ deposits }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -153,7 +153,7 @@ function VentureDepositsTable({ deposits }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -173,7 +173,7 @@ function VentureDepositsTable({ deposits }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -194,7 +194,7 @@ function VentureDepositsTable({ deposits }) {
                   setEndDate("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
 
@@ -222,7 +222,7 @@ function VentureDepositsTable({ deposits }) {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
+              <TableRow className="bg-primary hover:bg-primary">
                 <TableHead className="text-white font-semibold">Date</TableHead>
                 <TableHead className="text-white font-semibold">
                   Amount
@@ -263,7 +263,7 @@ function VentureDepositsTable({ deposits }) {
             <Button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm disabled:opacity-50"
+              className="bg-primary hover:bg-[#022007] text-white text-sm disabled:opacity-50"
             >
               Previous
             </Button>
@@ -274,8 +274,8 @@ function VentureDepositsTable({ deposits }) {
                 variant={currentPage === page ? "default" : "outline"}
                 className={`${
                   currentPage === page
-                    ? "bg-[#045e32] text-white"
-                    : "border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white"
+                    ? "bg-primary text-white"
+                    : "border-primary text-primary hover:bg-primary hover:text-white"
                 } text-sm`}
               >
                 {page}
@@ -284,7 +284,7 @@ function VentureDepositsTable({ deposits }) {
             <Button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm disabled:opacity-50"
+              className="bg-primary hover:bg-[#022007] text-white text-sm disabled:opacity-50"
             >
               Next
             </Button>

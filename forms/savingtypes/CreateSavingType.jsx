@@ -26,7 +26,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">
+          <DialogTitle className="">
             Create New Saving Type
           </DialogTitle>
         </DialogHeader>
@@ -59,7 +59,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   as={Input}
                   id="name"
                   name="name"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                   required
                 />
               </div>
@@ -72,7 +72,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   type="number"
                   id="interest_rate"
                   name="interest_rate"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                 />
               </div>
               <div className="space-y-2">
@@ -84,7 +84,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   rows={4}
                   id="description"
                   name="description"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                 />
               </div>
               <DialogFooter>

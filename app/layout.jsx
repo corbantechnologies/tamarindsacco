@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <title>Tamarind SACCO</title>
+        <title>Mzedu SACCO</title>
         <meta name="description" content="The SACCO for everyone" />
       </head>
       <body>

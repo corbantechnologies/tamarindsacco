@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { User } from "lucide-react";
 
 const InfoCard = ({ member }) => (
-  <Card className="shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-[#045e32]">
+  <Card className="shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-primary">
     <CardHeader className="pb-3">
-      <CardTitle className="flex items-center gap-2 text-[#045e32]">
+      <CardTitle className="flex items-center gap-2 text-primary">
         <User className="h-5 w-5" />
         Member Details
       </CardTitle>

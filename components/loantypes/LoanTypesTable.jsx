@@ -56,7 +56,7 @@ function LoanTypesTable({ loanTypes }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#cc5500]">Loan Types</CardTitle>
+        <CardTitle className="text-xl ">Loan Types</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Search Filter */}
@@ -74,7 +74,7 @@ function LoanTypesTable({ loanTypes }) {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1); // Reset to first page on search
               }}
-              className="pl-10 border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+              className="pl-10 border-gray-300   rounded-md text-base"
             />
           </div>
         </div>
@@ -142,7 +142,7 @@ function LoanTypesTable({ loanTypes }) {
                     className={`${
                       currentPage === page
                         ? "bg-[#cc5500] text-white"
-                        : "border-[#cc5500] text-[#cc5500] hover:bg-[#cc5500] hover:text-white"
+                        : "border-[#cc5500]  hover:bg-[#cc5500] hover:text-white"
                     } text-sm`}
                     aria-label={`Go to page ${page}`}
                   >

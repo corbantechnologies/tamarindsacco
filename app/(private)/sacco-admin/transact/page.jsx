@@ -80,7 +80,7 @@ function Transactions() {
         {/* Headers */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold ">
               Accounts & Transactions
             </h1>
             <p className="text-gray-500 mt-1">
@@ -92,7 +92,7 @@ function Transactions() {
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+                  className="bg-primary hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                   disabled={loading}
                 >
                   <Menu className="mr-2 h-4 w-4" />

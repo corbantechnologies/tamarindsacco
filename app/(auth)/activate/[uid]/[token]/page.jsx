@@ -22,12 +22,12 @@ function AccountActivation() {
     <div className="flex justify-center items-center min-h-screen bg-white px-4">
       <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md">
         <div className="text-center mb-6">
-          <Info className="w-12 h-12 text-[#cc5500] mx-auto mb-4" />
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#cc5500]">
+          <Info className="w-12 h-12  mx-auto mb-4" />
+          <h1 className="text-2xl sm:text-3xl font-bold ">
             Account Activation
           </h1>
           <p className="text-gray-500 mt-2">
-            Set your password to activate your Tamarind SACCO account
+            Set your password to activate your Mzedu SACCO account
           </p>
         </div>
 
@@ -67,7 +67,7 @@ function AccountActivation() {
                     name="password"
                     id="password"
                     placeholder="Enter your password"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2 pr-10"
+                    className="border-black   rounded-md text-base py-2 pr-10"
                   />
                   <button
                     type="button"
@@ -100,7 +100,7 @@ function AccountActivation() {
                     name="confirmPassword"
                     id="confirmPassword"
                     placeholder="Confirm your password"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2 pr-10"
+                    className="border-black   rounded-md text-base py-2 pr-10"
                   />
                   <button
                     type="button"

@@ -62,7 +62,7 @@ function SavingsTable({ savings, isLoading, route }) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl text-[#045e32]">My Savings</CardTitle>
+          <CardTitle className="text-xl text-primary">My Savings</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center text-gray-700">No savings found.</div>
@@ -74,7 +74,7 @@ function SavingsTable({ savings, isLoading, route }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#045e32]">My Savings</CardTitle>
+        <CardTitle className="text-xl text-primary">My Savings</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -95,7 +95,7 @@ function SavingsTable({ savings, isLoading, route }) {
             >
               <SelectTrigger
                 id="account-type-filter"
-                className="w-[200px] border-gray-300 focus:ring-[#045e32] focus:border-[#045e32]"
+                className="w-[200px] border-gray-300 focus:ring-primary focus:border-primary"
                 aria-label="Filter by account type"
               >
                 <SelectValue placeholder="Select account type" />
@@ -114,7 +114,7 @@ function SavingsTable({ savings, isLoading, route }) {
           <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
+                <TableRow className="bg-primary hover:bg-primary">
                   <TableHead className="text-white font-semibold text-base">
                     Account Type
                   </TableHead>
@@ -161,7 +161,7 @@ function SavingsTable({ savings, isLoading, route }) {
                     <TableCell className="text-sm text-gray-700">
                       <Link
                         href={`/${route}/savings/${saving.identity}`}
-                        className="text-[#045e32] hover:underline cursor-pointer"
+                        className="text-primary hover:underline cursor-pointer"
                       >
                         View
                       </Link>
@@ -183,7 +183,7 @@ function SavingsTable({ savings, isLoading, route }) {
               <Button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="bg-[#045e32] hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
+                className="bg-primary hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
                 aria-label="Previous page"
               >
                 Previous
@@ -196,8 +196,8 @@ function SavingsTable({ savings, isLoading, route }) {
                     variant={currentPage === page ? "default" : "outline"}
                     className={`${
                       currentPage === page
-                        ? "bg-[#045e32] text-white"
-                        : "border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white"
+                        ? "bg-primary text-white"
+                        : "border-primary text-primary hover:bg-primary hover:text-white"
                     } text-sm`}
                     aria-label={`Go to page ${page}`}
                   >
@@ -208,7 +208,7 @@ function SavingsTable({ savings, isLoading, route }) {
               <Button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="bg-[#045e32] hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
+                className="bg-primary hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
                 aria-label="Next page"
               >
                 Next

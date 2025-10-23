@@ -6,7 +6,7 @@ const SavingsTypesCountCard = ({ count }) => (
   <Card className="shadow-md hover:shadow-lg transition-shadow">
     <Flex direction="column" gap="2">
       <Flex align="center" gap="2">
-        <Wallet className="h-6 w-6 text-[#cc5500]" />
+        <Wallet className="h-6 w-6 " />
         <Text size="5" weight="bold" color="orange">
           Savings Types
         </Text>

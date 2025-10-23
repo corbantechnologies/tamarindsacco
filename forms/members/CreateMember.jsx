@@ -28,7 +28,7 @@ function CreateMember({ closeModal,  openModal }) {
     <Dialog open={openModal} onOpenChange={closeModal}>
       <DialogContent className="w-full h-auto sm:h-auto p-4 sm:p-6 bg-white overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-[#cc5500]">
+          <DialogTitle className="text-2xl font-bold ">
             Create New Member
           </DialogTitle>
         </DialogHeader>
@@ -74,7 +74,7 @@ function CreateMember({ closeModal,  openModal }) {
                     as="select"
                     name="salutation"
                     id="salutation"
-                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                   >
                     <option value="">Select Salutation</option>
                     <option value="Mr">Mr</option>
@@ -99,7 +99,7 @@ function CreateMember({ closeModal,  openModal }) {
                     name="first_name"
                     id="first_name"
                     placeholder="John"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                    className="border-black   rounded-md text-base py-2"
                   />
                 </div>
 
@@ -116,7 +116,7 @@ function CreateMember({ closeModal,  openModal }) {
                     name="last_name"
                     id="last_name"
                     placeholder="Doe"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                    className="border-black   rounded-md text-base py-2"
                   />
                 </div>
 
@@ -131,7 +131,7 @@ function CreateMember({ closeModal,  openModal }) {
                     as="select"
                     name="gender"
                     id="gender"
-                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -150,7 +150,7 @@ function CreateMember({ closeModal,  openModal }) {
                     as="select"
                     name="employment_type"
                     id="employment_type"
-                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                    className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                   >
                     <option value="">Select Employment Type</option>
                     <option value="Permanent">Permanent</option>
@@ -175,7 +175,7 @@ function CreateMember({ closeModal,  openModal }) {
                         type="text"
                         name="member_no"
                         id="member_no"
-                        className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                        className="border-black   rounded-md text-base py-2"
                       />
                     </div>
                   )}
@@ -193,7 +193,7 @@ function CreateMember({ closeModal,  openModal }) {
                     name="email"
                     id="email"
                     placeholder="jdoe@example.com"
-                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                    className="border-black   rounded-md text-base py-2"
                   />
                 </div>
                 {/* if no email provided, show the password input */}
@@ -212,7 +212,7 @@ function CreateMember({ closeModal,  openModal }) {
                         name="password"
                         id="password"
                         placeholder="Enter password"
-                        className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                        className="border-black   rounded-md text-base py-2"
                       />
                       <button
                         type="button"

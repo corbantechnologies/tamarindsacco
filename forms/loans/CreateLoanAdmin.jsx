@@ -30,7 +30,7 @@ function CreateLoanAccountAdmin({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">Create New Loan</DialogTitle>
+          <DialogTitle className="">Create New Loan</DialogTitle>
         </DialogHeader>
 
         <Formik
@@ -69,7 +69,7 @@ function CreateLoanAccountAdmin({
                   placeholder={`${member?.member_no}`}
                   value={`${member?.member_no}`}
                   disabled
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors bg-gray-100"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors bg-gray-100"
                 />
               </div>
               <div className="space-y-2">
@@ -97,7 +97,7 @@ function CreateLoanAccountAdmin({
                   as={Input}
                   type="number"
                   name="loan_amount"
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                 />
               </div>
               <DialogFooter>

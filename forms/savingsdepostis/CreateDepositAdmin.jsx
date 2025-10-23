@@ -24,7 +24,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">
+          <DialogTitle className="">
             Create New Savings Deposit
           </DialogTitle>
         </DialogHeader>
@@ -62,7 +62,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                 <Field
                   as="select"
                   name="savings_account"
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                 >
                   <option value="" label="Select account" />
                   {accounts?.map((account) => (
@@ -85,7 +85,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                   type="number"
                   id="amount"
                   name="amount"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                   placeholder="Enter deposit amount"
                   required
                   min="0.01"
@@ -100,7 +100,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                 <Field
                   as="select"
                   name="payment_method"
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                   required
                 >
                   <option value="" label="Select payment method" />
@@ -120,7 +120,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                 <Field
                   as="select"
                   name="deposit_type"
-                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+                  className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2   transition-colors"
                   required
                 >
                   <option value="" label="Select deposit type" />
@@ -138,7 +138,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                   type="submit"
                   size={"sm"}
                   disabled={loading}
-                  className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+                  className="bg-primary hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                 >
                   {loading ? "Depositing..." : "Deposit"}
                 </Button>

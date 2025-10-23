@@ -29,7 +29,7 @@ function Members() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold ">
               Members
             </h1>
             <p className="text-gray-500 mt-1">Manage your members</p>
@@ -38,7 +38,7 @@ function Members() {
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Button
               onClick={() => setMemberCreateModal(true)}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+              className="bg-primary hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
             >
               <User className="h-4 w-4 mr-2" /> New Member
             </Button>

@@ -51,16 +51,15 @@ function LoginForm() {
 
   return (
     <div>
-      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
-        <div className="text-center mb-8">
-          <Image
-            src="/logoNoBg.png"
-            alt="Tamarind SACCO Logo"
-            width={100}
-            height={100}
-            className="mx-auto mb-4 rounded-full"
+      <Image
+            src="/auth-image-noBg-2.png"
+            alt="Mzedu SACCO Logo"
+            width={200}
+            height={200}
+            className="mx-auto"
           />
-          <h1 className="text-3xl font-bold text-black">Tamarind SACCO</h1>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-black">Mzedu SACCO</h1>
           <p className="text-gray-500">The SACCO for everyone</p>
         </div>
 
@@ -74,7 +73,7 @@ function LoginForm() {
               type="text"
               id="member_no"
               placeholder="Enter your member number or payroll number"
-              className="border-black focus:ring-[#cc5500] focus:border-[#cc5500]"
+              className="border"
               value={member_no}
               onChange={(e) => setMemberNo(e.target.value)}
             />
@@ -90,7 +89,7 @@ function LoginForm() {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Password"
-                className="border-black focus:ring-[#cc5500] focus:border-[#cc5500]"
+                className="border"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -113,7 +112,7 @@ function LoginForm() {
           {/* Login Button */}
           <Button
             type="submit"
-            className="w-full bg-[#cc5500] hover:bg-[#e66b00] text-white"
+            className="w-full text-white"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
@@ -122,12 +121,11 @@ function LoginForm() {
           {/* Register Link */}
           <p className="text-center">
             Don&apos;t have an account?{" "}
-            <a href="/register" className="text-[#cc5500] hover:underline">
+            <a href="/register" className="text-primary hover:underline">
               Register now
             </a>
           </p>
         </form>
-      </div>
     </div>
   );
 }

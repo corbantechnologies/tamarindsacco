@@ -45,7 +45,7 @@ function BulkSavingsAccountsDepositUpload({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">
+          <DialogTitle className="">
             Bulk Savings Accounts Deposit Upload
           </DialogTitle>
         </DialogHeader>
@@ -92,7 +92,7 @@ function BulkSavingsAccountsDepositUpload({
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="bg-[#045e32] hover:bg-[#022007] text-white"
+                  className="bg-primary hover:bg-[#022007] text-white"
                 >
                   {loading ? "Uploading..." : "Upload"}
                 </Button>

@@ -128,7 +128,7 @@ function VenturePaymentsTable({ payments }) {
       {/* Filter Section */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#045e32]">
+          <CardTitle className="text-lg font-semibold text-primary">
             Filter Payments
           </CardTitle>
         </CardHeader>
@@ -152,7 +152,7 @@ function VenturePaymentsTable({ payments }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -172,7 +172,7 @@ function VenturePaymentsTable({ payments }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -192,7 +192,7 @@ function VenturePaymentsTable({ payments }) {
                   setMonth("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -213,7 +213,7 @@ function VenturePaymentsTable({ payments }) {
                   setEndDate("");
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -230,7 +230,7 @@ function VenturePaymentsTable({ payments }) {
                   setStatus(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               >
                 <option value="">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -253,7 +253,7 @@ function VenturePaymentsTable({ payments }) {
                   setPaymentMethod(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               >
                 <option value="">All Methods</option>
                 <option value="Cash">Cash</option>
@@ -277,7 +277,7 @@ function VenturePaymentsTable({ payments }) {
                   setPaymentType(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
               >
                 <option value="">All Types</option>
                 <option value="Individual Settlement">
@@ -311,7 +311,7 @@ function VenturePaymentsTable({ payments }) {
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
+              <TableRow className="bg-primary hover:bg-primary">
                 <TableHead className="text-white font-semibold">Date</TableHead>
                 <TableHead className="text-white font-semibold">
                   Amount
@@ -382,7 +382,7 @@ function VenturePaymentsTable({ payments }) {
             <Button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm disabled:opacity-50"
+              className="bg-primary hover:bg-[#022007] text-white text-sm disabled:opacity-50"
             >
               Previous
             </Button>
@@ -393,8 +393,8 @@ function VenturePaymentsTable({ payments }) {
                 variant={currentPage === page ? "default" : "outline"}
                 className={`${
                   currentPage === page
-                    ? "bg-[#045e32] text-white"
-                    : "border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white"
+                    ? "bg-primary text-white"
+                    : "border-primary text-primary hover:bg-primary hover:text-white"
                 } text-sm`}
               >
                 {page}
@@ -403,7 +403,7 @@ function VenturePaymentsTable({ payments }) {
             <Button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm disabled:opacity-50"
+              className="bg-primary hover:bg-[#022007] text-white text-sm disabled:opacity-50"
             >
               Next
             </Button>

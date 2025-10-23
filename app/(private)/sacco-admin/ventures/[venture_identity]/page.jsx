@@ -49,9 +49,9 @@ function VentureDetail() {
         </Breadcrumb>
 
         {/* Venture Details */}
-        <Card className="border-l-4 border-l-[#045e32] shadow-md">
+        <Card className="border-l-4 border-l-primary shadow-md">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-[#045e32]">
+            <CardTitle className="text-2xl font-bold text-primary">
               {venture?.venture_type}
             </CardTitle>
           </CardHeader>
@@ -62,7 +62,7 @@ function VentureDetail() {
             </p>
             <p className="text-base font-medium">
               Balance:{" "}
-              <span className="font-normal text-[#045e32]">
+              <span className="font-normal text-primary">
                 KES {parseFloat(venture?.balance).toFixed(2)}
               </span>
             </p>
@@ -92,7 +92,7 @@ function VentureDetail() {
         {/* Deposits Table */}
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-[#045e32]">
+            <CardTitle className="text-xl font-bold text-primary">
               Deposits
             </CardTitle>
           </CardHeader>
@@ -104,7 +104,7 @@ function VentureDetail() {
         {/* Payments Table */}
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-[#045e32]">
+            <CardTitle className="text-xl font-bold text-primary">
               Payments
             </CardTitle>
           </CardHeader>
@@ -116,7 +116,7 @@ function VentureDetail() {
         {/* Transactions Table */}
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-[#045e32]">
+            <CardTitle className="text-xl font-bold text-primary">
               All Transactions
             </CardTitle>
           </CardHeader>

@@ -14,13 +14,13 @@ function MemberNavbar() {
     <>
       {/* Navbar */}
       <header
-        className="bg-[#045e32] text-white sticky top-0 z-50"
+        className="bg-primary text-white sticky top-0 z-50"
         aria-label="Main navigation"
       >
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <h1 className="ml-2 text-xl md:text-2xl font-bold">
-              Tamarind SACCO
+              Mzedu SACCO
             </h1>
           </Link>
           <nav className="hidden md:flex gap-6 items-center">
@@ -43,14 +43,14 @@ function MemberNavbar() {
             <Button
               variant="outline"
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="border-white text-black cursor-pointer hover:bg-white hover:text-[#045e32] text-base py-1"
+              className="border-white text-black cursor-pointer hover:bg-white hover:text-primary text-base py-1"
             >
               Logout
             </Button>
           </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white text-black hover:bg-white hover:text-[#045e32]"
+            className="md:hidden border-white text-black hover:bg-white hover:text-primary"
             onClick={() => setIsMenuOpen(true)}
             aria-label="Open menu"
           >
@@ -64,11 +64,11 @@ function MemberNavbar() {
       <div
         className={`fixed inset-y-0 right-0 z-50 w-[200px] sm:w-[300px] bg-white text-black transform ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out md:hidden border-l border-[#045e32] shadow-lg`}
+        } transition-transform duration-300 ease-in-out md:hidden border-l border-primary shadow-lg`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-[#045e32]">Menu</h2>
+            <h2 className="text-lg font-semibold text-primary">Menu</h2>
             <Button
               variant="ghost"
               className="p-2 hover:bg-gray-100"
@@ -122,7 +122,7 @@ function MemberNavbar() {
                 setIsMenuOpen(false);
                 signOut({ callbackUrl: "/login" });
               }}
-              className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white text-base py-2"
+              className="border-primary text-primary hover:bg-primary hover:text-white text-base py-2"
             >
               Logout
             </Button>

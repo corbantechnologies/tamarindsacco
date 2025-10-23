@@ -26,7 +26,7 @@ function CreateLoanType({ isOpen, onClose, refetchLoanTypes }) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[#cc5500]">
+          <DialogTitle className="">
             Create New Loan Type
           </DialogTitle>
         </DialogHeader>
@@ -61,7 +61,7 @@ function CreateLoanType({ isOpen, onClose, refetchLoanTypes }) {
                   name="name"
                   type="text"
                   required
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                 />
               </div>
               <div className="space-y-2">
@@ -73,7 +73,7 @@ function CreateLoanType({ isOpen, onClose, refetchLoanTypes }) {
                   type="number"
                   id="interest_rate"
                   name="interest_rate"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                   required
                 />
               </div>
@@ -86,7 +86,7 @@ function CreateLoanType({ isOpen, onClose, refetchLoanTypes }) {
                   rows={4}
                   id="description"
                   name="description"
-                  className="border-black focus:ring-[#cc5500]"
+                  className="border-black "
                 />
               </div>
               <DialogFooter>
