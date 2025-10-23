@@ -49,3 +49,6 @@ export const downloadAccountsListCSV = async (token) => {
   }
 };
 
+export const createBulkCombinedUpdates = async (formData, token) => {
+  await apiActions.post("api/v1/transactions/bulk/upload/", formData, token);
+};
