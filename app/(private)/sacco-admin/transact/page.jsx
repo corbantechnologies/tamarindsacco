@@ -26,10 +26,13 @@ import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAc
 import BulkVentureAccountsDepositUpload from "@/forms/transactions/BulkVentureAccountsDepositUpload";
 import BulkVentureAccountsPaymentUpload from "@/forms/transactions/BulkVentureAccountsPaymentUpload";
 import BulkCombinedUpload from "@/forms/transactions/BulkCombinedUpload";
+import BulkLoanRepaymentsUpload from "@/forms/transactions/BulkLoanRepaymentsUpload";
+import BulkTamarindLoanInterestUpload from "@/forms/transactions/BulkInterestsUpload";
 
 function Transactions() {
   const token = useAxiosAuth();
   const [loading, setLoading] = useState(false);
+  // Dialog states
   const [isSavingsUploadDialogOpen, setIsSavingsUploadDialogOpen] =
     useState(false);
   const [isVentureUploadDialogOpen, setIsVentureUploadDialogOpen] =
@@ -40,6 +43,17 @@ function Transactions() {
   ] = useState(false);
   const [isCombinedUploadDialogOpen, setIsCombinedUploadDialogOpen] =
     useState(false);
+  const [
+    isBulkLoanRepaymentsUploadDialogOpen,
+    setIsBulkLoanRepaymentsUploadDialogOpen,
+  ] = useState(false);
+  const [
+    isBulkLoanInterestsUploadDialogOpen,
+    setIsBulkLoanInterestsUploadDialogOpen,
+  ] = useState(false);
+  // End dialog states
+
+  // Fetch accounts
   const {
     isLoading: isLoadingAccountsList,
     data: accountsList,
@@ -90,7 +104,7 @@ function Transactions() {
               Manage accounts and transactions
             </p>
           </div>
-
+          {/* Popovers for bulk updates */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Popover>
               <PopoverTrigger asChild>
@@ -104,6 +118,7 @@ function Transactions() {
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <div className="flex flex-col gap-2">
+                  {/* Download account list */}
                   <Button
                     onClick={handleDownload}
                     disabled={loading}
@@ -113,6 +128,7 @@ function Transactions() {
                     <Download className="mr-2 h-4 w-4" />
                     Download Account List
                   </Button>
+                  {/* Savings deposit */}
                   <Button
                     onClick={() => setIsSavingsUploadDialogOpen(true)}
                     variant="ghost"
@@ -121,6 +137,27 @@ function Transactions() {
                     <Upload className="mr-2 h-4 w-4" />
                     Savings Deposit Upload
                   </Button>
+                  {/* Bulk loan repayments */}
+                  <Button
+                    onClick={() =>
+                      setIsBulkLoanRepaymentsUploadDialogOpen(true)
+                    }
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Loan Repayments Upload
+                  </Button>
+                  {/* Bulk loan interest */}
+                  <Button
+                    onClick={() => setIsBulkLoanInterestsUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Loan Interest Upload
+                  </Button>
+                  {/* Venture deposit */}
                   <Button
                     onClick={() => setIsVentureUploadDialogOpen(true)}
                     variant="ghost"
@@ -129,6 +166,7 @@ function Transactions() {
                     <Upload className="mr-2 h-4 w-4" />
                     Venture Deposit Upload
                   </Button>
+                  {/* Venture payment */}
                   <Button
                     onClick={() => setIsVenturePaymentUploadDialogOpen(true)}
                     variant="ghost"
@@ -137,6 +175,8 @@ function Transactions() {
                     <Upload className="mr-2 h-4 w-4" />
                     Venture Payment Upload
                   </Button>
+
+                  {/* Bulk combined upload */}
                   <Button
                     onClick={() => setIsCombinedUploadDialogOpen(true)}
                     variant="ghost"
@@ -149,6 +189,7 @@ function Transactions() {
               </PopoverContent>
             </Popover>
           </div>
+          {/* End of Popovers */}
         </div>
 
         {/* Accounts List Table */}
@@ -162,6 +203,16 @@ function Transactions() {
         <BulkSavingsAccountsDepositUpload
           isOpen={isSavingsUploadDialogOpen}
           onClose={() => setIsSavingsUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkLoanRepaymentsUpload
+          isOpen={isBulkLoanRepaymentsUploadDialogOpen}
+          onClose={() => setIsBulkLoanRepaymentsUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkTamarindLoanInterestUpload
+          isOpen={isBulkLoanInterestsUploadDialogOpen}
+          onClose={() => setIsBulkLoanInterestsUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
         <BulkVentureAccountsDepositUpload

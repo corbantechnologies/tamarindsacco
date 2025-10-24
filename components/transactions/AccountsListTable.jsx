@@ -29,13 +29,15 @@ const AccountsListTable = ({ accountsList }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSavingsTypes, setSelectedSavingsTypes] = useState([]);
   const [selectedVentureTypes, setSelectedVentureTypes] = useState([]);
+  const [selectedLoanTypes, setSelectedLoanTypes] = useState([]);
   const [openSavings, setOpenSavings] = useState(false);
   const [openVentures, setOpenVentures] = useState(false);
+  const [openLoans, setOpenLoans] = useState(false);
 
   // Handle flat array or object with results
   const data = accountsList?.results || accountsList || [];
 
-  // Extract unique savings and venture types for filters
+  // Extract unique savings, venture, and loan types for filters
   const savingsTypes = useMemo(() => {
     const types = new Set();
     data.forEach((user) => {
@@ -48,6 +50,14 @@ const AccountsListTable = ({ accountsList }) => {
     const types = new Set();
     data.forEach((user) => {
       user.venture_accounts.forEach(([_, typeName]) => types.add(typeName));
+    });
+    return Array.from(types);
+  }, [data]);
+
+  const loanTypes = useMemo(() => {
+    const types = new Set();
+    data.forEach((user) => {
+      user.loan_accounts.forEach(([_, typeName]) => types.add(typeName));
     });
     return Array.from(types);
   }, [data]);
@@ -72,9 +82,26 @@ const AccountsListTable = ({ accountsList }) => {
           selectedVentureTypes.includes(typeName)
         );
 
-      return matchesSearch && hasSelectedSavings && hasSelectedVentures;
+      const hasSelectedLoans =
+        selectedLoanTypes.length === 0 ||
+        user.loan_accounts.some(([_, typeName]) =>
+          selectedLoanTypes.includes(typeName)
+        );
+
+      return (
+        matchesSearch &&
+        hasSelectedSavings &&
+        hasSelectedVentures &&
+        hasSelectedLoans
+      );
     });
-  }, [data, searchTerm, selectedSavingsTypes, selectedVentureTypes]);
+  }, [
+    data,
+    searchTerm,
+    selectedSavingsTypes,
+    selectedVentureTypes,
+    selectedLoanTypes,
+  ]);
 
   // Generate table headers dynamically
   const headers = useMemo(() => {
@@ -103,8 +130,35 @@ const AccountsListTable = ({ accountsList }) => {
         allHeaders.push(`${type} Account`, `${type} Balance`);
       });
     }
+    if (
+      selectedLoanTypes.length === 0 ||
+      selectedLoanTypes.length === loanTypes.length
+    ) {
+      loanTypes.forEach((type) => {
+        allHeaders.push(
+          `${type} Account`,
+          `${type} Balance`,
+          `${type} Interest`
+        );
+      });
+    } else {
+      selectedLoanTypes.forEach((type) => {
+        allHeaders.push(
+          `${type} Account`,
+          `${type} Balance`,
+          `${type} Interest`
+        );
+      });
+    }
     return allHeaders;
-  }, [savingsTypes, ventureTypes, selectedSavingsTypes, selectedVentureTypes]);
+  }, [
+    savingsTypes,
+    ventureTypes,
+    loanTypes,
+    selectedSavingsTypes,
+    selectedVentureTypes,
+    selectedLoanTypes,
+  ]);
 
   // Handle filter changes
   const handleSavingsTypeFilter = (type) => {
@@ -119,13 +173,21 @@ const AccountsListTable = ({ accountsList }) => {
     );
   };
 
+  const handleLoanTypeFilter = (type) => {
+    setSelectedLoanTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
   // Clear all filters and search
   const handleClearFilters = () => {
     setSelectedSavingsTypes([]);
     setSelectedVentureTypes([]);
+    setSelectedLoanTypes([]);
     setSearchTerm("");
     setOpenSavings(false);
     setOpenVentures(false);
+    setOpenLoans(false);
   };
 
   return (
@@ -153,7 +215,7 @@ const AccountsListTable = ({ accountsList }) => {
                   className="w-[200px] justify-between"
                 >
                   {selectedSavingsTypes.length > 0
-                    ? `${selectedSavingsTypes.length} selected`
+                    ? `${selectedSavingsTypes.length} savings selected`
                     : "Select savings types"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -200,7 +262,7 @@ const AccountsListTable = ({ accountsList }) => {
                   className="w-[200px] justify-between"
                 >
                   {selectedVentureTypes.length > 0
-                    ? `${selectedVentureTypes.length} selected`
+                    ? `${selectedVentureTypes.length} ventures selected`
                     : "Select venture types"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -223,6 +285,53 @@ const AccountsListTable = ({ accountsList }) => {
                             className={cn(
                               "mr-2 h-4 w-4",
                               selectedVentureTypes.includes(type)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {type}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+          {/* Loan Types Dropdown */}
+          <div>
+            <Popover open={openLoans} onOpenChange={setOpenLoans}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openLoans}
+                  className="w-[200px] justify-between"
+                >
+                  {selectedLoanTypes.length > 0
+                    ? `${selectedLoanTypes.length} loans selected`
+                    : "Select loan types"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search loan types..." />
+                  <CommandList>
+                    <CommandEmpty>No loan types found.</CommandEmpty>
+                    <CommandGroup>
+                      {loanTypes.map((type) => (
+                        <CommandItem
+                          key={type}
+                          value={type}
+                          onSelect={() => {
+                            handleLoanTypeFilter(type);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedLoanTypes.includes(type)
                                 ? "opacity-100"
                                 : "opacity-0"
                             )}
@@ -296,6 +405,31 @@ const AccountsListTable = ({ accountsList }) => {
                           <TableCell>{account ? account[0] : ""}</TableCell>
                           <TableCell>
                             {account ? account[2].toFixed(2) : ""}
+                          </TableCell>
+                        </React.Fragment>
+                      );
+                    }
+                    return null;
+                  })}
+                  {loanTypes.map((type) => {
+                    if (
+                      selectedLoanTypes.length === 0 ||
+                      selectedLoanTypes.includes(type)
+                    ) {
+                      const account = user.loan_accounts.find(
+                        ([_, t]) => t === type
+                      );
+                      const interest = user.loan_interest.find(
+                        ([_, acc_no]) => account && acc_no === account[0]
+                      );
+                      return (
+                        <React.Fragment key={type}>
+                          <TableCell>{account ? account[0] : ""}</TableCell>
+                          <TableCell>
+                            {account ? account[2].toFixed(2) : ""}
+                          </TableCell>
+                          <TableCell>
+                            {interest ? interest[0].toFixed(2) : ""}
                           </TableCell>
                         </React.Fragment>
                       );
