@@ -9,7 +9,14 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, Search, X } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  Search,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -33,6 +40,7 @@ const AccountsListTable = ({ accountsList }) => {
   const [openSavings, setOpenSavings] = useState(false);
   const [openVentures, setOpenVentures] = useState(false);
   const [openLoans, setOpenLoans] = useState(false);
+  const [expandedRows, setExpandedRows] = useState({});
 
   // Handle flat array or object with results
   const data = accountsList?.results || accountsList || [];
@@ -103,9 +111,9 @@ const AccountsListTable = ({ accountsList }) => {
     selectedLoanTypes,
   ]);
 
-  // Generate table headers dynamically
+  // Generate table headers for main table
   const headers = useMemo(() => {
-    const allHeaders = ["Member Number", "Member Name"];
+    const allHeaders = ["Member Number", "Member Name", ""];
     if (
       selectedSavingsTypes.length === 0 ||
       selectedSavingsTypes.length === savingsTypes.length
@@ -135,19 +143,11 @@ const AccountsListTable = ({ accountsList }) => {
       selectedLoanTypes.length === loanTypes.length
     ) {
       loanTypes.forEach((type) => {
-        allHeaders.push(
-          `${type} Account`,
-          `${type} Balance`,
-          `${type} Interest`
-        );
+        allHeaders.push(`${type} Account`, `${type} Balance`);
       });
     } else {
       selectedLoanTypes.forEach((type) => {
-        allHeaders.push(
-          `${type} Account`,
-          `${type} Balance`,
-          `${type} Interest`
-        );
+        allHeaders.push(`${type} Account`, `${type} Balance`);
       });
     }
     return allHeaders;
@@ -159,6 +159,14 @@ const AccountsListTable = ({ accountsList }) => {
     selectedVentureTypes,
     selectedLoanTypes,
   ]);
+
+  // Interest table headers
+  const interestHeaders = [
+    "Loan Account",
+    "Loan Type",
+    "Interest Amount",
+    "Outstanding Balance",
+  ];
 
   // Handle filter changes
   const handleSavingsTypeFilter = (type) => {
@@ -179,6 +187,14 @@ const AccountsListTable = ({ accountsList }) => {
     );
   };
 
+  // Toggle row expansion
+  const toggleRow = (memberNo) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [memberNo]: !prev[memberNo],
+    }));
+  };
+
   // Clear all filters and search
   const handleClearFilters = () => {
     setSelectedSavingsTypes([]);
@@ -188,6 +204,7 @@ const AccountsListTable = ({ accountsList }) => {
     setOpenSavings(false);
     setOpenVentures(false);
     setOpenLoans(false);
+    setExpandedRows({});
   };
 
   return (
@@ -357,7 +374,7 @@ const AccountsListTable = ({ accountsList }) => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* Main Table */}
       <div className="border rounded-md">
         <Table>
           <TableHeader>
@@ -370,73 +387,139 @@ const AccountsListTable = ({ accountsList }) => {
           <TableBody>
             {filteredAccounts.length > 0 ? (
               filteredAccounts.map((user) => (
-                <TableRow key={user.member_no}>
-                  <TableCell>{user.member_no}</TableCell>
-                  <TableCell>{user.member_name}</TableCell>
-                  {savingsTypes.map((type) => {
-                    if (
-                      selectedSavingsTypes.length === 0 ||
-                      selectedSavingsTypes.includes(type)
-                    ) {
-                      const account = user.savings_accounts.find(
-                        ([_, t]) => t === type
-                      );
-                      return (
-                        <React.Fragment key={type}>
-                          <TableCell>{account ? account[0] : ""}</TableCell>
-                          <TableCell>
-                            {account ? account[2].toFixed(2) : ""}
-                          </TableCell>
-                        </React.Fragment>
-                      );
-                    }
-                    return null;
-                  })}
-                  {ventureTypes.map((type) => {
-                    if (
-                      selectedVentureTypes.length === 0 ||
-                      selectedVentureTypes.includes(type)
-                    ) {
-                      const account = user.venture_accounts.find(
-                        ([_, t]) => t === type
-                      );
-                      return (
-                        <React.Fragment key={type}>
-                          <TableCell>{account ? account[0] : ""}</TableCell>
-                          <TableCell>
-                            {account ? account[2].toFixed(2) : ""}
-                          </TableCell>
-                        </React.Fragment>
-                      );
-                    }
-                    return null;
-                  })}
-                  {loanTypes.map((type) => {
-                    if (
-                      selectedLoanTypes.length === 0 ||
-                      selectedLoanTypes.includes(type)
-                    ) {
-                      const account = user.loan_accounts.find(
-                        ([_, t]) => t === type
-                      );
-                      const interest = user.loan_interest.find(
-                        ([_, acc_no]) => account && acc_no === account[0]
-                      );
-                      return (
-                        <React.Fragment key={type}>
-                          <TableCell>{account ? account[0] : ""}</TableCell>
-                          <TableCell>
-                            {account ? account[2].toFixed(2) : ""}
-                          </TableCell>
-                          <TableCell>
-                            {interest ? interest[0].toFixed(2) : ""}
-                          </TableCell>
-                        </React.Fragment>
-                      );
-                    }
-                    return null;
-                  })}
-                </TableRow>
+                <React.Fragment key={user.member_no}>
+                  <TableRow>
+                    <TableCell>{user.member_no}</TableCell>
+                    <TableCell>{user.member_name}</TableCell>
+                    <TableCell>
+                      {user.loan_interest.length > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleRow(user.member_no)}
+                        >
+                          {expandedRows[user.member_no] ? (
+                            <ChevronUp className="h-4 w-4" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" />
+                          )}
+                        </Button>
+                      )}
+                    </TableCell>
+                    {savingsTypes.map((type) => {
+                      if (
+                        selectedSavingsTypes.length === 0 ||
+                        selectedSavingsTypes.includes(type)
+                      ) {
+                        const account = user.savings_accounts.find(
+                          ([_, t]) => t === type
+                        );
+                        return (
+                          <React.Fragment key={type}>
+                            <TableCell>{account ? account[0] : ""}</TableCell>
+                            <TableCell>
+                              {account ? account[2].toFixed(2) : ""}
+                            </TableCell>
+                          </React.Fragment>
+                        );
+                      }
+                      return null;
+                    })}
+                    {ventureTypes.map((type) => {
+                      if (
+                        selectedVentureTypes.length === 0 ||
+                        selectedVentureTypes.includes(type)
+                      ) {
+                        const account = user.venture_accounts.find(
+                          ([_, t]) => t === type
+                        );
+                        return (
+                          <React.Fragment key={type}>
+                            <TableCell>{account ? account[0] : ""}</TableCell>
+                            <TableCell>
+                              {account ? account[2].toFixed(2) : ""}
+                            </TableCell>
+                          </React.Fragment>
+                        );
+                      }
+                      return null;
+                    })}
+                    {loanTypes.map((type) => {
+                      if (
+                        selectedLoanTypes.length === 0 ||
+                        selectedLoanTypes.includes(type)
+                      ) {
+                        const account = user.loan_accounts.find(
+                          ([_, t]) => t === type
+                        );
+                        return (
+                          <React.Fragment key={type}>
+                            <TableCell>{account ? account[0] : ""}</TableCell>
+                            <TableCell>
+                              {account ? account[2].toFixed(2) : ""}
+                            </TableCell>
+                          </React.Fragment>
+                        );
+                      }
+                      return null;
+                    })}
+                  </TableRow>
+                  {expandedRows[user.member_no] &&
+                    user.loan_interest.length > 0 && (
+                      <TableRow>
+                        <TableCell colSpan={headers.length} className="p-0">
+                          <div className="p-4 bg-gray-50">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  {interestHeaders.map((header) => (
+                                    <TableHead key={header}>{header}</TableHead>
+                                  ))}
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {user.loan_interest
+                                  .filter(
+                                    ([_, acc_no]) =>
+                                      selectedLoanTypes.length === 0 ||
+                                      user.loan_accounts.some(
+                                        ([loan_acc_no, type]) =>
+                                          loan_acc_no === acc_no &&
+                                          selectedLoanTypes.includes(type)
+                                      )
+                                  )
+                                  .map(
+                                    (
+                                      [amount, acc_no, outstanding_balance],
+                                      index
+                                    ) => {
+                                      const loan = user.loan_accounts.find(
+                                        ([loan_acc_no]) =>
+                                          loan_acc_no === acc_no
+                                      );
+                                      return (
+                                        <TableRow key={`${acc_no}-${index}`}>
+                                          <TableCell>{acc_no}</TableCell>
+                                          <TableCell>
+                                            {loan ? loan[1] : "Unknown"}
+                                          </TableCell>
+                                          <TableCell>
+                                            {amount.toFixed(2)}
+                                          </TableCell>
+                                          <TableCell>
+                                            {outstanding_balance.toFixed(2)}
+                                          </TableCell>
+                                        </TableRow>
+                                      );
+                                    }
+                                  )}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                </React.Fragment>
               ))
             ) : (
               <TableRow>
