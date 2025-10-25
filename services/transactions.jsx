@@ -43,9 +43,7 @@ export const downloadAccountsListCSV = async (token) => {
 
     return response.data;
   } catch (error) {
-    throw new Error(
-      "Failed to download CSV: " + (error.message || "Unknown error")
-    );
+    throw error;
   }
 };
 

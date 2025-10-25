@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { useParams } from "next/navigation";
-import { useFetchVentureDetail } from "@/hooks/ventures/actions";
+import { useFetchLoanDetail } from "@/hooks/loans/actions";
 import { useFetchMember } from "@/hooks/members/actions";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import { Button } from "@/components/ui/button";
@@ -25,53 +25,49 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-function VentureDetail() {
-  const { venture_identity } = useParams();
-  const [paymentModal, setPaymentModal] = useState(false);
-  const [monthFilter, setMonthFilter] = useState("");
-  const [methodFilter, setMethodFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
+function LoanDetail() {
+  const { identity } = useParams();
   const {
-    isLoading: isLoadingVenture,
-    data: venture,
-    refetch: refetchVenture,
-  } = useFetchVentureDetail(venture_identity);
+    isLoading: isLoadingLoan,
+    data: loan,
+    refetch: refetchLoan,
+  } = useFetchLoanDetail(identity);
   const {
     isLoading: isLoadingMember,
     data: member,
     refetch: refetchMember,
   } = useFetchMember();
+  const [monthFilter, setMonthFilter] = useState("");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Combine deposits and payments
+  // Combine repayments and interest transactions
   const allTransactions = useMemo(() => {
-    if (!venture) return [];
-    const deposits = (venture.deposits || []).map((deposit) => ({
-      ...deposit,
-      transaction_type: "Deposit",
-      balance: venture.balance,
-      payment_method: deposit.payment_method || "N/A",
-      transaction_status: deposit.transaction_status || "Completed",
+    if (!loan) return [];
+    const repayments = (loan.repayments || []).map((repayment) => ({
+      ...repayment,
+      transaction_type: "Repayment",
+      outstanding_balance: loan.outstanding_balance,
       details: "N/A",
     }));
-    const payments = (venture.payments || []).map((payment) => ({
-      ...payment,
-      transaction_type: "Payment",
-      balance: venture.balance,
-      payment_method: payment.payment_method || "N/A",
-      transaction_status: payment.transaction_status || "Completed",
+    const interests = (loan.loan_interests || []).map((interest) => ({
+      ...interest,
+      transaction_type: "Interest",
+      outstanding_balance:
+        interest.outstanding_balance || loan.outstanding_balance,
+      payment_method: interest.payment_method || "N/A",
+      transaction_status: interest.transaction_status || "Completed",
       details: "N/A",
     }));
-    return [...deposits, ...payments].sort(
+    return [...repayments, ...interests].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
-  }, [venture]);
+  }, [loan]);
 
   // Filter transactions
   const filteredTransactions = useMemo(() => {
@@ -90,13 +86,16 @@ function VentureDetail() {
           return false;
         }
       }
-      if (methodFilter && transaction.payment_method !== methodFilter)
+      if (
+        paymentMethodFilter &&
+        transaction.payment_method !== paymentMethodFilter
+      )
         return false;
       if (statusFilter && transaction.transaction_status !== statusFilter)
         return false;
       return true;
     });
-  }, [allTransactions, monthFilter, methodFilter, statusFilter]);
+  }, [allTransactions, monthFilter, paymentMethodFilter, statusFilter]);
 
   // Pagination
   const totalItems = filteredTransactions.length;
@@ -107,8 +106,8 @@ function VentureDetail() {
   );
 
   // Early returns after all Hooks
-  if (isLoadingVenture || isLoadingMember) return <MemberLoadingSpinner />;
-  if (!venture || !member) return <div>No venture or member data found.</div>;
+  if (isLoadingLoan || isLoadingMember) return <MemberLoadingSpinner />;
+  if (!loan || !member) return <div>No loan or member data found.</div>;
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -118,7 +117,7 @@ function VentureDetail() {
 
   const resetFilters = () => {
     setMonthFilter("");
-    setMethodFilter("");
+    setPaymentMethodFilter("");
     setStatusFilter("");
     setCurrentPage(1);
   };
@@ -151,7 +150,7 @@ function VentureDetail() {
 
     // Add member details
     doc.setFontSize(16);
-    doc.text("Venture Transaction Report", margin, yOffset);
+    doc.text("Loan Transaction Report", margin, yOffset);
     yOffset += 10;
     doc.setFontSize(12);
     doc.text(`Member Number: ${member.member_no}`, margin, yOffset);
@@ -169,23 +168,25 @@ function VentureDetail() {
     );
     yOffset += 20;
 
-    // Add venture details
+    // Add loan details
     doc.setFontSize(14);
-    doc.text("Venture Details", margin, yOffset);
+    doc.text("Loan Details", margin, yOffset);
     yOffset += 10;
     doc.setFontSize(12);
-    doc.text(`Venture Type: ${venture.venture_type}`, margin, yOffset);
+    doc.text(`Loan Type: ${loan.loan_type}`, margin, yOffset);
     yOffset += 10;
-    doc.text(`Account Number: ${venture.account_number}`, margin, yOffset);
+    doc.text(`Account Number: ${loan.account_number}`, margin, yOffset);
     yOffset += 10;
     doc.text(
-      `Balance: KES ${parseFloat(venture.balance).toFixed(2)}`,
+      `Loan Amount: KES ${parseFloat(loan.loan_amount).toFixed(2)}`,
       margin,
       yOffset
     );
     yOffset += 10;
     doc.text(
-      `Status: ${venture.is_active ? "Active" : "Inactive"}`,
+      `Outstanding Balance: KES ${parseFloat(loan.outstanding_balance).toFixed(
+        2
+      )}`,
       margin,
       yOffset
     );
@@ -200,7 +201,7 @@ function VentureDetail() {
             "Date",
             "Transaction Type",
             "Amount",
-            "Balance",
+            "Outstanding Balance",
             "Payment Method",
             "Status",
             "Details",
@@ -210,7 +211,9 @@ function VentureDetail() {
           formatDate(t.created_at),
           t.transaction_type,
           `KES ${parseFloat(t.amount).toFixed(2)}`,
-          t.balance ? `KES ${parseFloat(t.balance).toFixed(2)}` : "N/A",
+          t.outstanding_balance
+            ? `KES ${parseFloat(t.outstanding_balance).toFixed(2)}`
+            : "N/A",
           t.payment_method || "N/A",
           t.transaction_status || "N/A",
           t.details || "N/A",
@@ -231,10 +234,7 @@ function VentureDetail() {
 
     // Save PDF
     doc.save(
-      `venture_report_${venture.account_number}_${format(
-        new Date(),
-        "yyyyMMdd"
-      )}.pdf`
+      `loan_report_${loan.account_number}_${format(new Date(), "yyyyMMdd")}.pdf`
     );
   };
 
@@ -250,55 +250,57 @@ function VentureDetail() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{venture?.venture_type}</BreadcrumbPage>
+              <BreadcrumbLink href="/member/loans">Loans</BreadcrumbLink>
             </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbPage>Loan Details</BreadcrumbPage>
           </BreadcrumbList>
         </Breadcrumb>
 
         <Card className="border-l-4 border-l-[#045e32] shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader>
             <CardTitle className="text-2xl font-bold text-[#045e32]">
-              {venture?.venture_type}
+              Loan Details
             </CardTitle>
-            <Button
-              size="sm"
-              className="bg-[#045e32] hover:bg-[#022007] text-white"
-              onClick={() => setPaymentModal(true)}
-            >
-              Make Payment
-            </Button>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <p className="text-base font-medium">
-                Account Number:{" "}
-                <span className="font-normal">{venture?.account_number}</span>
+                Loan Type: <span className="font-normal">{loan.loan_type}</span>
               </p>
               <p className="text-base font-medium">
-                Balance:{" "}
-                <span className="font-normal text-[#045e32]">
-                  KES {parseFloat(venture?.balance).toFixed(2)}
+                Account Number:{" "}
+                <span className="font-normal">{loan.account_number}</span>
+              </p>
+              <p className="text-base font-medium">
+                Loan Amount:{" "}
+                <span className="font-normal">
+                  KES {parseFloat(loan.loan_amount).toFixed(2)}
+                </span>
+              </p>
+              <p className="text-base font-medium">
+                Outstanding Balance:{" "}
+                <span className="font-normal">
+                  KES {parseFloat(loan.outstanding_balance).toFixed(2)}
                 </span>
               </p>
               <p className="text-base font-medium">
                 Status:{" "}
                 <span
-                  className={`font-normal ${
-                    venture?.is_active ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                    loan.is_approved
+                      ? loan.is_active
+                        ? "Active"
+                        : "Inactive"
+                      : "Pending"
+                  )}`}
                 >
-                  {venture?.is_active ? "Active" : "Inactive"}
+                  {loan.is_approved
+                    ? loan.is_active
+                      ? "Active"
+                      : "Inactive"
+                    : "Pending"}
                 </span>
-              </p>
-              <p className="text-base font-medium">
-                Created At:{" "}
-                <span className="font-normal">
-                  {format(new Date(venture?.created_at), "PPP")}
-                </span>
-              </p>
-              <p className="text-base font-medium">
-                Venture Type:{" "}
-                <span className="font-normal">{venture?.venture_type}</span>
               </p>
             </div>
             <Button
@@ -338,16 +340,16 @@ function VentureDetail() {
               </div>
               <div className="space-y-2">
                 <Label
-                  htmlFor="method"
+                  htmlFor="paymentMethod"
                   className="text-sm font-medium text-gray-700"
                 >
                   Payment Method
                 </Label>
                 <select
-                  id="method"
-                  value={methodFilter}
+                  id="paymentMethod"
+                  value={paymentMethodFilter}
                   onChange={(e) => {
-                    setMethodFilter(e.target.value);
+                    setPaymentMethodFilter(e.target.value);
                     setCurrentPage(1);
                   }}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
@@ -400,7 +402,7 @@ function VentureDetail() {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-[#045e32]">
-              All Transactions
+              Repayments & Interest Transactions
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -423,7 +425,7 @@ function VentureDetail() {
                         Amount
                       </TableHead>
                       <TableHead className="text-white font-semibold">
-                        Balance
+                        Outstanding Balance
                       </TableHead>
                       <TableHead className="text-white font-semibold">
                         Payment Method
@@ -451,10 +453,10 @@ function VentureDetail() {
                           KES {parseFloat(transaction.amount).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-sm text-gray-700">
-                          {transaction.balance
-                            ? `KES ${parseFloat(transaction.balance).toFixed(
-                                2
-                              )}`
+                          {transaction.outstanding_balance
+                            ? `KES ${parseFloat(
+                                transaction.outstanding_balance
+                              ).toFixed(2)}`
                             : "N/A"}
                         </TableCell>
                         <TableCell className="text-sm text-gray-700">
@@ -524,16 +526,9 @@ function VentureDetail() {
             )}
           </CardContent>
         </Card>
-
-        <CreateVenturePayment
-          isOpen={paymentModal}
-          onClose={() => setPaymentModal(false)}
-          ventures={[venture]}
-          refetchVenture={refetchVenture}
-        />
       </div>
     </div>
   );
 }
 
-export default VentureDetail;
+export default LoanDetail;

@@ -1,6 +1,6 @@
 "use client";
 
-import { apiActions } from "@/tools/axios";
+import { apiActions, apiMultipartActions } from "@/tools/axios";
 
 // SACCO Admins
 export const createLoanRepayment = async (values, token) => {
@@ -23,4 +23,12 @@ export const getLoanRepayment = async (reference, token) => {
     token
   );
   return response?.data;
+};
+
+export const createBulkLoanRepayment = async (values, token) => {
+  await apiMultipartActions?.post(
+    "/api/v1/loanrepayments/bulk/upload/",
+    values,
+    token
+  );
 };

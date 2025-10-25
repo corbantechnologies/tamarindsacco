@@ -25,6 +25,8 @@ import toast from "react-hot-toast";
 import BulkSavingsAccountsDepositUpload from "@/forms/transactions/BulkSavingsAccountsDepositUpload";
 import BulkVentureAccountsDepositUpload from "@/forms/transactions/BulkVentureAccountsDepositUpload";
 import BulkVentureAccountsPaymentUpload from "@/forms/transactions/BulkVentureAccountsPaymentUpload";
+import BulkLoanRepaymentsUpload from "@/forms/transactions/BulkLoanRepaymentsUpload";
+import BulkTamarindLoanInterestUpload from "@/forms/transactions/BulkTamarindLoanInterestUpload";
 import BulkCombinedUpload from "@/forms/transactions/BulkCombinedUpload";
 
 function Transactions() {
@@ -38,6 +40,10 @@ function Transactions() {
     isVenturePaymentUploadDialogOpen,
     setIsVenturePaymentUploadDialogOpen,
   ] = useState(false);
+  const [isLoanRepaymentUploadDialogOpen, setIsLoanRepaymentUploadDialogOpen] =
+    useState(false);
+  const [isLoanInterestUploadDialogOpen, setIsLoanInterestUploadDialogOpen] =
+    useState(false);
   const [isCombinedUploadDialogOpen, setIsCombinedUploadDialogOpen] =
     useState(false);
   const {
@@ -46,10 +52,10 @@ function Transactions() {
     refetch: refetchAccountsList,
   } = useFetchAccountsList();
 
-  const handleDownload = async () => {
+  const handleDownload = async (interestOnly = false) => {
     setLoading(true);
     try {
-      await downloadAccountsListCSV(token);
+      await downloadAccountsListCSV(token, interestOnly);
     } catch (error) {
       toast.error(error.message || "Failed to download CSV");
       console.error("Error downloading CSV:", error);
@@ -90,7 +96,6 @@ function Transactions() {
               Manage accounts and transactions
             </p>
           </div>
-
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Popover>
               <PopoverTrigger asChild>
@@ -105,7 +110,7 @@ function Transactions() {
               <PopoverContent className="w-auto p-0">
                 <div className="flex flex-col gap-2">
                   <Button
-                    onClick={handleDownload}
+                    onClick={() => handleDownload(false)}
                     disabled={loading}
                     variant="ghost"
                     className="justify-start text-left"
@@ -113,6 +118,15 @@ function Transactions() {
                     <Download className="mr-2 h-4 w-4" />
                     Download Account List
                   </Button>
+                  {/* <Button
+                    onClick={() => handleDownload(true)}
+                    disabled={loading}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Interest Transactions
+                  </Button> */}
                   <Button
                     onClick={() => setIsSavingsUploadDialogOpen(true)}
                     variant="ghost"
@@ -136,6 +150,22 @@ function Transactions() {
                   >
                     <Upload className="mr-2 h-4 w-4" />
                     Venture Payment Upload
+                  </Button>
+                  <Button
+                    onClick={() => setIsLoanRepaymentUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Loan Repayments Upload
+                  </Button>
+                  <Button
+                    onClick={() => setIsLoanInterestUploadDialogOpen(true)}
+                    variant="ghost"
+                    className="justify-start text-left"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Bulk Loan Interest Upload
                   </Button>
                   <Button
                     onClick={() => setIsCombinedUploadDialogOpen(true)}
@@ -172,6 +202,16 @@ function Transactions() {
         <BulkVentureAccountsPaymentUpload
           isOpen={isVenturePaymentUploadDialogOpen}
           onClose={() => setIsVenturePaymentUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkLoanRepaymentsUpload
+          isOpen={isLoanRepaymentUploadDialogOpen}
+          onClose={() => setIsLoanRepaymentUploadDialogOpen(false)}
+          refetchTransactions={refetchAccountsList}
+        />
+        <BulkTamarindLoanInterestUpload
+          isOpen={isLoanInterestUploadDialogOpen}
+          onClose={() => setIsLoanInterestUploadDialogOpen(false)}
           refetchTransactions={refetchAccountsList}
         />
         <BulkCombinedUpload

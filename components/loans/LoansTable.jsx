@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Link from "next/link";
 
-function LoansTable({ loans, isLoading }) {
+function LoansTable({ loans, isLoading, route }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterType, setFilterType] = useState("All");
   const itemsPerPage = 5;
@@ -148,12 +149,8 @@ function LoansTable({ loans, isLoading }) {
                   <TableHead className="text-white font-semibold text-base">
                     Status
                   </TableHead>
-                  {/* TODO: sort this out */}
-                  {/* <TableHead className="text-white font-semibold text-base">
-                    Approved By
-                  </TableHead> */}
                   <TableHead className="text-white font-semibold text-base">
-                    Approval Date
+                    Action
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -184,13 +181,13 @@ function LoansTable({ loans, isLoading }) {
                         {getStatus(loan)}
                       </span>
                     </TableCell>
-                    {/* <TableCell className="text-sm text-gray-700">
-                      {loan.approved_by}
-                    </TableCell> */}
                     <TableCell className="text-sm text-gray-700">
-                      {loan.approval_date
-                        ? format(new Date(loan.approval_date), "MM/dd/yyyy")
-                        : "N/A"}
+                      <Link
+                        href={`/${route}/loans/${loan.identity}`}
+                        className="text-[#045e32] hover:underline cursor-pointer"
+                      >
+                        View
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
