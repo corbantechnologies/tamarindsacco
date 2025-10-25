@@ -5,8 +5,7 @@ import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import InfoCard from "@/components/member/InfoCard";
 import StatsCard from "@/components/member/StatsCard";
 import SavingsTable from "@/components/savings/SavingsTable";
-import { Button } from "@/components/ui/button";
-import CreateSavingsAccount from "@/forms/savings/CreateSavingsAccount";
+
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchMember } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
@@ -100,7 +99,7 @@ function MemberDashboard() {
 
         {/* Loans Table */}
         <div className="space-y-4">
-          <LoansTable loans={loans} isLoading={isLoadingLoans} />
+          <LoansTable loans={loans} isLoading={isLoadingLoans} route="member" />
         </div>
 
         {/* Ventures Table */}
