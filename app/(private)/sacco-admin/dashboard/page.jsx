@@ -7,6 +7,11 @@ import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import VentureTypesTable from "@/components/venturetypes/VentureTypesTable";
 import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
@@ -26,6 +31,7 @@ import {
   Users,
   Wallet,
   Wallet2,
+  Menu,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -50,26 +56,21 @@ function SaccoAdminDashboard() {
     data: savingTypes,
     refetch: refetchSavingTypes,
   } = useFetchSavingsTypes();
-
   const {
     isLoading: isLoadingSavings,
     data: savings,
     refetch: refetchSavings,
-    error: savingsError,
   } = useFetchSavings();
-
   const {
     isLoading: isLoadingLoanTypes,
     data: loanTypes,
     refetch: refetchLoanTypes,
   } = useFetchLoanTypes();
-
   const {
     isLoading: isLoadingLoans,
     data: loans,
     refetch: refetchLoans,
   } = useFetchLoans();
-
   const {
     isLoading: isLoadingVentureTypes,
     data: ventureTypes,
@@ -94,52 +95,63 @@ function SaccoAdminDashboard() {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc5500]">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#cc5500]">
               Welcome, {member?.salutation} {member?.last_name}
             </h1>
-            <p className="text-gray-500 mt-1">
-              Manage your members, saving types, savings and loan types
+            <p className="text-gray-500 text-sm sm:text-base mt-1">
+              Manage your members, saving types, savings, and loan types
             </p>
           </div>
 
-          {/* Header Actions */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Button
-              onClick={() => setMemberCreateModal(true)}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <User className="h-4 w-4 mr-2" /> Member
-            </Button>
-            <Button
-              onClick={() => setSavingTypeModal(true)}
-              className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <Wallet2 className="h-4 w-4 mr-2" /> Saving Type
-            </Button>
-            <Button
-              onClick={() => setLoanTypeModal(true)}
-              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <Plus className="h-4 w-4 mr-2" /> Loan Type
-            </Button>
-            <Button
-              onClick={() => setVentureTypeModal(true)}
-              className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" /> Venture Type
-            </Button>
+          {/* Header Actions in Popover */}
+          <div className="flex items-center justify-end">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button className="bg-[#045e32] hover:bg-[#022007] text-white">
+                  <Menu className="h-5 w-5 mr-2" /> Actions
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-48 p-2">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    onClick={() => setMemberCreateModal(true)}
+                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
+                  >
+                    <User className="h-4 w-4 mr-2" /> Member
+                  </Button>
+                  <Button
+                    onClick={() => setSavingTypeModal(true)}
+                    className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm py-2 px-3 w-full"
+                  >
+                    <Wallet2 className="h-4 w-4 mr-2" /> Saving Type
+                  </Button>
+                  <Button
+                    onClick={() => setLoanTypeModal(true)}
+                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> Loan Type
+                  </Button>
+                  <Button
+                    onClick={() => setVentureTypeModal(true)}
+                    className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm py-2 px-3 w-full"
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-2" /> Venture Type
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <AdminInfoCard member={member} />
-          <StatsCard
+          {/* <StatsCard
             title="Total Members"
             value={members?.length}
             Icon={Users}
             description="Active members in the system"
-          />
+          /> */}
           <StatsCard
             title="Savings Types"
             value={savingTypes?.length}
@@ -162,14 +174,12 @@ function SaccoAdminDashboard() {
 
         {/* Tables Section */}
         <div className="space-y-6">
-          {/* Put these tables side by side and stack over each other on smaller screens */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <SavingsTypesTable savingTypes={savingTypes} />
             <LoanTypesTable loanTypes={loanTypes} />
             <VentureTypesTable ventureTypes={ventureTypes} />
           </div>
 
-          {/* Members Table */}
           <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
@@ -182,18 +192,15 @@ function SaccoAdminDashboard() {
           onClose={() => setSavingTypeModal(false)}
           refetchSavingTypes={refetchSavingTypes}
         />
-
         <CreateMember
           openModal={memberCreateModal}
           closeModal={() => setMemberCreateModal(false)}
         />
-
         <CreateLoanType
           isOpen={loanTypeModal}
           onClose={() => setLoanTypeModal(false)}
           refetchLoanTypes={refetchLoanTypes}
         />
-
         <CreateVentureType
           isOpen={ventureTypeModal}
           onClose={() => setVentureTypeModal(false)}

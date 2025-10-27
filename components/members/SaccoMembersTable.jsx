@@ -25,7 +25,6 @@ function SaccoMembersTable({ members }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  // Filter members by search term and status
   const filteredMembers =
     members?.filter((member) => {
       const fullName =
@@ -38,7 +37,6 @@ function SaccoMembersTable({ members }) {
       return matchesSearch && matchesStatus;
     }) || [];
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
   const paginatedMembers = filteredMembers.slice(
     (currentPage - 1) * itemsPerPage,
@@ -54,15 +52,16 @@ function SaccoMembersTable({ members }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#cc5500]">Members List</CardTitle>
+        <CardTitle className="text-lg sm:text-xl text-[#cc5500]">
+          Members List
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Search and Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="flex-1">
             <Label
               htmlFor="search"
-              className="text-base text-black font-medium sr-only"
+              className="text-sm text-black font-medium sr-only"
             >
               Search Members
             </Label>
@@ -74,16 +73,16 @@ function SaccoMembersTable({ members }) {
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setCurrentPage(1); // Reset to first page on search
+                  setCurrentPage(1);
                 }}
-                className="pl-10 border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+                className="pl-10 border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-sm sm:text-base"
               />
             </div>
           </div>
           <div className="w-full sm:w-48">
             <Label
               htmlFor="status-filter"
-              className="text-base text-black font-medium sr-only"
+              className="text-sm text-black font-medium sr-only"
             >
               Filter by Status
             </Label>
@@ -92,9 +91,9 @@ function SaccoMembersTable({ members }) {
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
-                setCurrentPage(1); // Reset to first page on filter change
+                setCurrentPage(1);
               }}
-              className="w-full border border-black rounded-md px-3 py-2 text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
+              className="w-full border border-black rounded-md px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-[#cc5500] focus:border-[#cc5500] transition-colors"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Approved</option>
@@ -103,37 +102,45 @@ function SaccoMembersTable({ members }) {
           </div>
         </div>
 
-        {/* Table */}
         {filteredMembers.length > 0 ? (
           <>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-black">Member No</TableHead>
-                    <TableHead className="text-black">Name</TableHead>
-                    <TableHead className="text-black">Status</TableHead>
-                    <TableHead className="text-black">Actions</TableHead>
+                    <TableHead className="text-black text-sm sm:text-base">
+                      Member No
+                    </TableHead>
+                    <TableHead className="text-black text-sm sm:text-base">
+                      Name
+                    </TableHead>
+                    <TableHead className="text-black text-sm sm:text-base">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-black text-sm sm:text-base">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedMembers.map((member) => (
                     <TableRow key={member?.reference}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium text-sm sm:text-base">
                         <Link
                           href={`/sacco-admin/members/${member?.member_no}`}
+                          className="truncate block"
                         >
                           {member?.member_no}
                         </Link>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-sm sm:text-base">
                         <Link
                           href={`/sacco-admin/members/${member?.member_no}`}
+                          className="truncate block"
                         >
                           {member?.first_name} {member?.last_name}
                         </Link>
                       </TableCell>
-
                       <TableCell>
                         <Badge
                           variant={
@@ -161,7 +168,7 @@ function SaccoMembersTable({ members }) {
                               `/sacco-admin/members/${member?.member_no}`
                             );
                           }}
-                          className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+                          className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm"
                         >
                           Manage
                         </Button>
@@ -172,20 +179,19 @@ function SaccoMembersTable({ members }) {
               </Table>
             </div>
 
-            {/* Pagination Controls */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 whitespace-nowrap">
                 Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
                 {Math.min(currentPage * itemsPerPage, filteredMembers.length)}{" "}
                 of {filteredMembers.length} members
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="border-black text-black hover:bg-gray-100"
+                  className="border-black text-black hover:bg-gray-100 text-sm"
                 >
                   Previous
                 </Button>
@@ -196,11 +202,11 @@ function SaccoMembersTable({ members }) {
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
                       onClick={() => handlePageChange(page)}
-                      className={
+                      className={`min-w-[2.5rem] ${
                         currentPage === page
                           ? "bg-[#cc5500] text-white hover:bg-[#e66b00]"
                           : "border-black text-black hover:bg-gray-100"
-                      }
+                      } text-sm`}
                     >
                       {page}
                     </Button>
@@ -211,7 +217,7 @@ function SaccoMembersTable({ members }) {
                   size="sm"
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="border-black text-black hover:bg-gray-100"
+                  className="border-black text-black hover:bg-gray-100 text-sm"
                 >
                   Next
                 </Button>
