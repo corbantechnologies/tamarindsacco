@@ -144,14 +144,14 @@ function SaccoAdminDashboard() {
         </div>
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <AdminInfoCard member={member} />
-          <StatsCard
+          {/* <StatsCard
             title="Total Members"
             value={members?.length}
             Icon={Users}
             description="Active members in the system"
-          />
+          /> */}
           <StatsCard
             title="Savings Types"
             value={savingTypes?.length}

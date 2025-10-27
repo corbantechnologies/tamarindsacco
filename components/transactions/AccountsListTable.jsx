@@ -210,17 +210,17 @@ const AccountsListTable = ({ accountsList }) => {
   return (
     <div className="space-y-4">
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3">
+        <div className="relative flex-1 max-w-[400px]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search by Member Number or Name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 text-sm sm:text-base h-10"
           />
         </div>
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap md:gap-2">
           {/* Savings Types Dropdown */}
           <div>
             <Popover open={openSavings} onOpenChange={setOpenSavings}>
@@ -229,17 +229,20 @@ const AccountsListTable = ({ accountsList }) => {
                   variant="outline"
                   role="combobox"
                   aria-expanded={openSavings}
-                  className="w-[200px] justify-between"
+                  className="w-full md:w-[180px] justify-between text-sm sm:text-base h-10"
                 >
                   {selectedSavingsTypes.length > 0
-                    ? `${selectedSavingsTypes.length} savings selected`
-                    : "Select savings types"}
+                    ? `${selectedSavingsTypes.length} savings`
+                    : "Savings types"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
+              <PopoverContent className="w-[180px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search savings types..." />
+                  <CommandInput
+                    placeholder="Search savings..."
+                    className="text-sm"
+                  />
                   <CommandList>
                     <CommandEmpty>No savings types found.</CommandEmpty>
                     <CommandGroup>
@@ -250,6 +253,7 @@ const AccountsListTable = ({ accountsList }) => {
                           onSelect={() => {
                             handleSavingsTypeFilter(type);
                           }}
+                          className="text-sm"
                         >
                           <Check
                             className={cn(
@@ -276,17 +280,20 @@ const AccountsListTable = ({ accountsList }) => {
                   variant="outline"
                   role="combobox"
                   aria-expanded={openVentures}
-                  className="w-[200px] justify-between"
+                  className="w-full md:w-[180px] justify-between text-sm sm:text-base h-10"
                 >
                   {selectedVentureTypes.length > 0
-                    ? `${selectedVentureTypes.length} ventures selected`
-                    : "Select venture types"}
+                    ? `${selectedVentureTypes.length} ventures`
+                    : "Venture types"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
+              <PopoverContent className="w-[180px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search venture types..." />
+                  <CommandInput
+                    placeholder="Search ventures..."
+                    className="text-sm"
+                  />
                   <CommandList>
                     <CommandEmpty>No venture types found.</CommandEmpty>
                     <CommandGroup>
@@ -297,6 +304,7 @@ const AccountsListTable = ({ accountsList }) => {
                           onSelect={() => {
                             handleVentureTypeFilter(type);
                           }}
+                          className="text-sm"
                         >
                           <Check
                             className={cn(
@@ -323,17 +331,20 @@ const AccountsListTable = ({ accountsList }) => {
                   variant="outline"
                   role="combobox"
                   aria-expanded={openLoans}
-                  className="w-[200px] justify-between"
+                  className="w-full md:w-[180px] justify-between text-sm sm:text-base h-10"
                 >
                   {selectedLoanTypes.length > 0
-                    ? `${selectedLoanTypes.length} loans selected`
-                    : "Select loan types"}
+                    ? `${selectedLoanTypes.length} loans`
+                    : "Loan types"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
+              <PopoverContent className="w-[180px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search loan types..." />
+                  <CommandInput
+                    placeholder="Search loans..."
+                    className="text-sm"
+                  />
                   <CommandList>
                     <CommandEmpty>No loan types found.</CommandEmpty>
                     <CommandGroup>
@@ -344,6 +355,7 @@ const AccountsListTable = ({ accountsList }) => {
                           onSelect={() => {
                             handleLoanTypeFilter(type);
                           }}
+                          className="text-sm"
                         >
                           <Check
                             className={cn(
@@ -366,21 +378,26 @@ const AccountsListTable = ({ accountsList }) => {
           <Button
             variant="outline"
             onClick={handleClearFilters}
-            className="h-10 px-4"
+            className="w-full md:w-auto h-10 px-3 text-sm sm:text-base"
           >
             <X className="mr-2 h-4 w-4" />
-            Clear Filters
+            Clear
           </Button>
         </div>
       </div>
 
       {/* Main Table */}
-      <div className="border rounded-md">
+      <div className="border rounded-md overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
               {headers.map((header) => (
-                <TableHead key={header}>{header}</TableHead>
+                <TableHead
+                  key={header}
+                  className="text-sm sm:text-base whitespace-nowrap"
+                >
+                  {header}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -389,8 +406,12 @@ const AccountsListTable = ({ accountsList }) => {
               filteredAccounts.map((user) => (
                 <React.Fragment key={user.member_no}>
                   <TableRow>
-                    <TableCell>{user.member_no}</TableCell>
-                    <TableCell>{user.member_name}</TableCell>
+                    <TableCell className="text-sm sm:text-base truncate">
+                      {user.member_no}
+                    </TableCell>
+                    <TableCell className="text-sm sm:text-base truncate">
+                      {user.member_name}
+                    </TableCell>
                     <TableCell>
                       {user.loan_interest.length > 0 && (
                         <Button
@@ -416,8 +437,10 @@ const AccountsListTable = ({ accountsList }) => {
                         );
                         return (
                           <React.Fragment key={type}>
-                            <TableCell>{account ? account[0] : ""}</TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm sm:text-base truncate">
+                              {account ? account[0] : ""}
+                            </TableCell>
+                            <TableCell className="text-sm sm:text-base">
                               {account ? account[2].toFixed(2) : ""}
                             </TableCell>
                           </React.Fragment>
@@ -435,8 +458,10 @@ const AccountsListTable = ({ accountsList }) => {
                         );
                         return (
                           <React.Fragment key={type}>
-                            <TableCell>{account ? account[0] : ""}</TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm sm:text-base truncate">
+                              {account ? account[0] : ""}
+                            </TableCell>
+                            <TableCell className="text-sm sm:text-base">
                               {account ? account[2].toFixed(2) : ""}
                             </TableCell>
                           </React.Fragment>
@@ -454,8 +479,10 @@ const AccountsListTable = ({ accountsList }) => {
                         );
                         return (
                           <React.Fragment key={type}>
-                            <TableCell>{account ? account[0] : ""}</TableCell>
-                            <TableCell>
+                            <TableCell className="text-sm sm:text-base truncate">
+                              {account ? account[0] : ""}
+                            </TableCell>
+                            <TableCell className="text-sm sm:text-base">
                               {account ? account[2].toFixed(2) : ""}
                             </TableCell>
                           </React.Fragment>
@@ -473,7 +500,12 @@ const AccountsListTable = ({ accountsList }) => {
                               <TableHeader>
                                 <TableRow>
                                   {interestHeaders.map((header) => (
-                                    <TableHead key={header}>{header}</TableHead>
+                                    <TableHead
+                                      key={header}
+                                      className="text-sm sm:text-base whitespace-nowrap"
+                                    >
+                                      {header}
+                                    </TableHead>
                                   ))}
                                 </TableRow>
                               </TableHeader>
@@ -499,14 +531,16 @@ const AccountsListTable = ({ accountsList }) => {
                                       );
                                       return (
                                         <TableRow key={`${acc_no}-${index}`}>
-                                          <TableCell>{acc_no}</TableCell>
-                                          <TableCell>
+                                          <TableCell className="text-sm sm:text-base truncate">
+                                            {acc_no}
+                                          </TableCell>
+                                          <TableCell className="text-sm sm:text-base truncate">
                                             {loan ? loan[1] : "Unknown"}
                                           </TableCell>
-                                          <TableCell>
+                                          <TableCell className="text-sm sm:text-base">
                                             {amount.toFixed(2)}
                                           </TableCell>
-                                          <TableCell>
+                                          <TableCell className="text-sm sm:text-base">
                                             {outstanding_balance.toFixed(2)}
                                           </TableCell>
                                         </TableRow>
@@ -525,7 +559,7 @@ const AccountsListTable = ({ accountsList }) => {
               <TableRow>
                 <TableCell
                   colSpan={headers.length}
-                  className="text-center text-gray-500"
+                  className="text-center text-gray-500 text-sm sm:text-base"
                 >
                   No accounts found
                 </TableCell>
