@@ -15,55 +15,11 @@ function SaccoAdminNavbar() {
       <header className="bg-[#cc5500] text-white sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-xl md:text-2xl font-bold">Tamarind SACCO</h1>
-          <nav className="hidden md:flex gap-6 items-center">
-            <Link
-              href="/sacco-admin/dashboard"
-              className="hover:underline text-base"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/sacco-admin/personal"
-              className="hover:underline text-base"
-            >
-              Personal
-            </Link>
-            <Link
-              href="/sacco-admin/members"
-              className="hover:underline text-base"
-            >
-              Members
-            </Link>
-            <Link
-              href="/sacco-admin/transact"
-              className="hover:underline text-base"
-            >
-              Transact
-            </Link>
-            <Link
-              href="/sacco-admin/withdrawals"
-              className="hover:underline text-base"
-            >
-              Withdrawals
-            </Link>
-            <Link
-              href="/sacco-admin/settings"
-              className="hover:underline text-base"
-            >
-              Profile
-            </Link>
-            <Button
-              variant="outline"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="border-white text-black hover:bg-white hover:text-[#cc5500] text-base py-1"
-            >
-              Logout
-            </Button>
-          </nav>
           <Button
             variant="outline"
-            className="md:hidden border-white cursor-pointer text-black hover:bg-white hover:text-[#cc5500]"
+            className="border-white text-black hover:bg-white hover:text-[#cc5500]"
             onClick={() => setIsMenuOpen(true)}
+            aria-label="Open menu"
           >
             <MenuIcon className="h-5 w-5" />
             <span className="sr-only">Menu</span>
@@ -71,11 +27,11 @@ function SaccoAdminNavbar() {
         </div>
       </header>
 
-      {/* Mobile Sidebar */}
+      {/* Sidebar */}
       <div
         className={`fixed inset-y-0 right-0 z-50 w-[200px] sm:w-[300px] bg-white text-black transform ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out md:hidden border-l border-[#cc5500] shadow-lg`}
+        } transition-transform duration-300 ease-in-out border-l border-[#cc5500] shadow-lg`}
       >
         <div className="flex flex-col h-full">
           <div className="p-4 flex justify-between items-center">
@@ -84,6 +40,7 @@ function SaccoAdminNavbar() {
               variant="ghost"
               className="p-2 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
+              aria-label="Close menu"
             >
               <XIcon className="h-5 w-5 text-black" />
               <span className="sr-only">Close menu</span>
@@ -130,7 +87,7 @@ function SaccoAdminNavbar() {
               className="text-lg hover:text-[#cc5500]"
               onClick={() => setIsMenuOpen(false)}
             >
-              Settings
+              Profile
             </Link>
             <Button
               variant="outline"
@@ -146,10 +103,10 @@ function SaccoAdminNavbar() {
         </div>
       </div>
 
-      {/* Overlay for Mobile Sidebar */}
+      {/* Overlay for Sidebar */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
