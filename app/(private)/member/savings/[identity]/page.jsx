@@ -25,14 +25,14 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import CreateWithdrawal from "@/forms/savingswithdrawals/CreateWithdrawal";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 function SavingsDetail() {
   const { identity } = useParams();
-  const [withdrawalModal, setWithdrawalModal] = useState(false);
   const [monthFilter, setMonthFilter] = useState("");
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
   const [methodFilter, setMethodFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,6 +77,7 @@ function SavingsDetail() {
   const filteredTransactions = useMemo(() => {
     return allTransactions.filter((transaction) => {
       const transactionDate = new Date(transaction.created_at);
+      // Apply month filter if set
       if (monthFilter) {
         const [year, month] = monthFilter.split("-").map(Number);
         const startOfSelectedMonth = startOfMonth(new Date(year, month - 1));
@@ -90,13 +91,33 @@ function SavingsDetail() {
           return false;
         }
       }
+      // Apply date range filter if both dates are set
+      if (startDateFilter && endDateFilter) {
+        const startDate = new Date(startDateFilter);
+        const endDate = new Date(endDateFilter);
+        if (
+          !isWithinInterval(transactionDate, {
+            start: startDate,
+            end: endDate,
+          })
+        ) {
+          return false;
+        }
+      }
       if (methodFilter && transaction.payment_method !== methodFilter)
         return false;
       if (statusFilter && transaction.transaction_status !== statusFilter)
         return false;
       return true;
     });
-  }, [allTransactions, monthFilter, methodFilter, statusFilter]);
+  }, [
+    allTransactions,
+    monthFilter,
+    startDateFilter,
+    endDateFilter,
+    methodFilter,
+    statusFilter,
+  ]);
 
   // Pagination
   const totalItems = filteredTransactions.length;
@@ -118,6 +139,8 @@ function SavingsDetail() {
 
   const resetFilters = () => {
     setMonthFilter("");
+    setStartDateFilter("");
+    setEndDateFilter("");
     setMethodFilter("");
     setStatusFilter("");
     setCurrentPage(1);
@@ -191,6 +214,49 @@ function SavingsDetail() {
     );
     yOffset += 20;
 
+    // Add filter details
+    doc.setFontSize(14);
+    doc.text("Applied Filters", margin, yOffset);
+    yOffset += 10;
+    doc.setFontSize(12);
+    if (monthFilter) {
+      const [year, month] = monthFilter.split("-").map(Number);
+      doc.text(
+        `Month: ${format(new Date(year, month - 1), "MMMM yyyy")}`,
+        margin,
+        yOffset
+      );
+      yOffset += 10;
+    } else if (startDateFilter && endDateFilter) {
+      doc.text(
+        `Date Range: ${formatDate(startDateFilter)} to ${formatDate(
+          endDateFilter
+        )}`,
+        margin,
+        yOffset
+      );
+      yOffset += 10;
+    }
+    if (methodFilter && methodFilter !== "all") {
+      doc.text(`Payment Method: ${methodFilter}`, margin, yOffset);
+      yOffset += 10;
+    }
+    if (statusFilter && statusFilter !== "all") {
+      doc.text(`Status: ${statusFilter}`, margin, yOffset);
+      yOffset += 10;
+    }
+    if (
+      !monthFilter &&
+      !startDateFilter &&
+      !endDateFilter &&
+      !methodFilter &&
+      !statusFilter
+    ) {
+      doc.text("No filters applied", margin, yOffset);
+      yOffset += 10;
+    }
+    yOffset += 10;
+
     // Add transactions table
     if (filteredTransactions.length > 0) {
       autoTable(doc, {
@@ -260,13 +326,7 @@ function SavingsDetail() {
             <CardTitle className="text-2xl font-bold text-[#045e32]">
               {saving?.account_type}
             </CardTitle>
-            <Button
-              size="sm"
-              className="bg-[#045e32] hover:bg-[#022007] text-white"
-              onClick={() => setWithdrawalModal(true)}
-            >
-              Withdraw
-            </Button>
+            
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -327,6 +387,46 @@ function SavingsDetail() {
                   value={monthFilter}
                   onChange={(e) => {
                     setMonthFilter(e.target.value);
+                    setStartDateFilter(""); // Clear date range when month is selected
+                    setEndDateFilter("");
+                    setCurrentPage(1);
+                  }}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="startDate"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Start Date
+                </Label>
+                <input
+                  type="date"
+                  id="startDate"
+                  value={startDateFilter}
+                  onChange={(e) => {
+                    setStartDateFilter(e.target.value);
+                    setMonthFilter(""); // Clear month when date range is selected
+                    setCurrentPage(1);
+                  }}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="endDate"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  End Date
+                </Label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={endDateFilter}
+                  onChange={(e) => {
+                    setEndDateFilter(e.target.value);
+                    setMonthFilter(""); // Clear month when date range is selected
                     setCurrentPage(1);
                   }}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
@@ -521,12 +621,7 @@ function SavingsDetail() {
           </CardContent>
         </Card>
 
-        <CreateWithdrawal
-          isOpen={withdrawalModal}
-          onClose={() => setWithdrawalModal(false)}
-          account={saving}
-          refetchAccount={refetchSaving}
-        />
+        
       </div>
     </div>
   );
