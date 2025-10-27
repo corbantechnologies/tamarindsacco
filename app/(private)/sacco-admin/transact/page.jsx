@@ -68,7 +68,7 @@ function Transactions() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className="container mx-auto p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
@@ -87,12 +87,12 @@ function Transactions() {
         </Breadcrumb>
 
         {/* Headers */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#cc5500]">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#cc5500]">
               Accounts & Transactions
             </h1>
-            <p className="text-gray-500 text-sm sm:text-base mt-1">
+            <p className="text-gray-500 text-xs sm:text-sm mt-1">
               Manage accounts and transactions
             </p>
           </div>
@@ -100,70 +100,70 @@ function Transactions() {
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white text-xs sm:text-sm py-1.5 px-2 sm:py-2 sm:px-3 h-10"
                   disabled={loading}
                 >
-                  <Menu className="mr-2 h-4 w-4" />
+                  <Menu className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   Actions
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-64 sm:w-80 p-2">
-                <div className="flex flex-col gap-2">
+              <PopoverContent className="w-56 sm:w-72 p-1 sm:p-2">
+                <div className="flex flex-col gap-1 sm:gap-2">
                   <Button
                     onClick={() => handleDownload(false)}
                     disabled={loading}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Download Account List
                   </Button>
                   <Button
                     onClick={() => setIsSavingsUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Savings Deposit Upload
                   </Button>
                   <Button
                     onClick={() => setIsVentureUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Venture Deposit Upload
                   </Button>
                   <Button
                     onClick={() => setIsVenturePaymentUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Venture Payment Upload
                   </Button>
                   <Button
                     onClick={() => setIsLoanRepaymentUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Bulk Loan Repayments Upload
                   </Button>
                   <Button
                     onClick={() => setIsLoanInterestUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Bulk Loan Interest Upload
                   </Button>
                   <Button
                     onClick={() => setIsCombinedUploadDialogOpen(true)}
                     variant="ghost"
-                    className="justify-start text-left text-sm sm:text-base py-2 px-3"
+                    className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
                   >
-                    <Upload className="mr-2 h-4 w-4" />
+                    <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Bulk Combined Upload
                   </Button>
                 </div>
@@ -176,7 +176,9 @@ function Transactions() {
         {accountsList ? (
           <AccountsListTable accountsList={accountsList} />
         ) : (
-          <div className="text-center text-gray-500">No accounts available</div>
+          <div className="text-center text-gray-500 text-xs sm:text-sm">
+            No accounts available
+          </div>
         )}
 
         {/* Bulk Upload Dialogs */}
