@@ -20,7 +20,6 @@ function SavingsTypesTable({ savingTypes }) {
   const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 5;
 
-  // Filter saving types by search term (name)
   const filteredSavingTypes = useMemo(() => {
     if (!searchTerm) return savingTypes;
     return savingTypes?.filter((type) =>
@@ -28,7 +27,6 @@ function SavingsTypesTable({ savingTypes }) {
     );
   }, [savingTypes, searchTerm]);
 
-  // Pagination logic
   const totalItems = filteredSavingTypes?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const paginatedSavingTypes = filteredSavingTypes?.slice(
@@ -36,7 +34,6 @@ function SavingsTypesTable({ savingTypes }) {
     currentPage * itemsPerPage
   );
 
-  // Handle page change
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -56,10 +53,11 @@ function SavingsTypesTable({ savingTypes }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl text-[#cc5500]">Savings Types</CardTitle>
+        <CardTitle className="text-lg sm:text-xl text-[#cc5500]">
+          Savings Types
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Search Filter */}
         <div className="flex items-center gap-4">
           <Label htmlFor="search" className="text-sm font-medium text-gray-700">
             Search by Name
@@ -72,27 +70,23 @@ function SavingsTypesTable({ savingTypes }) {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // Reset to first page on search
+                setCurrentPage(1);
               }}
-              className="pl-10 border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base"
+              className="pl-10 border-gray-300 focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-sm sm:text-base"
             />
           </div>
         </div>
 
-        {/* Table */}
-        <div className=" rounded-lg shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-[#cc5500] hover:bg-[#cc5500]">
-                <TableHead className="text-white font-semibold text-base">
+                <TableHead className="text-white font-semibold text-sm sm:text-base">
                   Name
                 </TableHead>
-                <TableHead className="text-white font-semibold text-base">
+                <TableHead className="text-white font-semibold text-sm sm:text-base">
                   Interest Rate
                 </TableHead>
-                {/* <TableHead className="text-white font-semibold text-base">
-                  Description
-                </TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,30 +95,26 @@ function SavingsTypesTable({ savingTypes }) {
                   key={type.reference}
                   className="border-b border-gray-200"
                 >
-                  <TableCell className="font-medium text-gray-900">
+                  <TableCell className="font-medium text-gray-900 text-sm sm:text-base truncate">
                     {type.name}
                   </TableCell>
-                  <TableCell className="font-semibold text-green-600">
+                  <TableCell className="font-semibold text-green-600 text-sm sm:text-base">
                     {type.interest_rate}%
                   </TableCell>
-                  {/* <TableCell className="text-gray-600">
-                    {type.description}
-                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
-            <div className="text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+            <div className="text-sm text-gray-500 whitespace-nowrap">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
               entries
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -139,7 +129,7 @@ function SavingsTypesTable({ savingTypes }) {
                     key={page}
                     onClick={() => handlePageChange(page)}
                     variant={currentPage === page ? "default" : "outline"}
-                    className={`${
+                    className={`min-w-[2.5rem] ${
                       currentPage === page
                         ? "bg-[#cc5500] text-white"
                         : "border-[#cc5500] text-[#cc5500] hover:bg-[#cc5500] hover:text-white"
