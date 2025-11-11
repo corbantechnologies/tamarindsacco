@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import UpdateAccount from "@/forms/member/UpdateAccount";
 import ChangePassword from "@/forms/member/ChangePassword";
+import NextOfKinTable from "@/components/nextofkin/NextOfKinTable";
+import NextOfKinFormDialog from "@/forms/nextofkin/NextOfKinFormDialog";
 
 function AccountSettings() {
   const {
@@ -38,8 +40,11 @@ function AccountSettings() {
     refetch: refetchMember,
   } = useFetchMember();
 
+  console.log(member);
+
   const [updateModal, setUpdateModal] = useState(false);
   const [passwordModal, setPasswordModal] = useState(false);
+  const [nextOfKinModal, setNextOfKinModal] = useState(false);
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -139,6 +144,7 @@ function AccountSettings() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
+            {/* Personal Information */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -176,6 +182,30 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
+            {/* Next of Kin */}
+            <Card className="shadow-md">
+              <CardHeader className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <User className="h-6 w-6 text-[#045e32]" />
+                  Next of Kin
+                </CardTitle>
+                <Button
+                  onClick={() => setNextOfKinModal(true)}
+                  size="sm"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white"
+                >
+                  Add New
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <NextOfKinTable
+                  nextofkin={member?.next_of_kin}
+                  refetchAccount={refetchMember}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Employment Details */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -202,6 +232,7 @@ function AccountSettings() {
               </CardContent>
             </Card>
 
+            {/* Savings Accounts */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -334,6 +365,11 @@ function AccountSettings() {
         <ChangePassword
           isOpen={passwordModal}
           onClose={() => setPasswordModal(false)}
+        />
+        <NextOfKinFormDialog
+          isOpen={nextOfKinModal}
+          onClose={() => setNextOfKinModal(false)}
+          refetchAccount={refetchMember}
         />
       </div>
     </div>
