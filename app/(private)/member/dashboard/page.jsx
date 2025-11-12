@@ -11,7 +11,9 @@ import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
 import YearlySummaryTable from "@/components/summary/YearlySummaryTable";
 import MonthsSummaryTable from "@/components/summary/MonthsSummaryTable";
 import DetailedMonthlySummaryTable from "@/components/summary/DetailedMonthlySummaryTable";
-import DetailedSummaryTable from "@/components/summary/DetailedSummary";
+import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
+import DetailedSummaryCards from "@/components/summary/DetailedSummary";
+import DetailedSummaryAccordion from "@/components/summary/DetailedSummaryAccordion";
 
 function MemberDashboard() {
   const {
@@ -62,16 +64,30 @@ function MemberDashboard() {
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Yearly Summary
+            Monthly Summary Table without types
           </h2>
           <DetailedMonthlySummaryTable data={summary} />
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Yearly Summary
+            Detailed Table Summary
           </h2>
           <DetailedSummaryTable data={summary} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Yearly Summary
+          </h2>
+          <DetailedSummaryAccordion data={summary} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Yearly Summary
+          </h2>
+          <DetailedSummaryCards data={summary} />
         </div>
       </div>
     </div>
