@@ -126,9 +126,11 @@ function DetailedSummaryTable({ data }) {
           <tr className="border-b bg-gray-50">
             <th
               rowSpan={3}
-              className="text-left font-semibold px-3 py-2 w-24 align-bottom"
+              className="relative font-semibold px-3 py-2 w-24 align-bottom border-r"
             >
+              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               Month
+              </span>
             </th>
             <th
               colSpan={savingsTypes.length * 2}
@@ -172,7 +174,7 @@ function DetailedSummaryTable({ data }) {
               <th
                 key={t}
                 colSpan={4}
-                className="text-center font-medium px-3 py-1 align-bottom"
+                className="text-center font-medium px-3 py-1 align-bottom border-r last:border-r-0"
               >
                 {t}
               </th>
@@ -234,7 +236,7 @@ function DetailedSummaryTable({ data }) {
               </th>,
               <th
                 key={`${t}-out`}
-                className="text-right font-medium px-3 py-1 align-bottom"
+                className="text-right font-medium px-3 py-1 align-bottom border-r last:border-r-0"
               >
                 Out
               </th>,
@@ -246,7 +248,7 @@ function DetailedSummaryTable({ data }) {
             const k = m.month;
             return (
               <tr key={k} className="h-8 hover:bg-gray-50">
-                <td className="font-medium text-left px-3 py-1">
+                <td className="font-medium text-left px-3 py-1 border-r">
                   {k.split(" ")[0]}
                 </td>
                 {savingsTypes.map((t) => {
@@ -260,7 +262,6 @@ function DetailedSummaryTable({ data }) {
                     </React.Fragment>
                   );
                 })}
-                )
                 {ventureTypes.map((t) => {
                   const v = getValue(k, "ventures", t);
                   return (
@@ -273,7 +274,6 @@ function DetailedSummaryTable({ data }) {
                     </React.Fragment>
                   );
                 })}
-                )
                 {loanTypes.map((t) => {
                   const v = getValue(k, "loans", t);
                   return (
@@ -281,13 +281,12 @@ function DetailedSummaryTable({ data }) {
                       <td className="text-right px-3 py-1">{format(v.disb)}</td>
                       <td className="text-right px-3 py-1">{format(v.rep)}</td>
                       <td className="text-right px-3 py-1">{format(v.int)}</td>
-                      <td className="text-right font-medium px-3 py-1">
+                      <td className="text-right font-medium px-3 py-1 border-r last:border-r-0">
                         {format(v.out)}
                       </td>
                     </React.Fragment>
                   );
                 })}
-                )
               </tr>
             );
           })}

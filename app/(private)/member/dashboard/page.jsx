@@ -32,8 +32,6 @@ function MemberDashboard() {
     return <MemberLoadingSpinner />;
   }
 
-  console.log(summary);
-
   return (
     <div className="min-h-screen bg-gray-100">
       <div className=" sm:p-6 space-y-6">
