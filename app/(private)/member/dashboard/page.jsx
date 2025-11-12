@@ -55,37 +55,9 @@ function MemberDashboard() {
         {/* Summary */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Yearly Summary
-          </h2>
-          <MonthsSummaryTable data={summary} />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Monthly Summary Table without types
-          </h2>
-          <DetailedMonthlySummaryTable data={summary} />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
             Detailed Table Summary
           </h2>
           <DetailedSummaryTable data={summary} />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Yearly Summary
-          </h2>
-          <DetailedSummaryAccordion data={summary} />
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Yearly Summary
-          </h2>
-          <DetailedSummaryCards data={summary} />
         </div>
       </div>
     </div>
