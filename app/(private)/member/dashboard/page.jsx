@@ -8,6 +8,8 @@ import { useFetchMember } from "@/hooks/members/actions";
 import LoansTable from "@/components/loans/LoansTable";
 import VenturesTable from "@/components/ventures/VenturesTable";
 import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
+import YearlySummaryTable from "@/components/summary/YearlySummaryTable";
+import MonthsSummaryTable from "@/components/summary/MonthsSummaryTable";
 
 function MemberDashboard() {
   const {
@@ -22,7 +24,7 @@ function MemberDashboard() {
     refetch: refetchSummary,
   } = useFetchMemberYearlySummary();
 
-  if (isLoadingMember) {
+  if (isLoadingMember || isLoadingSummary) {
     return <MemberLoadingSpinner />;
   }
 
@@ -48,31 +50,12 @@ function MemberDashboard() {
           <InfoCard member={member} />
         </div>
 
-        {/* Savings Table */}
-        <div className="space-y-4">
-          <SavingsTable
-            savings={member?.savings_accounts}
-            isLoading={isLoadingMember}
-            route="member"
-          />
-        </div>
-
-        {/* Loans Table */}
-        <div className="space-y-4">
-          <LoansTable
-            loans={member?.loans}
-            isLoading={isLoadingMember}
-            route="member"
-          />
-        </div>
-
-        {/* Ventures Table */}
-        <div className="space-y-4">
-          <VenturesTable
-            ventures={member?.venture_accounts}
-            isLoading={isLoadingMember}
-            route="member"
-          />
+        {/* Summary */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Yearly Summary
+          </h2>
+          <MonthsSummaryTable data={summary} />
         </div>
       </div>
     </div>
