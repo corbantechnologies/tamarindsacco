@@ -42,88 +42,94 @@ function MonthsSummaryTable({ data }) {
 
   return (
     <div className="w-full overflow-x-auto rounded-md border">
-      <Table>
+      <Table className="text-xs">
+        {" "}
+        {/* Smaller base font */}
         <TableHeader>
-          {/* Main Header Row */}
-          <TableRow className="border-b">
-            <TableHead className="text-left font-semibold text-gray-700">
+          {/* Main Header */}
+          <TableRow className="border-b h-8">
+            {" "}
+            {/* Reduced height */}
+            <TableHead className="text-left font-semibold text-gray-700 px-2 py-1">
               Month
             </TableHead>
             <TableHead
               colSpan={2}
-              className="text-center font-semibold text-gray-700 border-x"
+              className="text-center font-semibold text-gray-700 border-x px-2 py-1"
             >
               Savings
             </TableHead>
             <TableHead
               colSpan={3}
-              className="text-center font-semibold text-gray-700 border-x"
+              className="text-center font-semibold text-gray-700 border-x px-2 py-1"
             >
               Ventures
             </TableHead>
             <TableHead
               colSpan={4}
-              className="text-center font-semibold text-gray-700 border-x"
+              className="text-center font-semibold text-gray-700 border-x px-2 py-1"
             >
               Loans
             </TableHead>
           </TableRow>
 
-          {/* Sub Header Row */}
-          <TableRow className="border-b text-xs text-gray-600">
-            <TableHead className="w-16"></TableHead>
-            <TableHead className="text-right">Deposits</TableHead>
-            <TableHead className="text-right border-x">Balance</TableHead>
-            <TableHead className="text-right">Deposit (Owed)</TableHead>
-            <TableHead className="text-right">Payment (Repaid)</TableHead>
-            <TableHead className="text-right border-x">Balance</TableHead>
-            <TableHead className="text-right">Disbursed</TableHead>
-            <TableHead className="text-right">Repaid</TableHead>
-            <TableHead className="text-right">Interest</TableHead>
-            <TableHead className="text-right font-medium">
+          {/* Sub Header */}
+          <TableRow className="border-b text-xs text-gray-600 h-7">
+            <TableHead className="w-16 px-2 py-1"></TableHead>
+            <TableHead className="text-right px-2 py-1">Deposits</TableHead>
+            <TableHead className="text-right border-x px-2 py-1">
+              Balance
+            </TableHead>
+            <TableHead className="text-right px-2 py-1">Deposit</TableHead>
+            <TableHead className="text-right px-2 py-1">Payment</TableHead>
+            <TableHead className="text-right border-x px-2 py-1">
+              Balance
+            </TableHead>
+            <TableHead className="text-right px-2 py-1">Disbursed</TableHead>
+            <TableHead className="text-right px-2 py-1">Repaid</TableHead>
+            <TableHead className="text-right px-2 py-1">Interest</TableHead>
+            <TableHead className="text-right font-medium px-2 py-1">
               Outstanding
             </TableHead>
           </TableRow>
         </TableHeader>
-
         <TableBody className="divide-y">
           {rows.length > 0 ? (
             rows.map((row, idx) => (
-              <TableRow key={idx} className="hover:bg-gray-50">
-                <TableCell className="font-medium text-left">
+              <TableRow key={idx} className="h-7 hover:bg-gray-50">
+                {" "}
+                {/* Compact row */}
+                <TableCell className="font-medium text-left px-2 py-1">
                   {row.month}
                 </TableCell>
-
                 {/* Savings */}
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.savingsDeposits)}
                 </TableCell>
-                <TableCell className="text-right border-x">
+                <TableCell className="text-right border-x px-2 py-1">
                   {format(row.savingsBalance)}
                 </TableCell>
-
                 {/* Ventures */}
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.ventureDeposit)}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.venturePayment)}
                 </TableCell>
-                <TableCell className="text-right border-x">
+                <TableCell className="text-right border-x px-2 py-1">
                   {format(row.ventureBalance)}
                 </TableCell>
-
                 {/* Loans */}
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.loanDisbursed)}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.loanRepaid)}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right px-2 py-1">
                   {format(row.loanInterest)}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-right font-medium px-2 py-1">
                   {format(row.loanOutstanding)}
                 </TableCell>
               </TableRow>
@@ -132,7 +138,7 @@ function MonthsSummaryTable({ data }) {
             <TableRow>
               <TableCell
                 colSpan={10}
-                className="text-center text-gray-500 py-6"
+                className="text-center text-gray-500 py-3 text-xs"
               >
                 No data available
               </TableCell>

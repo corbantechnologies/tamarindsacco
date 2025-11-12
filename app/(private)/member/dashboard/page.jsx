@@ -10,6 +10,8 @@ import VenturesTable from "@/components/ventures/VenturesTable";
 import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
 import YearlySummaryTable from "@/components/summary/YearlySummaryTable";
 import MonthsSummaryTable from "@/components/summary/MonthsSummaryTable";
+import DetailedMonthlySummaryTable from "@/components/summary/DetailedMonthlySummaryTable";
+import DetailedSummaryTable from "@/components/summary/DetailedSummary";
 
 function MemberDashboard() {
   const {
@@ -32,7 +34,7 @@ function MemberDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className=" sm:p-6 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -56,6 +58,20 @@ function MemberDashboard() {
             Yearly Summary
           </h2>
           <MonthsSummaryTable data={summary} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Yearly Summary
+          </h2>
+          <DetailedMonthlySummaryTable data={summary} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Yearly Summary
+          </h2>
+          <DetailedSummaryTable data={summary} />
         </div>
       </div>
     </div>
