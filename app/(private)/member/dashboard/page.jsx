@@ -1,19 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import InfoCard from "@/components/member/InfoCard";
-import SavingsTable from "@/components/savings/SavingsTable";
 import { useFetchMember } from "@/hooks/members/actions";
-import LoansTable from "@/components/loans/LoansTable";
-import VenturesTable from "@/components/ventures/VenturesTable";
 import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
-import YearlySummaryTable from "@/components/summary/YearlySummaryTable";
-import MonthsSummaryTable from "@/components/summary/MonthsSummaryTable";
-import DetailedMonthlySummaryTable from "@/components/summary/DetailedMonthlySummaryTable";
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
-import DetailedSummaryCards from "@/components/summary/DetailedSummary";
-import DetailedSummaryAccordion from "@/components/summary/DetailedSummaryAccordion";
+import SaccoStatement from "@/components/summary/Statement";
 
 function MemberDashboard() {
   const {
@@ -31,6 +23,7 @@ function MemberDashboard() {
   if (isLoadingMember || isLoadingSummary) {
     return <MemberLoadingSpinner />;
   }
+  console.log('my summary data', summary)
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -58,6 +51,13 @@ function MemberDashboard() {
             Detailed Table Summary
           </h2>
           <DetailedSummaryTable data={summary} />
+        </div>
+        {/* Statement */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">
+            Statement
+          </h2>
+          <SaccoStatement summaryData={summary} member={member}/>
         </div>
       </div>
     </div>
