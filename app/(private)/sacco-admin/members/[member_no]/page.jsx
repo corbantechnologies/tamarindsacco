@@ -24,6 +24,8 @@ import {
   Settings,
   Wallet,
   Wallet2,
+  LucideBanknoteX,
+  LucideBanknote,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -39,6 +41,7 @@ import CreateLoanAccountAdmin from "@/forms/loans/CreateLoanAdmin";
 import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits";
 import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
+import { createGuarantorProfile } from "@/services/guarantorprofile";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -50,14 +53,11 @@ function MemberDetail() {
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
 
-  const {
-    isLoading: isLoadingLoanTypes,
-    data: loanTypes,
-    refetch: refetchLoanTypes,
-  } = useFetchLoanTypes();
+  console.log(member);
 
   // states
   const [isApproving, setIsApproving] = useState(false);
+  const [isCreatingGuarantor, setIsCreatingGuarantor] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
   const [loanModal, setLoanModal] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
@@ -77,6 +77,24 @@ function MemberDetail() {
       toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
+    }
+  };
+
+  const guarantorProfileValues = {
+    member_no: member_no,
+    is_eligible: true,
+  };
+
+  const handleCreateGuarantorProfile = async () => {
+    try {
+      setIsCreatingGuarantor(true);
+      await createGuarantorProfile(guarantorProfileValues, token);
+      toast.success("Guarantor profile created successfully");
+      refetchMember();
+    } catch (error) {
+      toast.error("Failed to create guarantor profile. Please try again");
+    } finally {
+      setIsCreatingGuarantor(false);
     }
   };
 
@@ -327,11 +345,10 @@ function MemberDetail() {
                   </CardTitle>
                   {member?.is_approved && (
                     <Button
-                      onClick={() => setLoanModal(true)}
                       size="sm"
                       className="bg-[#045e32] hover:bg-[#022007] text-white"
                     >
-                      Create Loan
+                      Loan
                     </Button>
                   )}
                 </div>
@@ -400,6 +417,48 @@ function MemberDetail() {
               </CardContent>
             </Card>
 
+            {/* Guarantor Information */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center gap-2 text-2xl">
+                    <LucideBanknote className="h-6 w-6 text-primary" />
+                    Guarantor Details
+                  </CardTitle>
+                  {member?.guarantor_profile === null &&
+                    member?.is_approved && (
+                      <Button
+                        onClick={() => handleCreateGuarantorProfile()}
+                        disabled={isCreatingGuarantor}
+                        size="sm"
+                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
+                      >
+                        Add Guarantor
+                      </Button>
+                    )}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <InfoField
+                  icon={User}
+                  label="Available Amount"
+                  value={member?.guarantor_profile?.available_amount}
+                />
+                <InfoField
+                  icon={Mail}
+                  label="Committed Amount"
+                  value={member?.guarantor_profile?.committed_amount || 0}
+                />
+                <InfoField
+                  icon={Phone}
+                  label="Active Guarantees"
+                  value={
+                    member?.guarantor_profile?.active_guarantees_count || 0
+                  }
+                />
+              </CardContent>
+            </Card>
+
             {/* Employment Information */}
             <Card className="shadow-md">
               <CardHeader>
@@ -408,7 +467,7 @@ function MemberDetail() {
                   Employment Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="grid md:grid-cols-2 gap-4">
+              <CardContent className="space-y-4">
                 <InfoField
                   icon={Building}
                   label="Employment Type"
@@ -534,14 +593,6 @@ function MemberDetail() {
           onClose={() => setDepositModal(false)}
           refetchMember={refetchMember}
           accounts={member?.savings_accounts}
-        />
-
-        <CreateLoanAccountAdmin
-          isOpen={loanModal}
-          onClose={() => setLoanModal(false)}
-          refetchMember={refetchMember}
-          loanTypes={loanTypes}
-          member={member}
         />
 
         <CreateVentureDeposits
