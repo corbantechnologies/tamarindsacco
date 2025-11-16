@@ -23,16 +23,15 @@ function MemberDashboard() {
   if (isLoadingMember || isLoadingSummary) {
     return <MemberLoadingSpinner />;
   }
-  console.log('my summary data', summary)
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className=" sm:p-6 space-y-6">
+      <div className="px-2 py-2 sm:p-6 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#045e32]">
-              Hello, {member?.salutation} {member?.last_name}
+              Hello, {member?.salutation} {member?.last_name} - {member?.member_no}
             </h1>
             <p className="text-gray-500 text-sm sm:text-base mt-1">
               Welcome to your dashboard
@@ -40,24 +39,10 @@ function MemberDashboard() {
           </div>
         </div>
 
-        {/* Statistics */}
-        <div>
-          <InfoCard member={member} />
-        </div>
-
-        {/* Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Detailed Table Summary
-          </h2>
-          <DetailedSummaryTable data={summary} />
-        </div>
         {/* Statement */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">
-            Statement
-          </h2>
-          <SaccoStatement summaryData={summary} member={member}/>
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
+          <SaccoStatement summaryData={summary} member={member} />
         </div>
       </div>
     </div>
