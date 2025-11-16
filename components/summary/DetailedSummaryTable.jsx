@@ -42,11 +42,11 @@ function DetailedSummaryTable({ data }) {
           acc.savings[key] = { ...bal.savings };
         });
         m.ventures.by_type.forEach((vt) => {
-          const dep = (vt.venture_deposits || []).reduce(
+          const dep = (vt.venture_deposits || [])?.reduce(
             (s, d) => s + d.amount,
             0
           );
-          const pay = (vt.venture_payments || []).reduce(
+          const pay = (vt.venture_payments || [])?.reduce(
             (s, p) => s + p.amount,
             0
           );
@@ -54,11 +54,11 @@ function DetailedSummaryTable({ data }) {
           acc.venture[key] = { ...bal.venture };
         });
         m.loans.by_type.forEach((lt) => {
-          const disb = (lt.total_amount_disbursed || []).reduce(
+          const disb = (lt.total_amount_disbursed || [])?.reduce(
             (s, d) => s + d.amount,
             0
           );
-          const rep = (lt.total_amount_repaid || []).reduce(
+          const rep = (lt.total_amount_repaid || [])?.reduce(
             (s, r) => s + r.amount,
             0
           );
@@ -96,15 +96,15 @@ function DetailedSummaryTable({ data }) {
     }
     if (sec === "loans") {
       const t = m.loans.by_type.find((x) => x.loan_type === type);
-      const disb = (t?.total_amount_disbursed || []).reduce(
+      const disb = (t?.total_amount_disbursed || [])?.reduce(
         (s, d) => s + d.amount,
         0
       );
-      const rep = (t?.total_amount_repaid || []).reduce(
+      const rep = (t?.total_amount_repaid || [])?.reduce(
         (s, r) => s + r.amount,
         0
       );
-      const int = (t?.total_interest_charged || []).reduce(
+      const int = (t?.total_interest_charged || [])?.reduce(
         (s, i) => s + i.amount,
         0
       );
