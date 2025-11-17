@@ -30,6 +30,7 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
+  UserCheck,
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplication";
@@ -60,12 +61,19 @@ const getStatusBadge = (status) => {
   return map[status] || "bg-amber-100 text-amber-800";
 };
 
+const getGuarantorStatusBadge = (status) => {
+  const map = {
+    Accepted: "bg-green-100 text-green-800",
+    Pending: "bg-yellow-100 text-yellow-800",
+    Declined: "bg-red-100 text-red-800",
+  };
+  return map[status] || "bg-gray-100 text-gray-800";
+};
+
 export default function LoanApplicationDetail() {
   const { reference } = useParams();
   const router = useRouter();
   const token = useAxiosAuth();
-
-  console.log(token)
 
   const { isLoading, data: loan, refetch } = useFetchLoanApplication(reference);
   const [editOpen, setEditOpen] = useState(false);
@@ -74,6 +82,7 @@ export default function LoanApplicationDetail() {
   const status = loan?.status;
   const canSubmit = loan?.can_submit;
   const isFullyCovered = loan?.is_fully_covered;
+  const guarantors = loan?.guarantors || [];
 
   // --------------------------------------------------------------------
   // SUBMIT HANDLER
@@ -88,17 +97,16 @@ export default function LoanApplicationDetail() {
       refetch();
     } catch (err) {
       toast.error(
-        err.response?.data?.message ||
+        err.response?.data?.detail ||
           "Failed to submit loan application. Please try again."
       );
-      console.log(err)
     } finally {
       setSubmitting(false);
     }
   };
 
   // --------------------------------------------------------------------
-  // ACTION BUTTONS (with Submit integrated)
+  // ACTION BUTTONS
   // --------------------------------------------------------------------
   const actionButtons = useMemo(() => {
     if (!status) return null;
@@ -221,6 +229,7 @@ export default function LoanApplicationDetail() {
               <PopoverContent className="w-56 p-3 space-y-2" align="end">
                 {actionButtons}
               </PopoverContent>
+              emper
             </Popover>
           </div>
         </div>
@@ -342,6 +351,50 @@ export default function LoanApplicationDetail() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Guarantors Table */}
+        {guarantors.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5" />
+                Guarantors
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Member</TableHead>
+                      <TableHead>Guarantor</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {guarantors.map((g, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">
+                          {g.member}
+                        </TableCell>
+                        <TableCell>{g.guarantor}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(g.guaranteed_amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getGuarantorStatusBadge(g.status)}>
+                            {g.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Repayment Schedule */}
         <Card>
