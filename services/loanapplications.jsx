@@ -60,5 +60,5 @@ export const adminApproveDeclineLoanApplication = async (
     { status },
     token
   );
-  return response?.data;
+  return response;
 };

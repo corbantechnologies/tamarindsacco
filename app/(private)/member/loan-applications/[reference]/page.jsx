@@ -186,18 +186,6 @@ export default function LoanApplicationDetail() {
   // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
-  if (!loan) {
-    return (
-      <div className="min-h-screen bg-gray-100 p-6">
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-gray-500">Loan application not found.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   const schedule = loan.projection?.schedule || [];
 
   // --------------------------------------------------------------------
@@ -229,7 +217,6 @@ export default function LoanApplicationDetail() {
               <PopoverContent className="w-56 p-3 space-y-2" align="end">
                 {actionButtons}
               </PopoverContent>
-              emper
             </Popover>
           </div>
         </div>
