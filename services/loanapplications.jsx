@@ -42,11 +42,11 @@ export const deleteLoanApplication = async (reference, token) => {
 };
 
 export const submitLoanApplication = async (reference, token) => {
-  const response = await apiActions?.post(
+  await apiActions?.post(
     `/api/v1/loanapplications/${reference}/submit/`,
+    {},
     token
   );
-  return response?.data;
 };
 
 // Admin actions

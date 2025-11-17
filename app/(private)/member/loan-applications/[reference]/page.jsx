@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
@@ -25,9 +29,13 @@ import {
   MoreVertical,
   CheckCircle,
   XCircle,
+  Loader2,
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplication";
+import { submitLoanApplication } from "@/services/loanapplications";
+import toast from "react-hot-toast";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -55,13 +63,43 @@ const getStatusBadge = (status) => {
 export default function LoanApplicationDetail() {
   const { reference } = useParams();
   const router = useRouter();
+  const token = useAxiosAuth();
+
+  console.log(token)
+
   const { isLoading, data: loan, refetch } = useFetchLoanApplication(reference);
   const [editOpen, setEditOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const status = loan?.status;
   const canSubmit = loan?.can_submit;
   const isFullyCovered = loan?.is_fully_covered;
 
+  // --------------------------------------------------------------------
+  // SUBMIT HANDLER
+  // --------------------------------------------------------------------
+  const handleSubmit = async () => {
+    if (!canSubmit || !isFullyCovered) return;
+
+    setSubmitting(true);
+    try {
+      await submitLoanApplication(reference, token);
+      toast.success("Loan application submitted successfully");
+      refetch();
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to submit loan application. Please try again."
+      );
+      console.log(err)
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // --------------------------------------------------------------------
+  // ACTION BUTTONS (with Submit integrated)
+  // --------------------------------------------------------------------
   const actionButtons = useMemo(() => {
     if (!status) return null;
 
@@ -104,14 +142,24 @@ export default function LoanApplicationDetail() {
               <Edit className="mr-2 h-4 w-4" />
               Update Application
             </Button>
+
             <Button
               size="sm"
-              className="w-full bg-[#045e32] hover:bg-[#022007]"
-              disabled={!canSubmit || !isFullyCovered}
-              onClick={() => alert("Submitting application…")}
+              className="w-full bg-[#045e32] hover:bg-[#022007] text-white"
+              disabled={!canSubmit || !isFullyCovered || submitting}
+              onClick={handleSubmit}
             >
-              <Send className="mr-2 h-4 w-4" />
-              Submit Application
+              {submitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Submit Application
+                </>
+              )}
             </Button>
           </>
         );
@@ -123,8 +171,11 @@ export default function LoanApplicationDetail() {
           </p>
         );
     }
-  }, [status, canSubmit, isFullyCovered, reference, router]);
+  }, [status, canSubmit, isFullyCovered, submitting, reference, router]);
 
+  // --------------------------------------------------------------------
+  // LOADING / NOT FOUND
+  // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
   if (!loan) {
@@ -141,6 +192,9 @@ export default function LoanApplicationDetail() {
 
   const schedule = loan.projection?.schedule || [];
 
+  // --------------------------------------------------------------------
+  // RENDER
+  // --------------------------------------------------------------------
   return (
     <>
       <div className="min-h-screen bg-gray-100 p-4 sm:p-6 space-y-6">

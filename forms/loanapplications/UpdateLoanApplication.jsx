@@ -1,4 +1,3 @@
-// components/loanapplications/UpdateLoanApplication.jsx
 "use client";
 
 import React, { useState } from "react";
