@@ -3,7 +3,12 @@
 import { apiActions } from "@/tools/axios";
 
 export const createLoanApplication = async (values, token) => {
-  await apiActions?.post("/api/v1/loanapplications/", values, token);
+  const response = await apiActions?.post(
+    "/api/v1/loanapplications/",
+    values,
+    token
+  );
+  return response;
 };
 
 export const getLoanApplications = async (token) => {
@@ -45,7 +50,11 @@ export const submitLoanApplication = async (reference, token) => {
 };
 
 // Admin actions
-export const adminApproveDeclineLoanApplication = async (reference, status, token) => {
+export const adminApproveDeclineLoanApplication = async (
+  reference,
+  status,
+  token
+) => {
   const response = await apiActions?.post(
     `/api/v1/loanapplications/${reference}/status/`,
     { status },

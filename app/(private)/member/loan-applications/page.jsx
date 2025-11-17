@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import LoanApplicationsTable from "@/components/loanapplications/LoanApplicationsTable";
 import { Button } from "@/components/ui/button";
 import { useFetchLoanApplications } from "@/hooks/loanapplications/actions";
+import CreateLoanApplication from "@/forms/loanapplications/CreateLoanApplication";
+import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 
 export default function LoanApplications() {
   const {
@@ -12,6 +14,14 @@ export default function LoanApplications() {
     data: loanApplications = [],
     refetch,
   } = useFetchLoanApplications();
+
+  const {
+    isLoading: isLoadingLoanTypes,
+    data: loanTypes,
+    refetch: refetchLoanTypes,
+  } = useFetchLoanTypes();
+
+  const [loanApplicationModal, setLoanApplicationModal] = useState(false);
 
   if (isLoading) return <MemberLoadingSpinner />;
 
@@ -32,7 +42,7 @@ export default function LoanApplications() {
           <Button
             size="sm"
             className="bg-[#045e32] hover:bg-[#022007] text-white"
-            onClick={() => alert("Navigate to loan-application form")}
+            onClick={() => setLoanApplicationModal(true)}
           >
             Apply for a loan
           </Button>
@@ -42,6 +52,12 @@ export default function LoanApplications() {
         <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
           <LoanApplicationsTable data={loanApplications} />
         </div>
+
+        <CreateLoanApplication
+          isOpen={loanApplicationModal}
+          onClose={() => setLoanApplicationModal(false)}
+          products={loanTypes}
+        />
       </div>
     </div>
   );
