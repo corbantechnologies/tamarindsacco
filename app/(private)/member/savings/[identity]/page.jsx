@@ -306,7 +306,7 @@ function SavingsDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className="p-2 sm:p-6 space-y-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -326,7 +326,6 @@ function SavingsDetail() {
             <CardTitle className="text-2xl font-bold text-[#045e32]">
               {saving?.account_type}
             </CardTitle>
-            
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -620,8 +619,6 @@ function SavingsDetail() {
             )}
           </CardContent>
         </Card>
-
-        
       </div>
     </div>
   );

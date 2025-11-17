@@ -60,7 +60,7 @@ function MemberDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className="p-2 sm:p-6 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -99,12 +99,20 @@ function MemberDashboard() {
 
         {/* Loans Table */}
         <div className="space-y-4">
-          <LoansTable loans={loans} isLoading={isLoadingLoans}  route="sacco-admin"/>
+          <LoansTable
+            loans={loans}
+            isLoading={isLoadingLoans}
+            route="sacco-admin"
+          />
         </div>
 
         {/* Ventures Table */}
         <div className="space-y-4">
-          <VenturesTable ventures={ventures} isLoading={isLoadingVentures} route="sacco-admin" />
+          <VenturesTable
+            ventures={ventures}
+            isLoading={isLoadingVentures}
+            route="sacco-admin"
+          />
         </div>
       </div>
     </div>

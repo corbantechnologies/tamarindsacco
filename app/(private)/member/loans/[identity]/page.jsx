@@ -309,7 +309,7 @@ function LoanDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6">
+      <div className="p-2 sm:p-6 space-y-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import {
@@ -13,14 +13,26 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
+import {
+  MoreVertical,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  UserCheck,
+} from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { adminApproveDeclineLoanApplication } from "@/services/loanapplications";
 import toast from "react-hot-toast";
-import { CheckCircle, XCircle, Loader2, ArrowLeft } from "lucide-react";
+import useMemberNo from "@/hooks/authentication/useMemberNo";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -31,13 +43,45 @@ const formatCurrency = (val) =>
 const formatDate = (dateStr) =>
   dateStr ? format(new Date(dateStr), "dd MMM yyyy") : "—";
 
-export default function SaccoAdminLoanApplicationDetail() {
+const getStatusBadge = (status) => {
+  const map = {
+    Pending: "bg-gray-100 text-gray-800",
+    "In Progress": "bg-blue-100 text-blue-800",
+    "Ready for Submission": "bg-purple-100 text-purple-800",
+    Submitted: "bg-cyan-100 text-cyan-800",
+    Approved: "bg-green-100 text-green-800",
+    Disbursed: "bg-teal-100 text-teal-800",
+    Declined: "bg-red-100 text-red-800",
+    Cancelled: "bg-orange-100 text-orange-800",
+  };
+  return map[status] || "bg-amber-100 text-amber-800";
+};
+
+const getGuarantorStatusBadge = (status) => {
+  const map = {
+    Accepted: "bg-green-100 text-green-800",
+    Pending: "bg-yellow-100 text-yellow-800",
+    Declined: "bg-red-100 text-red-800",
+  };
+  return map[status] || "bg-gray-100 text-gray-800";
+};
+
+export default function AdminLoanApplicationDetail() {
   const { reference } = useParams();
   const router = useRouter();
   const token = useAxiosAuth();
+  const currentMemberNo = useMemberNo();
+
   const { isLoading, data: loan, refetch } = useFetchLoanApplication(reference);
   const [processing, setProcessing] = useState(false);
 
+  const status = loan?.status;
+  const guarantors = loan?.guarantors || [];
+  const schedule = loan?.projection?.schedule || [];
+
+  // --------------------------------------------------------------------
+  // ADMIN ACTION: APPROVE / DECLINE
+  // --------------------------------------------------------------------
   const handleStatusChange = async (newStatus) => {
     setProcessing(true);
     try {
@@ -51,200 +95,260 @@ export default function SaccoAdminLoanApplicationDetail() {
     }
   };
 
+  // --------------------------------------------------------------------
+  // ACTION BUTTONS (Popover) – only for Submitted + not self
+  // --------------------------------------------------------------------
+  const actionButtons = useMemo(() => {
+    if (!status || status !== "Submitted") {
+      return (
+        <p className="text-xs text-muted-foreground text-center">
+          No actions available
+        </p>
+      );
+    }
+
+    const isSelfApplication = loan?.member === currentMemberNo;
+    if (isSelfApplication) {
+      return (
+        <p className="text-xs text-muted-foreground text-center">
+          You cannot approve/decline your own application
+        </p>
+      );
+    }
+
+    return (
+      <>
+        <Button
+          size="sm"
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          disabled={processing}
+          onClick={() => handleStatusChange("Approved")}
+        >
+          {processing ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <CheckCircle className="mr-2 h-4 w-4" />
+          )}
+          Approve
+        </Button>
+
+        <Button
+          size="sm"
+          variant="destructive"
+          className="w-full"
+          disabled={processing}
+          onClick={() => handleStatusChange("Declined")}
+        >
+          {processing ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <XCircle className="mr-2 h-4 w-4" />
+          )}
+          Decline
+        </Button>
+      </>
+    );
+  }, [status, loan?.member, currentMemberNo, processing, reference]);
+
+  // --------------------------------------------------------------------
+  // LOADING / NOT FOUND
+  // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
-  if (!loan) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-6 text-center">
-        <p className="text-gray-500">Application not found.</p>
-      </div>
-    );
-  }
-
-  const schedule = loan.projection?.schedule || [];
-  const guarantors = loan.guarantors || [];
-
+  // --------------------------------------------------------------------
+  // RENDER – EXACT SAME AS MEMBER PAGE
+  // --------------------------------------------------------------------
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <>
+      <div className="min-h-screen bg-gray-100 p-4 sm:p-6 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold" style={{ color: "#cc5500" }}>
-                Loan Application
-              </h1>
-              <p className="text-sm text-gray-500 font-mono">
-                {loan.reference}
-              </p>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1
+              className="text-2xl sm:text-3xl font-bold"
+              style={{ color: "#cc5500" }}
+            >
+              Loan Application
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              Reference: <span className="font-mono">{loan.reference}</span>
+            </p>
           </div>
-          <Badge variant="outline" className="text-lg px-3 py-1">
-            {loan.status}
-          </Badge>
+
+          <div className="flex items-center gap-3">
+            <Badge className={getStatusBadge(status)}>{status}</Badge>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-3 space-y-2" align="end">
+                {actionButtons}
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        {loan.status === "Submitted" && (
-          <Card className="border-2 border-orange-200">
-            <CardContent className="pt-6">
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  size="lg"
-                  className="bg-green-600 hover:bg-green-700"
-                  disabled={processing}
-                  onClick={() => handleStatusChange("Approved")}
-                >
-                  {processing ? (
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  ) : (
-                    <CheckCircle className="mr-2 h-5 w-5" />
-                  )}
-                  Approve Application
-                </Button>
-                <Button
-                  size="lg"
-                  variant="destructive"
-                  disabled={processing}
-                  onClick={() => handleStatusChange("Declined")}
-                >
-                  {processing ? (
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  ) : (
-                    <XCircle className="mr-2 h-5 w-5" />
-                  )}
-                  Decline Application
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">
-                Requested
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Requested Amount
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font in-bold">
                 {formatCurrency(loan.requested_amount)}
               </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">
-                Member
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Repayment
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{loan.member}</p>
+              <p className="text-2xl font-bold text-red-600">
+                {formatCurrency(loan.repayment_amount)}
+              </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground">
-                Applied
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Interest
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-lg font-medium">
-                {formatDate(loan.created_at)}
+              <p className="text-2xl font-bold text-amber-600">
+                {formatCurrency(loan.total_interest)}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Monthly Payment
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {formatCurrency(loan.monthly_payment)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {loan.term_months} months
               </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Details */}
+        {/* Details Grid */}
         <Card>
           <CardHeader>
             <CardTitle>Application Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Product</span>
+                  <span className="text-sm text-muted-foreground">Product</span>
                   <span className="font-medium">{loan.product}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Start Date</span>
+                  <span className="text-sm text-muted-foreground">
+                    Start Date
+                  </span>
                   <span className="font-medium">
                     {formatDate(loan.start_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Term</span>
-                  <span className="font-medium">{loan.term_months} months</span>
+                  <span className="text-sm text-muted-foreground">Mode</span>
+                  <span className="font-medium capitalize">
+                    {loan.calculation_mode.replace("_", " ")}
+                  </span>
                 </div>
               </div>
-              <div className="space-y-2">
+
+              <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Self Guarantee</span>
+                  <span className="text-sm text-muted-foreground">
+                    Self Guarantee
+                  </span>
                   <span className="font-medium">
                     {formatCurrency(loan.self_guaranteed_amount)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Total Interest</span>
-                  <span className="font-medium text-amber-600">
-                    {formatCurrency(loan.total_interest)}
+                  <span className="text-sm text-muted-foreground">
+                    Remaining to Cover
+                  </span>
+                  <span className="font-medium text-red-600">
+                    {formatCurrency(loan.remaining_to_cover)}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Monthly</span>
-                  <span className="font-medium">
-                    {formatCurrency(loan.monthly_payment)}
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground">
+                    Fully Covered
                   </span>
+                  {loan.is_fully_covered ? (
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                  ) : (
+                    <XCircle className="h-5 w-5 text-red-600" />
+                  )}
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Guarantors */}
+        {/* Guarantors Table */}
         {guarantors.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Guarantors</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5" />
+                Guarantors
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Member</TableHead>
-                    <TableHead>Guarantor</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {guarantors.map((g, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{g.member}</TableCell>
-                      <TableCell>{g.guarantor}</TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(g.guaranteed_amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            g.status === "Accepted" ? "default" : "secondary"
-                          }
-                        >
-                          {g.status}
-                        </Badge>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Member</TableHead>
+                      <TableHead>Guarantor</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {guarantors.map((g, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">
+                          {g.member}
+                        </TableCell>
+                        <TableCell>{g.guarantor}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(g.guaranteed_amount)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={getGuarantorStatusBadge(g.status)}>
+                            {g.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -262,40 +366,65 @@ export default function SaccoAdminLoanApplicationDetail() {
                     <TableHead>Due Date</TableHead>
                     <TableHead className="text-right">Principal</TableHead>
                     <TableHead className="text-right">Interest</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead className="text-right">Total Due</TableHead>
+                    <TableHead className="text-right">Balance After</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {schedule.slice(0, 6).map((s, i) => (
-                    <TableRow key={i}>
-                      <TableCell>{formatDate(s.due_date)}</TableCell>
-                      <TableCell className="text-right">
-                        {formatCurrency(s.principal_due)}
+                  {schedule.map((item, idx) => (
+                    <TableRow key={idx}>
+                      <TableCell className="font-medium">
+                        {formatDate(item.due_date)}
                       </TableCell>
                       <TableCell className="text-right">
-                        {formatCurrency(s.interest_due)}
+                        {formatCurrency(item.principal_due)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(item.interest_due)}
                       </TableCell>
                       <TableCell className="text-right font-medium">
-                        {formatCurrency(s.total_due)}
+                        {formatCurrency(item.total_due)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(item.balance_after)}
                       </TableCell>
                     </TableRow>
                   ))}
-                  {schedule.length > 6 && (
-                    <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="text-center text-muted-foreground"
-                      >
-                        ... and {schedule.length - 6} more
-                      </TableCell>
-                    </TableRow>
-                  )}
                 </TableBody>
               </Table>
+            </div>
+
+            <Separator className="my-4" />
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Total Interest</p>
+                <p className="font-bold text-amber-600">
+                  {formatCurrency(loan.projection?.total_interest)}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Total Repayment</p>
+                <p className="font-bold text-red-600">
+                  {formatCurrency(loan.projection?.total_repayment)}
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Term</p>
+                <p className="font-bold">
+                  {loan.projection?.term_months} months
+                </p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Monthly</p>
+                <p className="font-bold">
+                  {formatCurrency(loan.projection?.monthly_payment)}
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

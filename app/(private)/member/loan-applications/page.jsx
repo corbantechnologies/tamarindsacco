@@ -50,7 +50,7 @@ export default function LoanApplications() {
 
         {/* Table */}
         <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-          <LoanApplicationsTable data={loanApplications} />
+          <LoanApplicationsTable route="member" data={loanApplications} />
         </div>
 
         <CreateLoanApplication
