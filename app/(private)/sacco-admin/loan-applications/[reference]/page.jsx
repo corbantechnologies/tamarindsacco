@@ -89,6 +89,7 @@ export default function AdminLoanApplicationDetail() {
       toast.success(`Application ${newStatus.toLowerCase()} successfully`);
       refetch();
     } catch (err) {
+      console.log(err)
       toast.error(err.response?.data?.detail || "Action failed");
     } finally {
       setProcessing(false);

@@ -57,7 +57,7 @@ export const adminApproveDeclineLoanApplication = async (
 ) => {
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/status/`,
-    status,
+    { status },
     token
   );
   return response;
