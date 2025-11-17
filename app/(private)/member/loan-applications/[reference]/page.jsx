@@ -1,4 +1,3 @@
-// app/member/loan-applications/[reference]/page.jsx
 "use client";
 
 import React, { useMemo, useState } from "react";
@@ -37,6 +36,9 @@ import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplicatio
 import { submitLoanApplication } from "@/services/loanapplications";
 import toast from "react-hot-toast";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import { useFetchGuarantorProfiles } from "@/hooks/guarantorprofiles/actions";
+import RequestGuarantorModal from "@/forms/guaranteerequests/RequestGuarantorModal";
+import CreateGuaranteeRequest from "@/forms/guaranteerequests/CreateGuaranteeRequest";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -76,8 +78,11 @@ export default function LoanApplicationDetail() {
   const token = useAxiosAuth();
 
   const { isLoading, data: loan, refetch } = useFetchLoanApplication(reference);
+  const { isLoading: isLoadingGuarantors, data: guarantorProfiles } =
+    useFetchGuarantorProfiles(reference);
   const [editOpen, setEditOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [guarantorModalOpen, setGuarantorModalOpen] = useState(false);
 
   const status = loan?.status;
   const canSubmit = loan?.can_submit;
@@ -128,9 +133,7 @@ export default function LoanApplicationDetail() {
               size="sm"
               variant="outline"
               className="w-full justify-start"
-              onClick={() =>
-                router.push(`/member/loan-applications/${reference}/guarantors`)
-              }
+              onClick={() => setGuarantorModalOpen(true)}
             >
               <Users className="mr-2 h-4 w-4" />
               Request Guarantors
@@ -186,7 +189,7 @@ export default function LoanApplicationDetail() {
   // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
-  const schedule = loan.projection?.schedule || [];
+  const schedule = loan?.projection?.schedule || [];
 
   // --------------------------------------------------------------------
   // RENDER
@@ -201,7 +204,7 @@ export default function LoanApplicationDetail() {
               Loan Application
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Reference: <span className="font-mono">{loan.reference}</span>
+              Reference: <span className="font-mono">{loan?.reference}</span>
             </p>
           </div>
 
@@ -462,6 +465,14 @@ export default function LoanApplicationDetail() {
         open={editOpen}
         onClose={() => setEditOpen(false)}
         onSuccess={refetch}
+      />
+
+      <CreateGuaranteeRequest
+        loanapplication={loan}
+        guarantors={guarantorProfiles}
+        isOpen={guarantorModalOpen}
+        onClose={() => setGuarantorModalOpen(false)}
+        refetchApplication={refetch}
       />
     </>
   );
