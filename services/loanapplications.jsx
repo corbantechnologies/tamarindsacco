@@ -30,7 +30,7 @@ export const updateLoanApplication = async (reference, values, token) => {
     values,
     token
   );
-  return response?.data;
+  return response;
 };
 
 export const deleteLoanApplication = async (reference, token) => {

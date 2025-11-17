@@ -23,7 +23,7 @@ export default function LoanApplications() {
 
   const [loanApplicationModal, setLoanApplicationModal] = useState(false);
 
-  if (isLoading) return <MemberLoadingSpinner />;
+  if (isLoading || isLoadingLoanTypes) return <MemberLoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-100">
