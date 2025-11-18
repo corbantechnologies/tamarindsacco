@@ -54,7 +54,7 @@ export default function GuarantorProfile() {
 
   if (isLoading) return <MemberLoadingSpinner />;
 
-  const allRequests = profile.guarantees || [];
+  const allRequests = profile?.guarantees || [];
   const pendingRequests = allRequests.filter((r) => r.status === "Pending");
   const historyRequests = allRequests.filter((r) => r.status !== "Pending");
 
@@ -136,9 +136,9 @@ export default function GuarantorProfile() {
           My Guarantor Profile
         </h1>
         <p className="text-2xl text-gray-700 mt-2">
-          {profile.guarantor_name || profile.member}
+          {profile?.guarantor_name || profile?.member}
         </p>
-        <p className="text-sm text-gray-500">Member: {profile.member}</p>
+        <p className="text-sm text-gray-500">Member: {profile?.member}</p>
       </div>
 
       {/* Capacity Summary */}
@@ -152,7 +152,7 @@ export default function GuarantorProfile() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold text-[#045e32]">
-              {formatCurrency(profile.available_amount)}
+              {formatCurrency(profile?.available_amount)}
             </p>
           </CardContent>
         </Card>
@@ -165,10 +165,10 @@ export default function GuarantorProfile() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-bold">
-              {profile.active_guarantees_count}
+              {profile?.active_guarantees_count}
               <span className="text-lg text-gray-500">
                 {" / "}
-                {profile.max_active_guarantees}
+                {profile?.max_active_guarantees}
               </span>
             </p>
           </CardContent>
@@ -176,7 +176,7 @@ export default function GuarantorProfile() {
 
         <Card
           className={
-            profile.has_reached_limit
+            profile?.has_reached_limit
               ? "border-red-300"
               : "border-green-300 shadow-lg"
           }
@@ -188,10 +188,10 @@ export default function GuarantorProfile() {
           </CardHeader>
           <CardContent>
             <Badge
-              variant={profile.is_eligible ? "default" : "destructive"}
+              variant={profile?.is_eligible ? "default" : "destructive"}
               className="text-lg px-6 py-3"
             >
-              {profile.is_eligible ? "Eligible" : "Limit Reached"}
+              {profile?.is_eligible ? "Eligible" : "Limit Reached"}
             </Badge>
           </CardContent>
         </Card>
