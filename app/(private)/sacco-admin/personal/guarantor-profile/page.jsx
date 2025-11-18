@@ -54,6 +54,7 @@ export default function GuarantorProfile() {
 
   if (isLoading) return <MemberLoadingSpinner />;
 
+
   const allRequests = profile.guarantees || [];
   const pendingRequests = allRequests.filter((r) => r.status === "Pending");
   const historyRequests = allRequests.filter((r) => r.status !== "Pending");

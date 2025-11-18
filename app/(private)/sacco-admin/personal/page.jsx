@@ -1,24 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
-import InfoCard from "@/components/member/InfoCard";
-import StatsCard from "@/components/member/StatsCard";
-import SavingsTable from "@/components/savings/SavingsTable";
-
-import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchMember } from "@/hooks/members/actions";
-import { useFetchSavings } from "@/hooks/savings/actions";
-import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
-import { DoorOpen, Plus, Wallet, Wallet2 } from "lucide-react";
-import { signOut } from "next-auth/react";
-import LoansTable from "@/components/loans/LoansTable";
-import { useFetchLoans } from "@/hooks/loans/actions";
-import { useFetchVentures } from "@/hooks/ventures/actions";
-import VenturesTable from "@/components/ventures/VenturesTable";
+import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
+import SaccoStatement from "@/components/summary/Statement";
+import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
 
 function MemberDashboard() {
-  const token = useAxiosAuth();
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -26,93 +14,36 @@ function MemberDashboard() {
   } = useFetchMember();
 
   const {
-    isLoading: isLoadingLoans,
-    data: loans,
-    refetch: refetchLoans,
-  } = useFetchLoans();
+    isLoading: isLoadingSummary,
+    data: summary,
+    refetch: refetchSummary,
+  } = useFetchMemberYearlySummary();
 
-  const {
-    isLoading: isLoadingSavingTypes,
-    data: savingTypes,
-    refetch: refetchSavingTypes,
-  } = useFetchSavingsTypes();
-
-  const {
-    isLoading: isLoadingSavings,
-    data: savings,
-    refetch: refetchSavings,
-    error: savingsError,
-  } = useFetchSavings();
-
-  const {
-    isLoading: isLoadingVentures,
-    data: ventures,
-    refetch: refetchVentures,
-  } = useFetchVentures();
-
-  if (
-    isLoadingMember ||
-    isLoadingSavingTypes ||
-    isLoadingSavings ||
-    isLoadingLoans
-  )
+  if (isLoadingMember || isLoadingSummary) {
     return <MemberLoadingSpinner />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="p-2 sm:p-6 space-y-6">
+      <div className="px-2 py-2 sm:p-6 space-y-6">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#045e32]">
-              Hello, {member?.salutation} {member?.last_name}
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#045e32]">
+              Hello, {member?.salutation} {member?.last_name} -{" "}
+              {member?.member_no}
             </h1>
-            <p className="text-gray-500 mt-1">Welcome to your dashboard</p>
+            <p className="text-gray-500 text-sm sm:text-base mt-1">
+              Welcome to your personal dashboard
+            </p>
           </div>
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          <InfoCard member={member} />
-          <StatsCard
-            title="Total Savings"
-            value={savings?.length || 0}
-            Icon={Wallet}
-            description="Number of savings accounts created"
-          />
-          <StatsCard
-            title="Savings Types"
-            value={savingTypes?.length}
-            Icon={Wallet2}
-            description="Available saving products"
-          />
-        </div>
-
-        {/* Savings Table */}
-        <div className="space-y-4">
-          <SavingsTable
-            savings={savings}
-            isLoading={isLoadingSavings}
-            route="sacco-admin"
-          />
-        </div>
-
-        {/* Loans Table */}
-        <div className="space-y-4">
-          <LoansTable
-            loans={loans}
-            isLoading={isLoadingLoans}
-            route="sacco-admin"
-          />
-        </div>
-
-        {/* Ventures Table */}
-        <div className="space-y-4">
-          <VenturesTable
-            ventures={ventures}
-            isLoading={isLoadingVentures}
-            route="sacco-admin"
-          />
+        {/* Statement */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
+          {/* <SaccoStatement summaryData={summary} member={member} /> */}
+          <DetailedSummaryTable data={summary} member={member} />
         </div>
       </div>
     </div>

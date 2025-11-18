@@ -11,6 +11,11 @@ export const createLoanApplication = async (values, token) => {
   return response;
 };
 
+export const getMyLoanApplications = async (token) => {
+  const response = await apiActions?.get("/api/v1/loanapplications/list/", token);
+  return response?.data?.results;
+};
+
 export const getLoanApplications = async (token) => {
   const response = await apiActions?.get("/api/v1/loanapplications/", token);
   return response?.data?.results;
