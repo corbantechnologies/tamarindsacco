@@ -4,7 +4,7 @@ import { apiActions } from "@/tools/axios";
 
 export const createLoanApplication = async (values, token) => {
   const response = await apiActions?.post(
-    "/api/v1/loanapplications/",
+    "/api/v1/loanapplications/list/",
     values,
     token
   );
