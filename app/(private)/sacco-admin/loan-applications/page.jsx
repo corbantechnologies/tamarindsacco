@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import { useFetchLoanApplications } from "@/hooks/loanapplications/actions";
 import { Eye, Calendar, User, DollarSign } from "lucide-react";
+import LoanApplicationsTable from "@/components/loanapplications/LoanApplicationsTable";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -39,82 +40,32 @@ const getStatusBadge = (status) => {
 };
 
 export default function SaccoAdminLoanApplications() {
-  const router = useRouter();
-  const { isLoading, data: applications = [] } = useFetchLoanApplications();
+  const {
+    isLoading,
+    data: loanApplications = [],
+    refetch,
+  } = useFetchLoanApplications();
 
   if (isLoading) return <MemberLoadingSpinner />;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1
-            className="text-2xl sm:text-3xl font-bold"
-            style={{ color: "#cc5500" }}
-          >
-            Loan Applications
-          </h1>
+      <div className="px-2 py-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#cc0000]">
+              Loan Applications
+            </h1>
+            <p className="text-gray-500 mt-1">
+              View and manage member loan applications
+            </p>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>All Applications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>Member</TableHead>
-                    <TableHead>Product</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Applied</TableHead>
-                    <TableHead className="text-center">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {applications.map((app) => (
-                    <TableRow key={app.reference}>
-                      <TableCell className="font-mono text-sm">
-                        {app.reference}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {app.member}
-                      </TableCell>
-                      <TableCell>{app.product}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        {formatCurrency(app.requested_amount)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusBadge(app.status)}>
-                          {app.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDate(app.created_at)}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() =>
-                            router.push(
-                              `/sacco-admin/loan-applications/${app.reference}`
-                            )
-                          }
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Table */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <LoanApplicationsTable route="sacco-admin" data={loanApplications} />
+        </div>
       </div>
     </div>
   );

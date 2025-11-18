@@ -3,6 +3,7 @@
 import {
   getLoanApplication,
   getLoanApplications,
+  getMyLoanApplications,
 } from "@/services/loanapplications";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -23,5 +24,14 @@ export function useFetchLoanApplication(reference) {
     queryKey: ["loanapplication", reference],
     queryFn: () => getLoanApplication(reference, token),
     enabled: !!reference,
+  });
+}
+
+export function useFetchMyLoanApplications() {
+  const token = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["myloanapplications"],
+    queryFn: () => getMyLoanApplications(token),
   });
 }

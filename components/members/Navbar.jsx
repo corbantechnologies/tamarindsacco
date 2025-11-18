@@ -69,11 +69,11 @@ function MemberNavbar() {
               Loan Applications
             </Link>
             <Link
-              href="/member/transactions"
+              href="/member/guarantor-profile"
               className="text-lg hover:text-[#067a46]"
               onClick={() => setIsMenuOpen(false)}
             >
-              Transactions
+              Guarantor Profile
             </Link>
             <Link
               href="/member/settings"

@@ -51,7 +51,7 @@ const getStatusBadge = (status) => {
   return map[status] || "bg-amber-100 text-amber-800";
 };
 
-export default function LoanApplicationsTable({ data }) {
+export default function LoanApplicationsTable({ data, route }) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState([]);
@@ -120,7 +120,7 @@ export default function LoanApplicationsTable({ data }) {
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() =>
-                router.push(`/member/loan-applications/${reference}`)
+                router.push(`/${route}/loan-applications/${reference}`)
               }
               title="View Details"
             >

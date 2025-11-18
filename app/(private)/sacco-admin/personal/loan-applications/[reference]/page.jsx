@@ -37,7 +37,6 @@ import { submitLoanApplication } from "@/services/loanapplications";
 import toast from "react-hot-toast";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchGuarantorProfiles } from "@/hooks/guarantorprofiles/actions";
-import RequestGuarantorModal from "@/forms/guaranteerequests/RequestGuarantorModal";
 import CreateGuaranteeRequest from "@/forms/guaranteerequests/CreateGuaranteeRequest";
 
 const formatCurrency = (val) =>

@@ -77,7 +77,7 @@ function AccountSettings() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 space-y-8">
+      <div className="p-2 space-y-8">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>

@@ -18,7 +18,12 @@ import toast from "react-hot-toast";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createLoanApplication } from "@/services/loanapplications";
 
-export default function CreateLoanApplication({ onClose, isOpen, products }) {
+export default function CreateLoanApplication({
+  onClose,
+  isOpen,
+  products,
+  route,
+}) {
   const token = useAxiosAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -48,7 +53,7 @@ export default function CreateLoanApplication({ onClose, isOpen, products }) {
               toast.success("Loan application created successfully");
               onClose();
               router.push(
-                `/member/loan-applications/${response?.data?.reference}`
+                `/${route}/loan-applications/${response?.data?.reference}`
               );
             } catch (error) {
               toast.error(

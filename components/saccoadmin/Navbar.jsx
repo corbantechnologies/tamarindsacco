@@ -1,114 +1,175 @@
+// components/layout/SaccoAdminNavbar.jsx
 "use client";
 
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu as MenuIcon, X as XIcon } from "lucide-react";
+import {
+  Menu as MenuIcon,
+  X as XIcon,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import React, { useState } from "react";
 
 function SaccoAdminNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPersonalOpen, setIsPersonalOpen] = useState(false);
+
+  const togglePersonal = () => setIsPersonalOpen(!isPersonalOpen);
 
   return (
     <>
       {/* Navbar */}
-      <header className="bg-[#cc5500] text-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl md:text-2xl font-bold">Tamarind SACCO</h1>
+      <header className="bg-[#cc5500] text-white sticky top-0 z-50 shadow-lg">
+        <div className="px-4 py-4 flex justify-between items-center">
+          <h1 className="text-xl md:text-2xl font-bold tracking-wide">
+            Tamarind SACCO Admin
+          </h1>
           <Button
-            variant="outline"
-            className="border-white text-black hover:bg-white hover:text-[#cc5500]"
+            variant="ghost"
+            className="hover:bg-white/20"
             onClick={() => setIsMenuOpen(true)}
-            aria-label="Open menu"
           >
-            <MenuIcon className="h-5 w-5" />
-            <span className="sr-only">Menu</span>
+            <MenuIcon className="h-6 w-6" />
           </Button>
         </div>
       </header>
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-[200px] sm:w-[300px] bg-white text-black transform ${
+        className={`fixed inset-y-0 right-0 z-50 w-[280px] bg-white text-black shadow-2xl transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300 ease-in-out border-l border-[#cc5500] shadow-lg`}
+        }`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-[#cc5500]">Menu</h2>
+          {/* Header */}
+          <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-[#cc5500]">Admin Menu</h2>
             <Button
               variant="ghost"
-              className="p-2 hover:bg-gray-100"
+              size="icon"
               onClick={() => setIsMenuOpen(false)}
-              aria-label="Close menu"
             >
-              <XIcon className="h-5 w-5 text-black" />
-              <span className="sr-only">Close menu</span>
+              <XIcon className="h-6 w-6" />
             </Button>
           </div>
-          <nav className="flex flex-col gap-6 p-4">
+
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
             <Link
               href="/sacco-admin/dashboard"
-              className="text-lg hover:text-[#cc5500]"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
             </Link>
-            <Link
-              href="/sacco-admin/personal"
-              className="text-lg hover:text-[#cc5500]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Personal
-            </Link>
+
+            {/* PERSONAL DROPDOWN */}
+            <div className="space-y-1">
+              <button
+                onClick={togglePersonal}
+                className="w-full flex items-center justify-between py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
+              >
+                <span>Personal</span>
+                {isPersonalOpen ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+
+              {isPersonalOpen && (
+                <div className="pl-8 space-y-2 bg-gray-50 rounded-lg py-2">
+                  <Link
+                    href="/sacco-admin/personal"
+                    className="block py-2 px-4 text-base hover:text-[#cc5500] hover:bg-white rounded transition"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Personal
+                  </Link>
+                  <Link
+                    href="/sacco-admin/personal/loan-applications"
+                    className="block py-2 px-4 text-base hover:text-[#cc5500] hover:bg-white rounded transition"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Loan Applications
+                  </Link>
+                  <Link
+                    href="/sacco-admin/personal/guarantor-profile"
+                    className="block py-2 px-4 text-base hover:text-[#cc5500] hover:bg-white rounded transition"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Guarantor Profile
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Admin Links */}
             <Link
               href="/sacco-admin/members"
-              className="text-lg hover:text-[#cc5500]"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
             >
               Members
             </Link>
+
             <Link
               href="/sacco-admin/transact"
-              className="text-lg hover:text-[#cc5500]"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
             >
               Transact
             </Link>
+
+            <Link
+              href="/sacco-admin/loan-applications"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              All Loan Applications
+            </Link>
+
             <Link
               href="/sacco-admin/withdrawals"
-              className="text-lg hover:text-[#cc5500]"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
             >
               Withdrawals
             </Link>
+
             <Link
               href="/sacco-admin/settings"
-              className="text-lg hover:text-[#cc5500]"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
             >
-              Profile
+              Profile & Settings
             </Link>
+          </nav>
+
+          {/* Logout */}
+          <div className="p-4 border-t border-gray-200">
             <Button
               variant="outline"
+              className="w-full border-[#cc5500] text-[#cc5500] hover:bg-[#cc5500] hover:text-white font-semibold"
               onClick={() => {
                 setIsMenuOpen(false);
                 signOut({ callbackUrl: "/login" });
               }}
-              className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white text-base py-2"
             >
               Logout
             </Button>
-          </nav>
+          </div>
         </div>
       </div>
 
-      {/* Overlay for Sidebar */}
+      {/* Backdrop */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/60 z-40"
           onClick={() => setIsMenuOpen(false)}
-        ></div>
+        />
       )}
     </>
   );
