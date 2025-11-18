@@ -89,7 +89,7 @@ export default function AdminLoanApplicationDetail() {
       toast.success(`Application ${newStatus.toLowerCase()} successfully`);
       refetch();
     } catch (err) {
-      console.log(err)
+      console.log(err);
       toast.error(err.response?.data?.detail || "Action failed");
     } finally {
       setProcessing(false);
@@ -241,10 +241,10 @@ export default function AdminLoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(loan.monthly_payment)}
+                {formatCurrency(loan.projection?.monthly_payment)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {loan.term_months} months
+                {loan.projection?.term_months} months
               </p>
             </CardContent>
           </Card>

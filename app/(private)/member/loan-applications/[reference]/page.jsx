@@ -273,10 +273,10 @@ export default function LoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(loan.monthly_payment)}
+                {formatCurrency(loan.projection?.monthly_payment)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {loan.term_months} months
+                {loan.projection?.term_months} months
               </p>
             </CardContent>
           </Card>
