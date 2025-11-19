@@ -16,7 +16,7 @@ function MemberNavbar() {
         className="bg-[#045e32] text-white sticky top-0 z-50"
         aria-label="Main navigation"
       >
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="px-2 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
             <h1 className="ml-2 text-xl md:text-2xl font-bold">
               Tamarind SACCO
@@ -55,18 +55,25 @@ function MemberNavbar() {
           </div>
           <nav className="flex flex-col gap-6 p-4">
             <Link
-              href="/"
-              className="text-lg hover:text-[#067a46]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
               href="/member/dashboard"
               className="text-lg hover:text-[#067a46]"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
+            </Link>
+            <Link
+              href="/member/loan-applications"
+              className="text-lg hover:text-[#067a46]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Loan Applications
+            </Link>
+            <Link
+              href="/member/guarantor-profile"
+              className="text-lg hover:text-[#067a46]"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Guarantor Profile
             </Link>
             <Link
               href="/member/settings"

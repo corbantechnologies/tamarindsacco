@@ -50,3 +50,9 @@ export const downloadAccountsListCSV = async (token) => {
 export const createBulkCombinedUpdates = async (formData, token) => {
   await apiActions.post("api/v1/transactions/bulk/upload/", formData, token);
 };
+
+// Reports
+export const getMemberYearlySummary = async (member_no, token) => {
+  const response = await apiActions?.get(`/api/v1/transactions/${member_no}/summary/`, token);
+  return response?.data
+};
