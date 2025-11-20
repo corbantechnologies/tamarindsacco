@@ -1,9 +1,7 @@
-// components/transactions/DetailedSummaryTable.jsx
-import React, { useMemo } from "react";
+import React,{ useMemo } from "react";
 
-function DetailedSummaryTable({ data }) {
+const SummaryTable = ({ data }) => {
   const { monthly_summary = [] } = data || {};
-
   // Extract unique types
   const savingsTypes = useMemo(() => {
     const set = new Set();
@@ -29,53 +27,55 @@ function DetailedSummaryTable({ data }) {
     return Array.from(set);
   }, [monthly_summary]);
 
-  // Helper: safely reduce array of objects with .amount
-  const safeReduce = (arr, defaultValue = 0) =>
-    (Array.isArray(arr) ? arr : []).reduce(
-      (sum, item) => sum + (item.amount ?? 0),
-      defaultValue
-    );
-
   // Calculate running balances
   const runningBalances = useMemo(() => {
-    const bal = { savings: {}, venture: {}, loan: {} };
-
-    // Initialize balances
-    savingsTypes.forEach((t) => (bal.savings[t] = 0));
-    ventureTypes.forEach((t) => (bal.venture[t] = 0));
-    loanTypes.forEach((t) => (bal.loan[t] = 0));
-
-    return monthly_summary.reduce(
-      (acc, m) => {
-        const key = m.month;
-
-        // === Savings ===
-        m.savings.by_type.forEach((t) => {
-          bal.savings[t.type] += t.amount || 0;
-          acc.savings[key] = { ...bal.savings };
-        });
-
-        // === Ventures ===
-        m.ventures.by_type.forEach((vt) => {
-          const dep = safeReduce(vt.venture_deposits);
-          const pay = safeReduce(vt.venture_payments);
-          bal.venture[vt.venture_type] += dep - pay;
-          acc.venture[key] = { ...bal.venture };
-        });
-
-        // === Loans ===
-        m.loans.by_type.forEach((lt) => {
-          const disb = safeReduce(lt.total_amount_disbursed);
-          const rep = safeReduce(lt.total_amount_repaid);
-          bal.loan[lt.loan_type] += disb - rep;
-          acc.loan[key] = { ...bal.loan };
-        });
-
-        return acc;
-      },
-      { savings: {}, venture: {}, loan: {} }
-    );
-  }, [monthly_summary, savingsTypes, ventureTypes, loanTypes]);
+    // Initial running totals
+    const bal = {
+      savings: Object.fromEntries(savingsTypes.map(t => [t, 0])),
+      venture: Object.fromEntries(ventureTypes.map(t => [t, 0])),
+      loan: Object.fromEntries(loanTypes.map(t => [t, 0]))
+    };
+  
+    // Final accumulated result per month
+    const result = { savings: {}, venture: {}, loan: {} };
+  
+    monthly_summary.forEach(m => {
+      const key = m.month;
+  
+      // ======== SAVINGS ========
+      (m.savings?.by_type ?? []).forEach(entry => {
+        const type = entry.type;
+        const amount = Number(entry.amount) || 0;
+  
+        bal.savings[type] += amount;
+      });
+      result.savings[key] = { ...bal.savings };
+  
+      // ======== VENTURES ========
+      (m.ventures?.by_type ?? []).forEach(vt => {
+        const type = vt.venture_type;
+  
+        const deposits = vt.total_venture_deposits;
+        const payments = vt.total_venture_payments;
+  
+        bal.venture[type] += deposits - payments;
+      });
+      result.venture[key] = { ...bal.venture };
+  
+      // ======== LOANS ========
+      (m.loans?.by_type ?? []).forEach(lt => {
+        const type = lt.loan_type;
+  
+        const disb = lt.total_amount_disbursed;
+        const rep = lt.total_amount_repaid;
+  
+        bal.loan[type] += disb - rep;
+      });
+      result.loan[key] = { ...bal.loan };
+    });
+  
+    return result;
+  }, [monthly_summary, savingsTypes, ventureTypes, loanTypes]);  
 
   // Format number with 2 decimal places
   const format = (n) =>
@@ -85,8 +85,8 @@ function DetailedSummaryTable({ data }) {
     });
 
   // Get values for a specific month, section, and type
-  const getValue = (key, sec, type) => {
-    const m = monthly_summary.find((x) => x.month === key);
+  const getValue = (month, sec, type) => {
+    const m = monthly_summary.find((x) => x.month === month);
     if (!m) {
       return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0 };
     }
@@ -95,7 +95,7 @@ function DetailedSummaryTable({ data }) {
       const t = m.savings.by_type.find((x) => x.type === type);
       return {
         dep: t?.amount || 0,
-        bal: runningBalances.savings[key]?.[type] || 0,
+        bal: runningBalances.savings[month]?.[type] || 0,
         pay: 0,
         disb: 0,
         rep: 0,
@@ -106,12 +106,12 @@ function DetailedSummaryTable({ data }) {
 
     if (sec === "ventures") {
       const t = m.ventures.by_type.find((x) => x.venture_type === type);
-      const dep = safeReduce(t?.venture_deposits);
-      const pay = safeReduce(t?.venture_payments);
+      const dep = t?.total_venture_deposits;
+      const pay = t?.total_venture_payments;
       return {
         dep,
         pay,
-        bal: runningBalances.venture[key]?.[type] || 0,
+        bal: runningBalances.venture[month]?.[type] || 0,
         disb: 0,
         rep: 0,
         int: 0,
@@ -121,9 +121,9 @@ function DetailedSummaryTable({ data }) {
 
     if (sec === "loans") {
       const t = m.loans.by_type.find((x) => x.loan_type === type);
-      const disb = safeReduce(t?.total_amount_disbursed);
-      const rep = safeReduce(t?.total_amount_repaid);
-      const int = safeReduce(t?.total_interest_charged);
+      const disb = t?.total_amount_disbursed;
+      const rep = t?.total_amount_repaid;
+      const int = t?.total_interest_charged;
       const out = t?.total_amount_outstanding || 0;
       return { disb, rep, int, out, dep: 0, pay: 0, bal: 0 };
     }
@@ -250,51 +250,51 @@ function DetailedSummaryTable({ data }) {
         </thead>
 
         <tbody className="divide-y">
-          {monthly_summary.map((m) => {
-            const k = m.month;
+          {monthly_summary.map((monthSummary) => {
+            const month = monthSummary.month;
             return (
-              <tr key={k} className="h-8 hover:bg-gray-50">
+              <tr key={month} className="h-8 hover:bg-gray-50">
                 <td className="font-medium text-left px-3 py-1 border-r">
-                  {k.split(" ")[0]}
+                  {month.split(" ")[0]}
                 </td>
 
                 {/* Savings Columns */}
-                {savingsTypes.map((t) => {
-                  const v = getValue(k, "savings", t);
+                {savingsTypes.map((savingType) => {
+                  const value = getValue(month, "savings", savingType);
                   return (
-                    <React.Fragment key={t}>
-                      <td className="text-right px-3 py-1">{format(v.dep)}</td>
+                    <React.Fragment key={savingType}>
+                      <td className="text-right px-3 py-1">{format(value.dep)}</td>
                       <td className="text-right px-3 py-1 border-r last:border-r-0">
-                        {format(v.bal)}
+                        {format(value.bal)}
                       </td>
                     </React.Fragment>
                   );
                 })}
 
                 {/* Ventures Columns */}
-                {ventureTypes.map((t) => {
-                  const v = getValue(k, "ventures", t);
+                {ventureTypes.map((ventureType) => {
+                  const value = getValue(month, "ventures", ventureType);
                   return (
-                    <React.Fragment key={t}>
-                      <td className="text-right px-3 py-1">{format(v.dep)}</td>
-                      <td className="text-right px-3 py-1">{format(v.pay)}</td>
+                    <React.Fragment key={ventureType}>
+                      <td className="text-right px-3 py-1">{format(value.dep)}</td>
+                      <td className="text-right px-3 py-1">{format(value.pay)}</td>
                       <td className="text-right px-3 py-1 border-r last:border-r-0">
-                        {format(v.bal)}
+                        {format(value.bal)}
                       </td>
                     </React.Fragment>
                   );
                 })}
 
                 {/* Loans Columns */}
-                {loanTypes.map((t) => {
-                  const v = getValue(k, "loans", t);
+                {loanTypes.map((loanType) => {
+                  const value = getValue(month, "loans", loanType);
                   return (
-                    <React.Fragment key={t}>
-                      <td className="text-right px-3 py-1">{format(v.disb)}</td>
-                      <td className="text-right px-3 py-1">{format(v.rep)}</td>
-                      <td className="text-right px-3 py-1">{format(v.int)}</td>
+                    <React.Fragment key={loanType}>
+                      <td className="text-right px-3 py-1">{format(value.disb)}</td>
+                      <td className="text-right px-3 py-1">{format(value.rep)}</td>
+                      <td className="text-right px-3 py-1">{format(value.int)}</td>
                       <td className="text-right font-medium px-3 py-1 border-r last:border-r-0">
-                        {format(v.out)}
+                        {format(value.out)}
                       </td>
                     </React.Fragment>
                   );
@@ -308,4 +308,4 @@ function DetailedSummaryTable({ data }) {
   );
 }
 
-export default DetailedSummaryTable;
+export default SummaryTable;
