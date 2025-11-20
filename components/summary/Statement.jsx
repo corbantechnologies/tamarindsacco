@@ -9,7 +9,7 @@ const SaccoStatement = ({summaryData, member}) => {
   }, 0);
   
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md text-sm">
+    <div className="bg-white text-sm">
       <h1 className="text-2xl font-bold text-center mb-4 uppercase">
         Tamarind Sacco Ltd
       </h1>
