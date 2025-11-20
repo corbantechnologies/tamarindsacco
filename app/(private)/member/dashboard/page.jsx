@@ -42,8 +42,8 @@ function MemberDashboard() {
         {/* Statement */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
-          {/* <SaccoStatement summaryData={summary} member={member} /> */}
           <DetailedSummaryTable data={summary} member={member} />
+          <SaccoStatement summaryData={summary} member={member} />
         </div>
       </div>
     </div>

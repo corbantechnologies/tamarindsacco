@@ -1,5 +1,3 @@
-
-
 const SaccoStatement = ({summaryData, member}) => {
   const summary = summaryData?.monthly_summary
   const bFSummary = summaryData?.monthly_summary[0]
@@ -150,3 +148,4 @@ const SaccoStatement = ({summaryData, member}) => {
 };
 
 export default SaccoStatement;
+
