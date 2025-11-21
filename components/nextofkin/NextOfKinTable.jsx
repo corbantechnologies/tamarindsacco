@@ -49,6 +49,7 @@ function NextOfKinTable({ nextofkin = [], refetchAccount }) {
               <TableHead>Name</TableHead>
               <TableHead>Relationship</TableHead>
               <TableHead>Phone</TableHead>
+              <TableHead>Percentage</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -63,6 +64,7 @@ function NextOfKinTable({ nextofkin = [], refetchAccount }) {
                 </TableCell>
                 <TableCell>{kin?.relationship}</TableCell>
                 <TableCell>{kin?.phone}</TableCell>
+                <TableCell>{kin?.percentage}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button
                     size="sm"

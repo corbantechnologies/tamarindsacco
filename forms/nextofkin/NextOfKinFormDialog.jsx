@@ -31,6 +31,7 @@ function NextOfKinFormDialog({
     last_name: nextOfKin?.last_name || "",
     relationship: nextOfKin?.relationship || "",
     phone: nextOfKin?.phone || "",
+    percentage: nextOfKin?.percentage || "",
     email: nextOfKin?.email || "",
     address: nextOfKin?.address || "",
   };
@@ -59,6 +60,7 @@ function NextOfKinFormDialog({
       onClose();
       refetchAccount();
     } catch (error) {
+      console.log(error)
       toast.error("Failed to add next of kin. Please try again.");
     } finally {
       setLoading(false);
@@ -121,6 +123,14 @@ function NextOfKinFormDialog({
                 <Field as={Input} id="phone" name="phone" required />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="percentage">
+                Percentage<sup className="text-red-500">*</sup>
+              </Label>
+              <Field as={Input} id="percentage" name="percentage" required />
+            </div>
+
 
             <div className="space-y-4">
               <div className="space-y-2">
