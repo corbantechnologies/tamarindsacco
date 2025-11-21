@@ -118,7 +118,7 @@ function Transactions() {
                     <Download className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Download Account List
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={() => setIsSavingsUploadDialogOpen(true)}
                     variant="ghost"
                     className="justify-start text-left text-xs sm:text-sm py-1.5 px-2"
@@ -157,7 +157,7 @@ function Transactions() {
                   >
                     <Upload className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                     Bulk Loan Interest Upload
-                  </Button>
+                  </Button> */}
                   <Button
                     onClick={() => setIsCombinedUploadDialogOpen(true)}
                     variant="ghost"
