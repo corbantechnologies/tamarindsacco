@@ -41,9 +41,6 @@ function LandingPage() {
             <Link href="/login" className="hover:underline">
               Login
             </Link>
-            <Link href="/register" className="hover:underline">
-              Join Now
-            </Link>
           </nav>
           <Button
             variant="outline"
@@ -135,16 +132,9 @@ function LandingPage() {
           <div className="flex justify-center gap-4">
             <Button
               asChild
-              className="bg-white text-[#045e32] hover:bg-gray-100"
+              className="border-white bg-white text-black  hover:text-[#045e32]"
             >
-              <Link href="/register">Get Started</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="border-white text-black hover:bg-white hover:text-[#045e32]"
-            >
-              <Link href="/login">Login</Link>
+              <Link href="/login">Login to Dashboard</Link>
             </Button>
           </div>
         </div>

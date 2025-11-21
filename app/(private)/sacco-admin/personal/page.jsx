@@ -5,8 +5,10 @@ import { useFetchMember } from "@/hooks/members/actions";
 import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
 import SaccoStatement from "@/components/summary/Statement";
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
+import { useState } from "react";
 
 function MemberDashboard() {
+  const [showSummary, setShowSummary] = useState(false);
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -34,16 +36,24 @@ function MemberDashboard() {
               {member?.member_no}
             </h1>
             <p className="text-gray-500 text-sm sm:text-base mt-1">
-              Welcome to your personal dashboard
+              Welcome to your dashboard
             </p>
           </div>
+          <button onClick={()=>setShowSummary(prev=>!prev)} className="cursor-pointer text-left text-[#045e32] font-semibold underline">{showSummary ? 'Hide':'View'} Summary</button>
         </div>
+
+        {/* Statement */}
+        {showSummary ? <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">Summary</h2>
+          <DetailedSummaryTable data={summary} member={member} />
+        </div>
+        :null
+        }
 
         {/* Statement */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
-          {/* <SaccoStatement summaryData={summary} member={member} /> */}
-          <DetailedSummaryTable data={summary} member={member} />
+          <SaccoStatement summaryData={summary} member={member} />
         </div>
       </div>
     </div>
