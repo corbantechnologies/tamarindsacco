@@ -106,7 +106,7 @@ export default function CreateGuaranteeRequest({
               refetchApplication();
             } catch (error) {
               toast.error(
-                error.response?.data?.detail ||
+                error.response?.data?.guarantor ||
                   "Failed to send request. Please try again."
               );
             } finally {
@@ -184,12 +184,12 @@ export default function CreateGuaranteeRequest({
                               </p>
                             </div>
                           </div>
-                          <div className="text-right">
+                          {/* <div className="text-right">
                             <p className="font-semibold text-[#045e32]">
                               {formatCurrency(g.available_amount)}
                             </p>
                             <p className="text-xs text-gray-500">Available</p>
-                          </div>
+                          </div> */}
                         </label>
                       ))
                     )}

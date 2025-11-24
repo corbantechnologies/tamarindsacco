@@ -13,6 +13,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import { useFetchGuarantorProfile } from "@/hooks/guarantorprofiles/actions";
@@ -51,6 +61,9 @@ export default function GuarantorProfile() {
   const token = useAxiosAuth();
   const { isLoading, data: profile, refetch } = useFetchGuarantorProfile();
   const [processing, setProcessing] = useState({});
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (isLoading) return <MemberLoadingSpinner />;
 
@@ -59,15 +72,48 @@ export default function GuarantorProfile() {
   const historyRequests = allRequests.filter((r) => r.status !== "Pending");
 
   const handleAction = async (requestRef, action) => {
+    if (action === "Accepted") {
+      const req = pendingRequests.find((r) => r.reference === requestRef);
+      if (req) {
+        setSelectedRequest(req);
+        setAmount(req.guaranteed_amount || 0);
+        setIsModalOpen(true);
+      }
+      return;
+    }
+
     setProcessing((prev) => ({ ...prev, [requestRef]: action }));
     try {
-      await acceptDeclineGuaranteeRequest(requestRef, action, token);
+      await acceptDeclineGuaranteeRequest(requestRef, { status: action }, token);
       toast.success(`Request ${action.toLowerCase()}ed successfully`);
       refetch();
     } catch (err) {
       toast.error(err.response?.data?.detail || "Action failed");
     } finally {
       setProcessing((prev) => ({ ...prev, [requestRef]: null }));
+    }
+  };
+
+  const handleConfirmAccept = async () => {
+    if (!selectedRequest) return;
+    
+    const requestRef = selectedRequest.reference;
+    setProcessing((prev) => ({ ...prev, [requestRef]: "Accepted" }));
+    setIsModalOpen(false);
+
+    try {
+      await acceptDeclineGuaranteeRequest(
+        requestRef,
+        { status: "Accepted", guaranteed_amount: amount },
+        token
+      );
+      toast.success("Request accepted successfully");
+      refetch();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Action failed");
+    } finally {
+      setProcessing((prev) => ({ ...prev, [requestRef]: null }));
+      setSelectedRequest(null);
     }
   };
 
@@ -276,6 +322,40 @@ export default function GuarantorProfile() {
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Guarantee Amount</DialogTitle>
+            <DialogDescription>
+              Please review and adjust the amount you wish to guarantee for{" "}
+              {selectedRequest?.member}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="amount" className="text-right">
+                Amount
+              </Label>
+              <Input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmAccept} className="bg-[#045e32]">
+              Confirm Accept
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

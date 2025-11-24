@@ -54,6 +54,33 @@ export const submitLoanApplication = async (reference, token) => {
   );
 };
 
+// submit for amendment
+export const submitForAmendmentLoanApplication = async (reference, token) => {
+  await apiActions?.post(
+    `/api/v1/loanapplications/${reference}/submit-amendment/`,
+    {},
+    token
+  );
+};
+
+// accept amendment
+export const acceptAmendmentLoanApplication = async (reference, token) => {
+  await apiActions?.post(
+    `/api/v1/loanapplications/${reference}/accept-amendment/`,
+    {},
+    token
+  );
+};
+
+// decline amendment
+export const cancelAmendmentLoanApplication = async (reference, token) => {
+  await apiActions?.post(
+    `/api/v1/loanapplications/${reference}/cancel-amendment/`,
+    {},
+    token
+  );
+};
+
 // Admin actions
 export const adminApproveDeclineLoanApplication = async (
   reference,
@@ -63,6 +90,17 @@ export const adminApproveDeclineLoanApplication = async (
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/status/`,
     { status },
+    token
+  );
+  return response;
+};
+
+
+// amend
+export const amendLoanApplication = async (reference, values, token) => {
+  const response = await apiActions?.patch(
+    `/api/v1/loanapplications/${reference}/amend/`,
+    values,
     token
   );
   return response;

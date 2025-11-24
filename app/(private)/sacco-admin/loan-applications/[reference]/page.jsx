@@ -30,9 +30,10 @@ import {
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
-import { adminApproveDeclineLoanApplication } from "@/services/loanapplications";
+import { adminApproveDeclineLoanApplication, amendLoanApplication } from "@/services/loanapplications";
 import toast from "react-hot-toast";
 import useMemberNo from "@/hooks/authentication/useMemberNo";
+import AmendLoanApplication from "@/forms/loanapplications/AmendLoanApplication";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -68,7 +69,6 @@ const getGuarantorStatusBadge = (status) => {
 
 export default function AdminLoanApplicationDetail() {
   const { reference } = useParams();
-  const router = useRouter();
   const token = useAxiosAuth();
   const currentMemberNo = useMemberNo();
 
@@ -78,6 +78,12 @@ export default function AdminLoanApplicationDetail() {
   const status = loan?.status;
   const guarantors = loan?.guarantors || [];
   const schedule = loan?.projection?.schedule || [];
+
+  // AMEND
+  const [amendOpen, setAmendOpen] = useState(false);
+
+  
+
 
   // --------------------------------------------------------------------
   // ADMIN ACTION: APPROVE / DECLINE
@@ -100,6 +106,18 @@ export default function AdminLoanApplicationDetail() {
   // ACTION BUTTONS (Popover) – only for Submitted + not self
   // --------------------------------------------------------------------
   const actionButtons = useMemo(() => {
+    if (status === "Ready for Amendment") {
+      // open amendment modal
+      return (
+        <Button
+          size="sm"
+          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          onClick={() => setAmendOpen(true)}
+        >
+          Amend Application
+        </Button>
+      );
+    }
     if (!status || status !== "Submitted") {
       return (
         <p className="text-xs text-muted-foreground text-center">
@@ -156,10 +174,7 @@ export default function AdminLoanApplicationDetail() {
   // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
-  // --------------------------------------------------------------------
-  // RENDER – EXACT SAME AS MEMBER PAGE
-  // --------------------------------------------------------------------
-  return (
+return (
     <>
       <div className="min-h-screen bg-gray-100 p-4 sm:p-6 space-y-6">
         {/* Header */}
@@ -426,6 +441,13 @@ export default function AdminLoanApplicationDetail() {
           </CardContent>
         </Card>
       </div>
+
+      <AmendLoanApplication
+        loan={loan}
+        open={amendOpen}
+        onClose={() => setAmendOpen(false)}
+        onSuccess={refetch}
+      />
     </>
   );
 }
