@@ -21,12 +21,12 @@ export const getGuaranteeRequest = async (reference, token) => {
 
 export const acceptDeclineGuaranteeRequest = async (
   reference,
-  status,
+  values,
   token
 ) => {
   const response = await apiActions?.patch(
     `/api/v1/guaranteerequests/${reference}/status/`,
-    { status },
+    values,
     token
   );
   return response?.data;
