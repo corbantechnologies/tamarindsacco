@@ -105,8 +105,9 @@ export default function CreateGuaranteeRequest({
               onClose();
               refetchApplication();
             } catch (error) {
+              console.log(error?.response?.data["guarantor"]);
               toast.error(
-                error.response?.data?.detail ||
+                error.response?.data?.guarantor ||
                   "Failed to send request. Please try again."
               );
             } finally {

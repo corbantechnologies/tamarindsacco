@@ -33,10 +33,11 @@ import {
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplication";
-import { submitLoanApplication } from "@/services/loanapplications";
+import { acceptAmendmentLoanApplication, cancelAmendmentLoanApplication, submitForAmendmentLoanApplication, submitLoanApplication } from "@/services/loanapplications";
 import toast from "react-hot-toast";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { useFetchGuarantorProfiles } from "@/hooks/guarantorprofiles/actions";
+import RequestGuarantorModal from "@/forms/guaranteerequests/RequestGuarantorModal";
 import CreateGuaranteeRequest from "@/forms/guaranteerequests/CreateGuaranteeRequest";
 
 const formatCurrency = (val) =>
@@ -81,6 +82,7 @@ export default function LoanApplicationDetail() {
     useFetchGuarantorProfiles(reference);
   const [editOpen, setEditOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submittingForAmendment, setSubmittingForAmendment] = useState(false);
   const [guarantorModalOpen, setGuarantorModalOpen] = useState(false);
 
   const status = loan?.status;
@@ -89,7 +91,7 @@ export default function LoanApplicationDetail() {
   const guarantors = loan?.guarantors || [];
 
   // --------------------------------------------------------------------
-  // SUBMIT HANDLER
+  // SUBMIT HANDLERS
   // --------------------------------------------------------------------
   const handleSubmit = async () => {
     if (!canSubmit || !isFullyCovered) return;
@@ -108,6 +110,56 @@ export default function LoanApplicationDetail() {
       setSubmitting(false);
     }
   };
+
+  const submitForAmendment = async () => {
+
+    setSubmittingForAmendment(true);
+    try {
+      await submitForAmendmentLoanApplication(reference, token);
+      toast.success("Loan application submitted for amendment successfully");
+      refetch();
+    } catch (err) {
+      toast.error(
+        err.response?.data?.detail ||
+          "Failed to submit loan application for amendment. Please try again."
+      );
+    } finally {
+      setSubmittingForAmendment(false);
+    }
+  };
+
+
+  const acceptChanges = async () => {
+    setSubmitting(true);
+    try {
+      await acceptAmendmentLoanApplication(reference, token);
+      toast.success("Loan application accepted successfully");
+      refetch();
+    } catch (err) {
+      toast.error(
+        err.response?.data?.detail ||
+          "Failed to accept loan application. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const cancelAmendment = async () => {
+    setSubmitting(true);
+    try {
+      await cancelAmendmentLoanApplication(reference, token);
+      toast.success("Loan application cancelled successfully");
+      refetch();
+    } catch (err) {
+      toast.error(
+        err.response?.data?.detail ||
+          "Failed to cancel loan application. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   // --------------------------------------------------------------------
   // ACTION BUTTONS
@@ -128,7 +180,60 @@ export default function LoanApplicationDetail() {
               <Edit className="mr-2 h-4 w-4" />
               Update Application
             </Button>
+
+            
+
             <Button
+              size="sm"
+              className="w-full justify-start bg-[#045e32] hover:bg-[#022007] text-white"
+              disabled={submittingForAmendment}
+              onClick={() => submitForAmendment()}
+            >
+              {submittingForAmendment ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting for Amendment...
+                </>
+              ) : (
+                <>
+                  <Send className="mr-2 h-4 w-4" />
+                  Submit for Amendment
+                </>
+              )}
+            </Button>
+
+          </>
+        );
+
+      case "Amended":
+      // accept changes
+        return (
+          <>
+          <Button
+              size="sm"
+              className="w-full justify-start bg-[#045e32] hover:bg-[#022007] text-white"
+              onClick={() => acceptChanges()}
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Accept Changes
+            </Button>
+
+            <Button
+              size="sm"
+              className="w-full justify-start bg-red-500 hover:bg-red-600 text-white"
+              onClick={() => cancelAmendment()}
+            >
+              <XCircle className="mr-2 h-4 w-4" />
+              Cancel Amendment
+            </Button>
+          </>
+        );
+
+      case "In Progress":
+        // accept changes
+        return (
+          <>
+          <Button
               size="sm"
               variant="outline"
               className="w-full justify-start"
@@ -143,16 +248,6 @@ export default function LoanApplicationDetail() {
       case "Ready for Submission":
         return (
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => setEditOpen(true)}
-            >
-              <Edit className="mr-2 h-4 w-4" />
-              Update Application
-            </Button>
-
             <Button
               size="sm"
               className="w-full bg-[#045e32] hover:bg-[#022007] text-white"
