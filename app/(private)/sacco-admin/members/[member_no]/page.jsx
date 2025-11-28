@@ -1,7 +1,8 @@
 "use client";
 
 import LoadingSpinner from "@/components/general/LoadingSpinner";
-import { useFetchMemberDetail } from "@/hooks/members/actions";
+import { useFetchMemberDetail, useFetchMemberYearlySummaryAdmin } from "@/hooks/members/actions";
+import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,7 +25,6 @@ import {
   Settings,
   Wallet,
   Wallet2,
-  LucideBanknoteX,
   LucideBanknote,
 } from "lucide-react";
 import {
@@ -37,21 +37,25 @@ import {
 } from "@/components/ui/breadcrumb";
 import { apiActions } from "@/tools/axios";
 import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
-import CreateLoanAccountAdmin from "@/forms/loans/CreateLoanAdmin";
 import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits";
 import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
-import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { createGuarantorProfile } from "@/services/guarantorprofile";
+import SaccoStatement from "@/components/summary/Statement";
 
 function MemberDetail() {
   const { member_no } = useParams();
   const token = useAxiosAuth();
   const {
-    isLoading: isLoadingMember,
+    isPending: isLoadingMember,
     data: member,
     error,
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
+
+   const {
+      isLoading: isLoadingSummary,
+      data: summary,
+    } = useFetchMemberYearlySummaryAdmin(member_no);
 
   console.log(member);
 
@@ -62,6 +66,7 @@ function MemberDetail() {
   const [loanModal, setLoanModal] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -167,7 +172,7 @@ function MemberDetail() {
         </Breadcrumb>
         {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-8">
+          <CardContent className="p-8 flex justify-between">
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
               <Avatar className="h-24 w-24 border-4 border-primary/20">
                 <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
@@ -234,6 +239,7 @@ function MemberDetail() {
                 </Button>
               )}
             </div>
+            <button onClick={()=>setShowSummary(prev=>!prev)} className="cursor-pointer text-left text-[#045e32] font-semibold underline">{showSummary ? 'Hide':'View'} Summary</button>
           </CardContent>
         </Card>
 
@@ -586,6 +592,22 @@ function MemberDetail() {
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* summary */}
+        {showSummary ? 
+         <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">Summary</h2>
+          <DetailedSummaryTable data={summary} member={member} />
+        </div>
+         :
+         null
+         }
+
+         {/* Statement */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
+          <SaccoStatement summaryData={summary} member={member} />
         </div>
 
         <CreateDepositAdmin

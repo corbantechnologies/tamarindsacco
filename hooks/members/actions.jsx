@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import useUserId from "../authentication/useUserId";
 import { approveMember, getMember, getMemberDetail, getMembers } from "@/services/members";
+import { getMemberYearlySummary } from "@/services/transactions";
 
 // MEMBER Hooks
 export function useFetchMember() {
@@ -47,5 +48,16 @@ export function useVerifyMember(member_no) {
 
   return useMutation({
     mutationFn: () => approveMember(member_no, token),
+  });
+}
+
+// fetch member summary in admin dashboard
+export function useFetchMemberYearlySummaryAdmin(member_no) {
+  const token = useAxiosAuth();
+
+  return useQuery({
+    queryKey: ["summary", member_no],
+    queryFn: () => getMemberYearlySummary(member_no, token),
+    enabled: !!token && !!member_no,
   });
 }
