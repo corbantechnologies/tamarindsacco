@@ -26,6 +26,9 @@ import {
   Wallet,
   Wallet2,
   LucideBanknote,
+  Download,
+  FileText,
+  LayoutDashboard,
 } from "lucide-react";
 import {
   Breadcrumb,
@@ -41,6 +44,8 @@ import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits
 import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
 import { createGuarantorProfile } from "@/services/guarantorprofile";
 import SaccoStatement from "@/components/summary/Statement";
+import { downloadMemberYearlySummary } from "@/services/transactions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -52,21 +57,18 @@ function MemberDetail() {
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
 
-   const {
-      isLoading: isLoadingSummary,
-      data: summary,
-    } = useFetchMemberYearlySummaryAdmin(member_no);
-
-  console.log(member);
+  const {
+    isLoading: isLoadingSummary,
+    data: summary,
+  } = useFetchMemberYearlySummaryAdmin(member_no);
 
   // states
   const [isApproving, setIsApproving] = useState(false);
   const [isCreatingGuarantor, setIsCreatingGuarantor] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
-  const [loanModal, setLoanModal] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
-  const [showSummary, setShowSummary] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -82,6 +84,18 @@ function MemberDetail() {
       toast.error("Failed to approve member. Please try again");
     } finally {
       setIsApproving(false);
+    }
+  };
+
+  const handleSummaryDownload = async () => {
+    setDownloading(true);
+    try {
+      await downloadMemberYearlySummary(member_no, token);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to download summary. Please try again");
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -145,7 +159,7 @@ function MemberDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-8">
+      <div className="p-6 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
@@ -170,9 +184,10 @@ function MemberDetail() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+
         {/* Header Card */}
         <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-primary/5 to-primary/10">
-          <CardContent className="p-8 flex justify-between">
+          <CardContent className="p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
               <Avatar className="h-24 w-24 border-4 border-primary/20">
                 <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
@@ -227,336 +242,181 @@ function MemberDetail() {
                   </Badge>
                 </div>
               </div>
+            </div>
 
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
               {!member?.is_approved && (
                 <Button
                   onClick={() => handleApprove()}
                   disabled={isApproving}
-                  size="sm"
-                  className="bg-[#045e32] hover:bg-[#022007] text-white px-8"
+                  className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
                 >
                   {isApproving ? "Approving..." : "Approve Member"}
                 </Button>
               )}
+              
+              <Button
+                onClick={() => handleSummaryDownload()}
+                disabled={downloading}
+                variant="outline"
+                className={`w-full sm:w-auto border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white transition-colors ${
+                  downloading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                {downloading ? "Downloading..." : "Download Summary"}
+              </Button>
             </div>
-            <button onClick={()=>setShowSummary(prev=>!prev)} className="cursor-pointer text-left text-[#045e32] font-semibold underline">{showSummary ? 'Hide':'View'} Summary</button>
           </CardContent>
         </Card>
 
-        {/* Key Actions */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="flex flex-col h-full">
-            {/* Savings Accounts */}
-            <Card className="shadow-md flex flex-col h-full">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Savings Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <Button
-                      onClick={() => setDepositModal(true)}
-                      size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                    >
-                      Deposit
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-1">
-                {member?.savings_accounts?.length > 0 ? (
-                  <>
-                    {member?.savings_accounts.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={Wallet2}
-                          label={`${account?.account_type} - ${account?.account_number}`}
-                          value={`${account?.balance} ${
-                            account?.currency || "KES"
-                          }`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No savings accounts found.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="profile">Profile Details</TabsTrigger>
+            <TabsTrigger value="financials">Financials</TabsTrigger>
+          </TabsList>
 
-          <div className="flex flex-col h-full">
-            {/* Venture Accounts */}
-            <Card className="shadow-md flex flex-col h-full">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Venture Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => setVentureDepositModal(true)}
-                        size="sm"
-                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                      >
-                        Deposit
-                      </Button>
-                      <Button
-                        onClick={() => setVenturePaymentModal(true)}
-                        size="sm"
-                        className="bg-[#cc5500] hover:bg-[#e66b00] text-white mt-4"
-                      >
-                        Pay
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-1">
-                {member?.venture_accounts?.length > 0 ? (
-                  <>
-                    {member?.venture_accounts.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={Wallet2}
-                          label={`${account?.venture_type} - ${account?.account_number}`}
-                          value={`${account?.balance} KES`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No venture accounts found.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex flex-col h-full">
-            {/* Loan Accounts */}
-            <Card className="shadow-md flex flex-col h-full">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Wallet className="h-6 w-6 text-primary" />
-                    Loan Accounts
-                  </CardTitle>
-                  {member?.is_approved && (
-                    <Button
-                      size="sm"
-                      className="bg-[#045e32] hover:bg-[#022007] text-white"
-                    >
-                      Loan
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-1">
-                {member?.loans?.length > 0 ? (
-                  <>
-                    {member?.loans?.map((account) => (
-                      <div key={account?.reference} className="space-y-2">
-                        <InfoField
-                          icon={CreditCard}
-                          label={`${account?.loan_type} - ${account?.account_number}`}
-                          value={`${account?.outstanding_balance} KES`}
-                        />
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <p className="text-muted-foreground text-center py-4">
-                    No loan accounts found.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        {/* Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Personal Information */}
-          <div className="lg:col-span-2 space-y-8">
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl">
-                  <User className="h-6 w-6 text-primary" />
-                  Personal Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid md:grid-cols-2 gap-4">
-                <InfoField
-                  icon={Mail}
-                  label="Email Address"
-                  value={member?.email}
-                />
-                <InfoField
-                  icon={Phone}
-                  label="Phone Number"
-                  value={member?.phone}
-                />
-                <InfoField
-                  icon={Calendar}
-                  label="Date of Birth"
-                  value={formatDate(member?.dob)}
-                />
-                <InfoField icon={User} label="Gender" value={member?.gender} />
-                <InfoField
-                  icon={MapPin}
-                  label="County"
-                  value={member?.county}
-                />
-                <InfoField
-                  icon={CreditCard}
-                  label="Reference Code"
-                  value={member?.reference}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Guarantor Information */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle className="flex items-center gap-2 text-2xl">
-                    <LucideBanknote className="h-6 w-6 text-primary" />
-                    Guarantor Details
-                  </CardTitle>
-                  {member?.guarantor_profile === null &&
-                    member?.is_approved && (
-                      <Button
-                        onClick={() => handleCreateGuarantorProfile()}
-                        disabled={isCreatingGuarantor}
-                        size="sm"
-                        className="bg-[#045e32] hover:bg-[#022007] text-white mt-4"
-                      >
-                        Add Guarantor
-                      </Button>
-                    )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <InfoField
-                  icon={User}
-                  label="Available Amount"
-                  value={member?.guarantor_profile?.available_amount}
-                />
-                <InfoField
-                  icon={Mail}
-                  label="Committed Amount"
-                  value={member?.guarantor_profile?.committed_amount || 0}
-                />
-                <InfoField
-                  icon={Phone}
-                  label="Active Guarantees"
-                  value={
-                    member?.guarantor_profile?.active_guarantees_count || 0
-                  }
-                />
-              </CardContent>
-            </Card>
-
-            {/* Employment Information */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Building className="h-6 w-6 text-primary" />
-                  Employment Details
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <InfoField
-                  icon={Building}
-                  label="Employment Type"
-                  value={member?.employment_type}
-                />
-                <InfoField
-                  icon={Building}
-                  label="Employer"
-                  value={member?.employer}
-                />
-                <InfoField
-                  icon={User}
-                  label="Job Title"
-                  value={member?.job_title}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Identification */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Shield className="h-5 w-5 text-primary" />
-                  Identification
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <InfoField
-                  icon={CreditCard}
-                  label="ID Type"
-                  value={member?.id_type}
-                />
-                <InfoField
-                  icon={CreditCard}
-                  label="ID Number"
-                  value={member?.id_number}
-                />
-                <InfoField
-                  icon={CreditCard}
-                  label="Tax PIN"
-                  value={member?.tax_pin}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Roles & Permissions */}
-            <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Settings className="h-5 w-5 text-primary" />
-                  Roles & Permissions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {roles.length > 0 ? (
-                    roles.map((role) => (
-                      <div
-                        key={role.key}
-                        className="flex items-center justify-between p-3 rounded-lg bg-primary/5"
-                      >
-                        <span className="font-medium text-foreground">
-                          {role.label}
-                        </span>
-                        <Badge
-                          variant="default"
-                          className="bg-primary text-primary-foreground"
+          {/* OVERVIEW TAB */}
+          <TabsContent value="overview" className="space-y-6">
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+              {/* Savings Accounts */}
+              <div className="flex flex-col h-full">
+                <Card className="shadow-md flex flex-col h-full">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <Wallet className="h-6 w-6 text-primary" />
+                        Savings Accounts
+                      </CardTitle>
+                      {member?.is_approved && (
+                        <Button
+                          onClick={() => setDepositModal(true)}
+                          size="sm"
+                          className="bg-[#045e32] hover:bg-[#022007] text-white"
                         >
-                          Active
-                        </Badge>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-center py-4">
-                      No roles assigned
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                          Deposit
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 flex-1">
+                    {member?.savings_accounts?.length > 0 ? (
+                      <>
+                        {member?.savings_accounts.map((account) => (
+                          <div key={account?.reference} className="space-y-2">
+                            <InfoField
+                              icon={Wallet2}
+                              label={`${account?.account_type} - ${account?.account_number}`}
+                              value={`${account?.balance} ${
+                                account?.currency || "KES"
+                              }`}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">
+                        No savings accounts found.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Venture Accounts */}
+              <div className="flex flex-col h-full">
+                <Card className="shadow-md flex flex-col h-full">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <LayoutDashboard className="h-6 w-6 text-primary" />
+                        Venture Accounts
+                      </CardTitle>
+                      {member?.is_approved && (
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => setVentureDepositModal(true)}
+                            size="sm"
+                            className="bg-[#045e32] hover:bg-[#022007] text-white"
+                          >
+                            Deposit
+                          </Button>
+                          <Button
+                            onClick={() => setVenturePaymentModal(true)}
+                            size="sm"
+                            className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+                          >
+                            Pay
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 flex-1">
+                    {member?.venture_accounts?.length > 0 ? (
+                      <>
+                        {member?.venture_accounts.map((account) => (
+                          <div key={account?.reference} className="space-y-2">
+                            <InfoField
+                              icon={Wallet2}
+                              label={`${account?.venture_type} - ${account?.account_number}`}
+                              value={`${account?.balance} KES`}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">
+                        No venture accounts found.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Loan Accounts */}
+              <div className="flex flex-col h-full">
+                <Card className="shadow-md flex flex-col h-full">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <CreditCard className="h-6 w-6 text-primary" />
+                        Loan Accounts
+                      </CardTitle>
+                      {member?.is_approved && (
+                        <Button
+                          size="sm"
+                          className="bg-[#045e32] hover:bg-[#022007] text-white"
+                        >
+                          Loan
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 flex-1">
+                    {member?.loans?.length > 0 ? (
+                      <>
+                        {member?.loans?.map((account) => (
+                          <div key={account?.reference} className="space-y-2">
+                            <InfoField
+                              icon={CreditCard}
+                              label={`${account?.loan_type} - ${account?.account_number}`}
+                              value={`${account?.outstanding_balance} KES`}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">
+                        No loan accounts found.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
 
             {/* Account Timeline */}
             <Card className="shadow-md">
@@ -566,7 +426,7 @@ function MemberDetail() {
                   Account Timeline
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
                   <div className="h-3 w-3 rounded-full bg-success"></div>
                   <div>
@@ -591,24 +451,209 @@ function MemberDetail() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
+          </TabsContent>
 
-        {/* summary */}
-        {showSummary ? 
-         <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">Summary</h2>
-          <DetailedSummaryTable data={summary} member={member} />
-        </div>
-         :
-         null
-         }
+          {/* PROFILE TAB */}
+          <TabsContent value="profile" className="space-y-6">
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Personal Information */}
+              <div className="lg:col-span-2 space-y-6">
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <User className="h-6 w-6 text-primary" />
+                      Personal Information
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid md:grid-cols-2 gap-4">
+                    <InfoField
+                      icon={Mail}
+                      label="Email Address"
+                      value={member?.email}
+                    />
+                    <InfoField
+                      icon={Phone}
+                      label="Phone Number"
+                      value={member?.phone}
+                    />
+                    <InfoField
+                      icon={Calendar}
+                      label="Date of Birth"
+                      value={formatDate(member?.dob)}
+                    />
+                    <InfoField icon={User} label="Gender" value={member?.gender} />
+                    <InfoField
+                      icon={MapPin}
+                      label="County"
+                      value={member?.county}
+                    />
+                    <InfoField
+                      icon={CreditCard}
+                      label="Reference Code"
+                      value={member?.reference}
+                    />
+                  </CardContent>
+                </Card>
 
-         {/* Statement */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-[#045e32] mb-4">Statement</h2>
-          <SaccoStatement summaryData={summary} member={member} />
-        </div>
+                {/* Employment Information */}
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <Building className="h-6 w-6 text-primary" />
+                      Employment Details
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <InfoField
+                      icon={Building}
+                      label="Employment Type"
+                      value={member?.employment_type}
+                    />
+                    <InfoField
+                      icon={Building}
+                      label="Employer"
+                      value={member?.employer}
+                    />
+                    <InfoField
+                      icon={User}
+                      label="Job Title"
+                      value={member?.job_title}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Identification */}
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Shield className="h-5 w-5 text-primary" />
+                      Identification
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <InfoField
+                      icon={CreditCard}
+                      label="ID Type"
+                      value={member?.id_type}
+                    />
+                    <InfoField
+                      icon={CreditCard}
+                      label="ID Number"
+                      value={member?.id_number}
+                    />
+                    <InfoField
+                      icon={CreditCard}
+                      label="Tax PIN"
+                      value={member?.tax_pin}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Guarantor Information */}
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <LucideBanknote className="h-5 w-5 text-primary" />
+                        Guarantor
+                      </CardTitle>
+                      {member?.guarantor_profile === null &&
+                        member?.is_approved && (
+                          <Button
+                            onClick={() => handleCreateGuarantorProfile()}
+                            disabled={isCreatingGuarantor}
+                            size="sm"
+                            className="bg-[#045e32] hover:bg-[#022007] text-white"
+                          >
+                            Add
+                          </Button>
+                        )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <InfoField
+                      icon={User}
+                      label="Available Amount"
+                      value={member?.guarantor_profile?.available_amount}
+                    />
+                    <InfoField
+                      icon={Mail}
+                      label="Committed Amount"
+                      value={member?.guarantor_profile?.committed_amount || 0}
+                    />
+                    <InfoField
+                      icon={Phone}
+                      label="Active Guarantees"
+                      value={
+                        member?.guarantor_profile?.active_guarantees_count || 0
+                      }
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Roles & Permissions */}
+                <Card className="shadow-md">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Settings className="h-5 w-5 text-primary" />
+                      Roles
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {roles.length > 0 ? (
+                        roles.map((role) => (
+                          <div
+                            key={role.key}
+                            className="flex items-center justify-between p-3 rounded-lg bg-primary/5"
+                          >
+                            <span className="font-medium text-foreground">
+                              {role.label}
+                            </span>
+                            <Badge
+                              variant="default"
+                              className="bg-primary text-primary-foreground"
+                            >
+                              Active
+                            </Badge>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground text-center py-4">
+                          No roles assigned
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* FINANCIALS TAB */}
+          <TabsContent value="financials" className="space-y-6">
+            {/* Summary Table */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="h-6 w-6 text-[#045e32]" />
+                <h2 className="text-xl font-bold text-[#045e32]">Yearly Summary</h2>
+              </div>
+              <DetailedSummaryTable data={summary} member={member} />
+            </div>
+
+            {/* Statement */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="h-6 w-6 text-[#045e32]" />
+                <h2 className="text-xl font-bold text-[#045e32]">Statement</h2>
+              </div>
+              <SaccoStatement summaryData={summary} member={member} />
+            </div>
+          </TabsContent>
+        </Tabs>
 
         <CreateDepositAdmin
           isOpen={depositModal}

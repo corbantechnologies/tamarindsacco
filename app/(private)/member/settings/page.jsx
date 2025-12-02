@@ -40,7 +40,6 @@ function AccountSettings() {
     refetch: refetchMember,
   } = useFetchMember();
 
-  console.log(member);
 
   const [updateModal, setUpdateModal] = useState(false);
   const [passwordModal, setPasswordModal] = useState(false);

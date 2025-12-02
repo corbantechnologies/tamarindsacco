@@ -2,13 +2,19 @@
 
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import { useFetchMember } from "@/hooks/members/actions";
-import { useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
+import { useDownloadMemberYearlySummary, useFetchMemberYearlySummary } from "@/hooks/transactions/actions";
 import SaccoStatement from "@/components/summary/Statement";
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
 import { useState } from "react";
+import { downloadMemberYearlySummary } from "@/services/transactions";
+import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
+import useMemberNo from "@/hooks/authentication/useMemberNo";
 
 function MemberDashboard() {
   const [showSummary, setShowSummary] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const token = useAxiosAuth()
+  const memberNo = useMemberNo()
   const {
     isLoading: isLoadingMember,
     data: member,
@@ -20,6 +26,17 @@ function MemberDashboard() {
     data: summary,
     refetch: refetchSummary,
   } = useFetchMemberYearlySummary();
+
+  const handleSummaryDownload = async () => {
+    setDownloading(false);
+    try {
+      await downloadMemberYearlySummary(memberNo, token)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setDownloading(false)
+    }
+  };
 
   if (isLoadingMember || isLoadingSummary) {
     return <MemberLoadingSpinner />;
@@ -39,7 +56,20 @@ function MemberDashboard() {
               Welcome to your dashboard
             </p>
           </div>
-          <button onClick={()=>setShowSummary(prev=>!prev)} className="cursor-pointer text-left text-[#045e32] font-semibold underline">{showSummary ? 'Hide':'View'} Summary</button>
+          <div className="flex gap-2">
+            <button onClick={()=>setShowSummary(prev=>!prev)} className="px-4 py-2 rounded-md font-medium text-white transition bg-[#045e32] hover:bg-[#037a40]">{showSummary ? 'Hide':'View'} Summary</button>
+            <button
+              onClick={() => handleSummaryDownload()}
+              disabled={downloading}
+              className={`px-4 py-2 rounded-md font-medium text-white transition ${
+                downloading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#045e32] hover:bg-[#037a40]"
+              }`}
+            >
+              {downloading ? "Downloading…" : "Download Summary"}
+            </button>
+          </div>
         </div>
 
         {/* Statement */}
