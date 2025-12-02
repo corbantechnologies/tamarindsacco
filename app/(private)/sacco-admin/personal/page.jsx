@@ -28,7 +28,7 @@ function MemberDashboard() {
   } = useFetchMemberYearlySummary();
 
   const handleSummaryDownload = async () => {
-    setDownloading(false);
+    setDownloading(true);
     try {
       await downloadMemberYearlySummary(memberNo, token)
     } catch (error) {
