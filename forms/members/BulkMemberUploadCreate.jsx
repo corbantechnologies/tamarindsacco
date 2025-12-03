@@ -33,7 +33,6 @@ function BulkMemberUploadCreate({isOpen, onClose, refetchMembers}) {
             onClose();
             refetchMembers();
         } catch (error) {
-            console.log(error);
             toast.error("Failed to upload bulk members. Please try again.");
         } finally {
             setLoading(false);
