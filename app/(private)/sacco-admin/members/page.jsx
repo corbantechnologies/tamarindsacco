@@ -4,13 +4,15 @@ import LoadingSpinner from "@/components/general/LoadingSpinner";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import { Button } from "@/components/ui/button";
+import BulkMemberUploadCreate from "@/forms/members/BulkMemberUploadCreate";
 import CreateMember from "@/forms/members/CreateMember";
 import { useFetchMembers } from "@/hooks/members/actions";
-import { User, Users } from "lucide-react";
+import { Upload, User, Users } from "lucide-react";
 import React, { useState } from "react";
 
 function Members() {
   const [memberCreateModal, setMemberCreateModal] = useState(false);
+  const [memberUploadModal, setMemberUploadModal] = useState(false);
   const {
     isLoading: isLoadingMembers,
     data: members,
@@ -42,6 +44,13 @@ function Members() {
             >
               <User className="h-4 w-4 mr-2" /> New Member
             </Button>
+            <Button
+              onClick={() => setMemberUploadModal(true)}
+              variant="ghost"
+              className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
+            >
+              <Upload className="h-4 w-4 mr-2" /> Upload Member CSV
+            </Button>
           </div>
         </div>
 
@@ -70,6 +79,12 @@ function Members() {
           closeModal={() => setMemberCreateModal(false)}
         />
       </div>
+
+      <BulkMemberUploadCreate
+        isOpen={memberUploadModal}
+        onClose={() => setMemberUploadModal(false)}
+        refetchMembers={refetchMembers}
+      />
     </div>
   );
 }
