@@ -51,6 +51,11 @@ export const approveMember = async (member_no, token) => {
   await apiActions?.patch(`/api/v1/auth/approve-member/${member_no}/`, token);
 };
 
+// Bulk upload
+export const createBulkMembers = async (formData, token) => {
+    await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
+};
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 // Member Views
 export const getMember = async (userId, token) => {
