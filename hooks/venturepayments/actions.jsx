@@ -8,20 +8,21 @@ import {
 } from "@/services/venturepayments";
 
 export function useFetchVenturePayments() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["venturepayments"],
-    queryFn: () => getVenturePayments(token),
+    queryFn: () => getVenturePayments(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchVenturePayment(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["venturepayment", reference],
-    queryFn: () => getVenturePayment(reference, token),
-    enabled: !!reference,
+    queryFn: () => getVenturePayment(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

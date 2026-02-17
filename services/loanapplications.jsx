@@ -2,82 +2,82 @@
 
 import { apiActions } from "@/tools/axios";
 
-export const createLoanApplication = async (values, token) => {
+export const createLoanApplication = async (values, auth) => {
   const response = await apiActions?.post(
     "/api/v1/loanapplications/list/",
     values,
-    token
+    auth
   );
   return response;
 };
 
-export const getMyLoanApplications = async (token) => {
-  const response = await apiActions?.get("/api/v1/loanapplications/list/", token);
+export const getMyLoanApplications = async (auth) => {
+  const response = await apiActions?.get("/api/v1/loanapplications/list/", auth);
   return response?.data?.results;
 };
 
-export const getLoanApplications = async (token) => {
-  const response = await apiActions?.get("/api/v1/loanapplications/", token);
+export const getLoanApplications = async (auth) => {
+  const response = await apiActions?.get("/api/v1/loanapplications/", auth);
   return response?.data?.results;
 };
 
-export const getLoanApplication = async (reference, token) => {
+export const getLoanApplication = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/loanapplications/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };
 
-export const updateLoanApplication = async (reference, values, token) => {
+export const updateLoanApplication = async (reference, values, auth) => {
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/`,
     values,
-    token
+    auth
   );
   return response;
 };
 
-export const deleteLoanApplication = async (reference, token) => {
+export const deleteLoanApplication = async (reference, auth) => {
   const response = await apiActions?.delete(
     `/api/v1/loanapplications/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };
 
-export const submitLoanApplication = async (reference, token) => {
+export const submitLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/submit/`,
     {},
-    token
+    auth
   );
 };
 
 // submit for amendment
-export const submitForAmendmentLoanApplication = async (reference, token) => {
+export const submitForAmendmentLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/submit-amendment/`,
     {},
-    token
+    auth
   );
 };
 
 // accept amendment
-export const acceptAmendmentLoanApplication = async (reference, token) => {
+export const acceptAmendmentLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/accept-amendment/`,
     {},
-    token
+    auth
   );
 };
 
 // decline amendment
-export const cancelAmendmentLoanApplication = async (reference, token) => {
+export const cancelAmendmentLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/cancel-amendment/`,
     {},
-    token
+    auth
   );
 };
 
@@ -85,23 +85,23 @@ export const cancelAmendmentLoanApplication = async (reference, token) => {
 export const adminApproveDeclineLoanApplication = async (
   reference,
   status,
-  token
+  auth
 ) => {
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/status/`,
     { status },
-    token
+    auth
   );
   return response;
 };
 
 
 // amend
-export const amendLoanApplication = async (reference, values, token) => {
+export const amendLoanApplication = async (reference, values, auth) => {
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/amend/`,
     values,
-    token
+    auth
   );
   return response;
 };

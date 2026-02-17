@@ -30,7 +30,7 @@ export default function RequestGuarantorModal({
   existingGuarantors = [],
   refetch,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
@@ -69,7 +69,7 @@ export default function RequestGuarantorModal({
           loan_application: loan.reference,
           guaranteed_amount: amountNum,
         },
-        token
+        auth
       );
       toast.success(
         `KES ${formatCurrency(amountNum)} requested from ${selected.member}`
@@ -122,11 +122,10 @@ export default function RequestGuarantorModal({
                 {filteredProfiles.map((profile) => (
                   <div
                     key={profile.member}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-all ${
-                      selected?.member === profile.member
+                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-all ${selected?.member === profile.member
                         ? "bg-green-50 border-l-4 border-[#045e32]"
                         : ""
-                    }`}
+                      }`}
                     onClick={() => {
                       setSelected(profile);
                       setAmount("");
@@ -188,7 +187,7 @@ export default function RequestGuarantorModal({
           </Button>
           <Button
             onClick={handleRequest}
-            disabled={!selected || !isValidAmount || loading}
+            disabled={!selected || !isValidAmount || loading || !auth.isEnabled}
             className="bg-[#045e32] hover:bg-[#022007] text-white"
           >
             {loading ? (

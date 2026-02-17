@@ -7,15 +7,15 @@ export const createVenturePayment = async (values, token) => {
   await apiActions?.post("/api/v1/venturepayments/", values, token);
 };
 
-export const getVenturePayments = async (token) => {
-  const response = await apiActions?.get("/api/v1/venturepayments/", token);
+export const getVenturePayments = async (auth) => {
+  const response = await apiActions?.get("/api/v1/venturepayments/", auth);
   return response?.data?.results;
 };
 
-export const getVenturePayment = async (reference, token) => {
+export const getVenturePayment = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/venturepayments/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

@@ -20,7 +20,7 @@ function BulkVentureAccountsDepositUpload({
   onClose,
   refetchTransactions,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
   const handleBulkUpdate = async (values, { resetForm }) => {
@@ -30,7 +30,7 @@ function BulkVentureAccountsDepositUpload({
       if (values.file) {
         formData.append("file", values.file);
       }
-      await createBulkVentureDeposits(formData, token);
+      await createBulkVentureDeposits(formData, auth);
       toast.success("Bulk venture deposits uploaded successfully");
       resetForm();
       refetchTransactions();
@@ -90,7 +90,7 @@ function BulkVentureAccountsDepositUpload({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white"
                 >
                   {loading ? "Uploading..." : "Upload"}

@@ -49,7 +49,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function MemberDetail() {
   const { member_no } = useParams();
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const {
     isPending: isLoadingMember,
     data: member,
@@ -76,7 +76,7 @@ function MemberDetail() {
       await apiActions?.patch(
         `/api/v1/auth/approve-member/${member_no}/`,
         {},
-        token
+        auth
       );
       toast.success("Member approved successfully");
       refetchMember();
@@ -90,7 +90,7 @@ function MemberDetail() {
   const handleSummaryDownload = async () => {
     setDownloading(true);
     try {
-      await downloadMemberYearlySummary(member_no, token);
+      await downloadMemberYearlySummary(member_no, auth);
     } catch (error) {
       console.error(error);
       toast.error("Failed to download summary. Please try again");
@@ -107,7 +107,7 @@ function MemberDetail() {
   const handleCreateGuarantorProfile = async () => {
     try {
       setIsCreatingGuarantor(true);
-      await createGuarantorProfile(guarantorProfileValues, token);
+      await createGuarantorProfile(guarantorProfileValues, auth);
       toast.success("Guarantor profile created successfully");
       refetchMember();
     } catch (error) {
@@ -127,9 +127,8 @@ function MemberDetail() {
   };
 
   const getInitials = (firstName, lastName) => {
-    return `${firstName?.charAt(0) || ""}${
-      lastName?.charAt(0) || ""
-    }`.toUpperCase();
+    return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""
+      }`.toUpperCase();
   };
 
   const InfoField = ({ icon: Icon, label, value }) => (
@@ -216,11 +215,10 @@ function MemberDetail() {
                 <div className="flex flex-wrap gap-3">
                   <Badge
                     variant={member?.is_approved ? "default" : "secondary"}
-                    className={`${
-                      member?.is_approved
-                        ? "bg-success text-success-foreground hover:bg-success/90"
-                        : "bg-warning text-warning-foreground hover:bg-warning/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                    className={`${member?.is_approved
+                      ? "bg-success text-success-foreground hover:bg-success/90"
+                      : "bg-warning text-warning-foreground hover:bg-warning/90"
+                      } px-3 py-1 text-sm font-semibold`}
                   >
                     {member?.is_approved ? (
                       <CheckCircle className="h-4 w-4 mr-1" />
@@ -232,11 +230,10 @@ function MemberDetail() {
 
                   <Badge
                     variant={member?.is_active ? "default" : "secondary"}
-                    className={`${
-                      member?.is_active
-                        ? "bg-success text-success-foreground hover:bg-success/90"
-                        : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    } px-3 py-1 text-sm font-semibold`}
+                    className={`${member?.is_active
+                      ? "bg-success text-success-foreground hover:bg-success/90"
+                      : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      } px-3 py-1 text-sm font-semibold`}
                   >
                     {member?.is_active ? "Active" : "Inactive"}
                   </Badge>
@@ -248,20 +245,19 @@ function MemberDetail() {
               {!member?.is_approved && (
                 <Button
                   onClick={() => handleApprove()}
-                  disabled={isApproving}
+                  disabled={isApproving || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
                 >
                   {isApproving ? "Approving..." : "Approve Member"}
                 </Button>
               )}
-              
+
               <Button
                 onClick={() => handleSummaryDownload()}
-                disabled={downloading}
+                disabled={downloading || !auth.isEnabled}
                 variant="outline"
-                className={`w-full sm:w-auto border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white transition-colors ${
-                  downloading ? "opacity-70 cursor-not-allowed" : ""
-                }`}
+                className={`w-full sm:w-auto border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white transition-colors ${downloading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
               >
                 <Download className="mr-2 h-4 w-4" />
                 {downloading ? "Downloading..." : "Download Summary"}
@@ -309,9 +305,8 @@ function MemberDetail() {
                             <InfoField
                               icon={Wallet2}
                               label={`${account?.account_type} - ${account?.account_number}`}
-                              value={`${account?.balance} ${
-                                account?.currency || "KES"
-                              }`}
+                              value={`${account?.balance} ${account?.currency || "KES"
+                                }`}
                             />
                           </div>
                         ))}

@@ -33,10 +33,10 @@ export const addMember = async (values, token) => {
 
 
 // View all members
-export const getMembers = async (token, page = 1, pageSize = 20) => {
+export const getMembers = async (auth, page = 1, pageSize = 20) => {
   const response = await apiActions?.get(
     `/api/v1/auth/members/all/?page=${page}&page_size=${pageSize}`,
-    token
+    auth
   );
   return response?.data;
 };

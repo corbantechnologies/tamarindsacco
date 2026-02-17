@@ -2,36 +2,36 @@
 
 import { apiActions } from "@/tools/axios";
 
-export const createNextOfKin = async (values, token) => {
-  await apiActions?.post("/api/v1/nextofkin/", values, token);
+export const createNextOfKin = async (values, auth) => {
+  await apiActions?.post("/api/v1/nextofkin/", values, auth);
 };
 
-export const getNextOfKins = async (token) => {
-  const response = await apiActions?.get("/api/v1/nextofkin/", token);
+export const getNextOfKins = async (auth) => {
+  const response = await apiActions?.get("/api/v1/nextofkin/", auth);
   return response?.data?.results;
 };
 
-export const getNextOfKin = async (reference, token) => {
+export const getNextOfKin = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/nextofkin/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };
 
-export const updateNextOfKin = async (reference, formData, token) => {
+export const updateNextOfKin = async (reference, formData, auth) => {
   const response = await apiActions?.patch(
     `/api/v1/nextofkin/${reference}/`,
     formData,
-    token
+    auth
   );
   return response?.data;
 };
 
-export const deleteNextOfKin = async (reference, token) => {
+export const deleteNextOfKin = async (reference, auth) => {
   const response = await apiActions?.delete(
     `/api/v1/nextofkin/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

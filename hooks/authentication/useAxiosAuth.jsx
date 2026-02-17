@@ -7,14 +7,13 @@ function useAxiosAuth() {
 
   const tokens = session?.user?.token;
 
-  const authenticationHeader = {
+  return {
     headers: {
       Authorization: "Token " + tokens,
       "Content-Type": "multipart/form-data",
     },
+    isEnabled: !!tokens,
   };
-
-  return authenticationHeader;
 }
 
 export default useAxiosAuth;

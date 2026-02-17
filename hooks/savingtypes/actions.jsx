@@ -5,20 +5,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { getSavingTypeDetail, getSavingTypes } from "@/services/savingstypes";
 
 export function useFetchSavingsTypes() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["savingstypes"],
-    queryFn: () => getSavingTypes(token),
+    queryFn: () => getSavingTypes(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchSavingsTypeDetail(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["savingstype", reference],
-    queryFn: () => getSavingTypeDetail(reference, token),
-    enabled: !!reference,
+    queryFn: () => getSavingTypeDetail(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

@@ -4,30 +4,30 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
 import { createBulkMembers } from "@/services/members";
 
-function BulkMemberUploadCreate({isOpen, onClose, refetchMembers}) {
-    const token = useAxiosAuth();
+function BulkMemberUploadCreate({ isOpen, onClose, refetchMembers }) {
+    const auth = useAxiosAuth();
     const [loading, setLoading] = useState(false);
-    
 
-    const handleBulkMemberUpload = async (values, {resetForm}) => {
+
+    const handleBulkMemberUpload = async (values, { resetForm }) => {
         setLoading(true);
         try {
             const formData = new FormData();
             if (values.file) {
                 formData.append("file", values.file);
             }
-            await createBulkMembers(formData, token);
+            await createBulkMembers(formData, auth);
             toast.success("Bulk members uploaded successfully");
             resetForm();
             onClose();
@@ -77,7 +77,7 @@ function BulkMemberUploadCreate({isOpen, onClose, refetchMembers}) {
                                 </Button>
                                 <Button
                                     type="submit"
-                                    disabled={loading}
+                                    disabled={loading || !auth.isEnabled}
                                     className="bg-[#045e32] hover:bg-[#022007] text-white"
                                 >
                                     {loading ? "Uploading..." : "Upload"}

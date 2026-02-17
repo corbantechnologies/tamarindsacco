@@ -21,7 +21,7 @@ function BulkSavingsAccountsDepositUpload({
   onClose,
   refetchTransactions,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
   const handleBulkUpdate = async (values) => {
@@ -32,7 +32,7 @@ function BulkSavingsAccountsDepositUpload({
       if (values.file) {
         formData.append("file", values.file);
       }
-      await createBulkSavingsDeposits(formData, token);
+      await createBulkSavingsDeposits(formData, auth);
       toast.success("Bulk savings deposits uploaded successfully");
       refetchTransactions();
       onClose();
@@ -91,7 +91,7 @@ function BulkSavingsAccountsDepositUpload({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white"
                 >
                   {loading ? "Uploading..." : "Upload"}

@@ -2,15 +2,15 @@
 
 import { apiActions } from "@/tools/axios";
 
-export const getVentures = async (token) => {
-  const response = await apiActions?.get("/api/v1/ventures/", token);
+export const getVentures = async (auth) => {
+  const response = await apiActions?.get("/api/v1/ventures/", auth);
   return response?.data?.results;
 };
 
-export const getVenture = async (identity, token) => {
+export const getVenture = async (identity, auth) => {
   const response = await apiActions?.get(
     `/api/v1/ventures/${identity}/`,
-    token
+    auth
   );
   return response?.data;
 };

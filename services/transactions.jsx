@@ -2,17 +2,16 @@
 
 import { apiActions } from "@/tools/axios";
 
-export const getAccountsList = async (token) => {
-  const response = await apiActions?.get("api/v1/transactions/", token);
+export const getAccountsList = async (auth) => {
+  const response = await apiActions?.get("api/v1/transactions/", auth);
   return response?.data?.results;
 };
 
-export const downloadAccountsListCSV = async (token) => {
+export const downloadAccountsListCSV = async (auth) => {
   try {
     const response = await apiActions.get(
       "api/v1/transactions/list/download/",
-      token,
-      { responseType: "blob" }
+      { ...auth, responseType: "blob" }
     );
 
     // Create a Blob from the response data
@@ -47,24 +46,24 @@ export const downloadAccountsListCSV = async (token) => {
   }
 };
 
-export const createBulkCombinedUpdates = async (formData, token) => {
-  await apiActions.post("api/v1/transactions/bulk/upload/", formData, token);
+export const createBulkCombinedUpdates = async (formData, auth) => {
+  await apiActions.post("api/v1/transactions/bulk/upload/", formData, auth);
 };
 
 // Reports
-export const getMemberYearlySummary = async (member_no, token) => {
+export const getMemberYearlySummary = async (member_no, auth) => {
   const response = await apiActions?.get(
     `/api/v1/transactions/${member_no}/summary/`,
-    token
+    auth
   );
   return response?.data;
 };
 
-export const downloadMemberYearlySummary = async (member_no, token) => {
+export const downloadMemberYearlySummary = async (member_no, auth) => {
   try {
     const response = await apiActions.get(
       `/api/v1/transactions/${member_no}/summary/download/`,
-      { ...token, responseType: "blob" }
+      { ...auth, responseType: "blob" }
     );
 
     // Create a Blob from the response data

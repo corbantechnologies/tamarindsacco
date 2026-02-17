@@ -8,16 +8,16 @@ export const createVentureDeposit = async (values, token) => {
 };
 
 // get
-export const getVentureDeposits = async (token) => {
-  const response = await apiActions?.get("/api/v1/venturedeposits/", token);
+export const getVentureDeposits = async (auth) => {
+  const response = await apiActions?.get("/api/v1/venturedeposits/", auth);
   return response?.data;
 };
 
 // get
-export const getVentureDeposit = async (reference, token) => {
+export const getVentureDeposit = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/venturedeposits/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

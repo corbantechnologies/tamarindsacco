@@ -30,7 +30,7 @@ export default function CreateGuaranteeRequest({
   loanapplication,
   refetchApplication,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -99,7 +99,7 @@ export default function CreateGuaranteeRequest({
           onSubmit={async (values, { resetForm }) => {
             setLoading(true);
             try {
-              await createGuaranteeRequest(values, token);
+              await createGuaranteeRequest(values, auth);
               toast.success("Guarantee request sent successfully!");
               resetForm();
               onClose();
@@ -107,7 +107,7 @@ export default function CreateGuaranteeRequest({
             } catch (error) {
               toast.error(
                 error.response?.data?.guarantor ||
-                  "Failed to send request. Please try again."
+                "Failed to send request. Please try again."
               );
             } finally {
               setLoading(false);
@@ -154,11 +154,10 @@ export default function CreateGuaranteeRequest({
                       filteredGuarantors.map((g) => (
                         <label
                           key={g.member}
-                          className={`flex items-center justify-between p-4 cursor-pointer hover:bg-green-50 transition ${
-                            values.guarantor === g.member
+                          className={`flex items-center justify-between p-4 cursor-pointer hover:bg-green-50 transition ${values.guarantor === g.member
                               ? "bg-green-100 border-l-4 border-[#045e32]"
                               : ""
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center gap-3">
                             <input
@@ -249,7 +248,7 @@ export default function CreateGuaranteeRequest({
                   <Button
                     type="submit"
                     disabled={
-                      loading || !values.guarantor || !values.guaranteed_amount
+                      loading || !values.guarantor || !values.guaranteed_amount || !auth.isEnabled
                     }
                     className="flex-1 bg-[#045e32] hover:bg-[#022007] text-white font-semibold text-lg py-6"
                   >

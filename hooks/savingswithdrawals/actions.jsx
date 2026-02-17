@@ -8,20 +8,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchSavingsWithdrawals() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["withdrawals"],
-    queryFn: () => getSavingsWithdrawals(token),
+    queryFn: () => getSavingsWithdrawals(auth),
+    enabled: auth.isEnabled,
   });
 }
 
-export function useFetchSavingsWithdrawal() {
-  const token = useAxiosAuth();
+export function useFetchSavingsWithdrawal(reference) {
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["withdrawal", reference],
-    queryFn: () => getSavingsWithdrawal(reference, token),
-    enabled: !!reference,
+    queryFn: () => getSavingsWithdrawal(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

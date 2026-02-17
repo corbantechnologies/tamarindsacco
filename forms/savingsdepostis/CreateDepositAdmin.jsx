@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 
 function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
   const [loading, setLoading] = useState(false);
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -42,7 +42,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
           onSubmit={async (values) => {
             setLoading(true);
             try {
-              await createSavingsDeposit(values, token);
+              await createSavingsDeposit(values, auth);
               toast?.success("Deposit created successfully!");
               onClose();
               refetchMember();
@@ -137,7 +137,7 @@ function CreateDepositAdmin({ isOpen, onClose, refetchMember, accounts }) {
                 <Button
                   type="submit"
                   size={"sm"}
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                 >
                   {loading ? "Depositing..." : "Deposit"}

@@ -22,7 +22,7 @@ function BulkTamarindLoanInterestUpload({
   onClose,
   refetchTransactions,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
   const handleBulkUpdate = async (values, { resetForm }) => {
@@ -33,13 +33,13 @@ function BulkTamarindLoanInterestUpload({
         formData.append("file", values.file);
       }
 
-      await createBulkInterest(formData, token);
+      await createBulkInterest(formData, auth);
       toast.success("Bulk loan interest uploaded successfully");
       resetForm();
       refetchTransactions();
       onClose();
     } catch (error) {
-        console.log(error)
+      console.log(error)
       toast.error("Failed to upload bulk loan interest. Please try again.");
     } finally {
       setLoading(false);
@@ -95,7 +95,7 @@ function BulkTamarindLoanInterestUpload({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white"
                 >
                   {loading ? "Uploading..." : "Upload"}

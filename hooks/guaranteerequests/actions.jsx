@@ -8,20 +8,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchGuaranteeRequests() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["guaranteeRequests"],
-    queryFn: () => getGuaranteeRequests(token),
+    queryFn: () => getGuaranteeRequests(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchGuaranteeRequest(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["guaranteeRequest", reference],
-    queryFn: () => getGuaranteeRequest(reference, token),
-    enabled: !!reference,
+    queryFn: () => getGuaranteeRequest(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

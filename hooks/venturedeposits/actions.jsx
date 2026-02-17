@@ -8,20 +8,21 @@ import {
 } from "@/services/venturedeposits";
 
 export function useFetchVentureDeposits() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["venturedeposits"],
-    queryFn: () => getVentureDeposits(token),
+    queryFn: () => getVentureDeposits(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchVentureDeposit(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["venturedeposit", reference],
-    queryFn: () => getVentureDeposit(reference, token),
-    enabled: !!reference,
+    queryFn: () => getVentureDeposit(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }
