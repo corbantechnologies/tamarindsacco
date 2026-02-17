@@ -18,10 +18,10 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-function CreateMember({ closeModal,  openModal }) {
+function CreateMember({ closeModal, openModal }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const router = useRouter();
 
   return (
@@ -48,7 +48,7 @@ function CreateMember({ closeModal,  openModal }) {
           onSubmit={async (values) => {
             try {
               setLoading(true);
-              const response = await addMember(values, token);
+              const response = await addMember(values, auth);
               toast?.success("Member created successfully!");
               closeModal();
               // refetchMembers();
@@ -244,7 +244,7 @@ function CreateMember({ closeModal,  openModal }) {
                 <Button
                   type="submit"
                   className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-base py-2 px-4 w-full sm:w-auto"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                 >
                   {loading ? "Creating..." : "Create Member"}
                 </Button>

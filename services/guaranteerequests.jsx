@@ -2,19 +2,19 @@
 
 import { apiActions } from "@/tools/axios";
 
-export const createGuaranteeRequest = async (values, token) => {
-  await apiActions?.post("/api/v1/guaranteerequests/", values, token);
+export const createGuaranteeRequest = async (values, auth) => {
+  await apiActions?.post("/api/v1/guaranteerequests/", values, auth);
 };
 
-export const getGuaranteeRequests = async (token) => {
-  const response = await apiActions?.get("/api/v1/guaranteerequests/", token);
+export const getGuaranteeRequests = async (auth) => {
+  const response = await apiActions?.get("/api/v1/guaranteerequests/", auth);
   return response?.data?.results;
 };
 
-export const getGuaranteeRequest = async (reference, token) => {
+export const getGuaranteeRequest = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/guaranteerequests/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };
@@ -22,12 +22,12 @@ export const getGuaranteeRequest = async (reference, token) => {
 export const acceptDeclineGuaranteeRequest = async (
   reference,
   values,
-  token
+  auth
 ) => {
   const response = await apiActions?.patch(
     `/api/v1/guaranteerequests/${reference}/status/`,
     values,
-    token
+    auth
   );
   return response?.data;
 };

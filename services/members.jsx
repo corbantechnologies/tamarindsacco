@@ -31,10 +31,14 @@ export const addMember = async (values, token) => {
   return response;
 };
 
+
 // View all members
-export const getMembers = async (token) => {
-  const response = await apiActions?.get("/api/v1/auth/", token);
-  return response?.data?.results;
+export const getMembers = async (auth, page = 1, pageSize = 20) => {
+  const response = await apiActions?.get(
+    `/api/v1/auth/members/all/?page=${page}&page_size=${pageSize}`,
+    auth
+  );
+  return response?.data;
 };
 
 // View member details
@@ -53,7 +57,7 @@ export const approveMember = async (member_no, token) => {
 
 // Bulk upload
 export const createBulkMembers = async (formData, token) => {
-    await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
+  await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------

@@ -5,20 +5,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchNextOfKins() {
-  const { token } = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["nextofkins"],
-    queryFn: () => getNextOfKins(token),
+    queryFn: () => getNextOfKins(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchNextOfKin(reference) {
-  const { token } = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["nextofkin", reference],
-    queryFn: () => getNextOfKin(reference, token),
-    enabled: !!reference,
+    queryFn: () => getNextOfKin(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

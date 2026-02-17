@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, keepPreviousData } from "@tanstack/react-query";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import useUserId from "../authentication/useUserId";
 import { approveMember, getMember, getMemberDetail, getMembers } from "@/services/members";
@@ -9,12 +9,12 @@ import { getMemberYearlySummary } from "@/services/transactions";
 // MEMBER Hooks
 export function useFetchMember() {
   const userId = useUserId();
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["member", userId],
-    queryFn: () => getMember(userId, token),
-    enabled: !!userId,
+    queryFn: () => getMember(userId, auth),
+    enabled: !!userId && auth.isEnabled,
   });
 }
 
@@ -22,42 +22,44 @@ export function useFetchMember() {
 
 // SACCO Admin Hooks
 // All members
-export function useFetchMembers() {
-  const token = useAxiosAuth();
+export function useFetchMembers(page = 1, pageSize = 20) {
+  const auth = useAxiosAuth();
 
   return useQuery({
-    queryKey: ["members"],
-    queryFn: () => getMembers(token),
+    queryKey: ["members", page, pageSize],
+    queryFn: () => getMembers(auth, page, pageSize),
+    placeholderData: keepPreviousData,
+    enabled: auth.isEnabled,
   });
 }
 
 // Single Member by member_no
 export function useFetchMemberDetail(member_no) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["member", member_no],
-    queryFn: () => getMemberDetail(member_no, token),
-    enabled: !!member_no,
+    queryFn: () => getMemberDetail(member_no, auth),
+    enabled: !!member_no && auth.isEnabled,
   });
 }
 
 // Verify member
 export function useVerifyMember(member_no) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useMutation({
-    mutationFn: () => approveMember(member_no, token),
+    mutationFn: () => approveMember(member_no, auth),
   });
 }
 
 // fetch member summary in admin dashboard
 export function useFetchMemberYearlySummaryAdmin(member_no) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["summary", member_no],
-    queryFn: () => getMemberYearlySummary(member_no, token),
-    enabled: !!token && !!member_no,
+    queryFn: () => getMemberYearlySummary(member_no, auth),
+    enabled: !!auth.isEnabled && !!member_no,
   });
 }

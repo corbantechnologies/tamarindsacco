@@ -18,7 +18,7 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 
 function CreateWithdrawal({ isOpen, onClose, account, refetchAccount }) {
   const [loading, setLoading] = useState(false);
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -38,7 +38,7 @@ function CreateWithdrawal({ isOpen, onClose, account, refetchAccount }) {
           onSubmit={async (values) => {
             setLoading(true);
             try {
-              await createSavingsWithdrawals(values, token);
+              await createSavingsWithdrawals(values, auth);
               toast?.success("Withdrawal created successfully!");
               onClose();
               refetchAccount();
@@ -94,7 +94,7 @@ function CreateWithdrawal({ isOpen, onClose, account, refetchAccount }) {
                 <Button
                   type="submit"
                   size={"sm"}
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                 >
                   {loading ? "Submitting..." : "Withdraw"}

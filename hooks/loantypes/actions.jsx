@@ -5,19 +5,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchLoanTypes() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["loanTypes"],
-    queryFn: () => getLoanTypes(token),
+    queryFn: () => getLoanTypes(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchLoanTypeDetail(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["loanType", reference],
-    queryFn: () => getLoanTypeDetail(reference, token),
+    queryFn: () => getLoanTypeDetail(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }

@@ -15,6 +15,7 @@ import {
 import VentureTypesTable from "@/components/venturetypes/VentureTypesTable";
 import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
+import BulkMemberUploadCreate from "@/forms/members/BulkMemberUploadCreate";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
 import CreateVentureType from "@/forms/venturetypes/CreateVentureType";
 import { useFetchLoans } from "@/hooks/loans/actions";
@@ -32,6 +33,7 @@ import {
   Wallet,
   Wallet2,
   Menu,
+  Upload,
 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -39,6 +41,7 @@ function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
   const [loanTypeModal, setLoanTypeModal] = useState(false);
   const [memberCreateModal, setMemberCreateModal] = useState(false);
+  const [memberUploadModal, setMemberUploadModal] = useState(false);
   const [ventureTypeModal, setVentureTypeModal] = useState(false);
 
   const {
@@ -48,9 +51,11 @@ function SaccoAdminDashboard() {
   } = useFetchMember();
   const {
     isLoading: isLoadingMembers,
-    data: members,
+    data: membersData,
     refetch: refetchMembers,
-  } = useFetchMembers();
+  } = useFetchMembers(1, 20);
+  const members = membersData?.results || [];
+  const totalMembers = membersData?.count || 0;
   const {
     isLoading: isLoadingSavingTypes,
     data: savingTypes,
@@ -120,6 +125,12 @@ function SaccoAdminDashboard() {
                     <User className="h-4 w-4 mr-2" /> Member
                   </Button>
                   <Button
+                    onClick={() => setMemberUploadModal(true)}
+                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
+                  >
+                    <Upload className="h-4 w-4 mr-2" /> Member (Bulk)
+                  </Button>
+                  <Button
                     onClick={() => setSavingTypeModal(true)}
                     className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm py-2 px-3 w-full"
                   >
@@ -148,7 +159,7 @@ function SaccoAdminDashboard() {
           <AdminInfoCard member={member} />
           {/* <StatsCard
             title="Total Members"
-            value={members?.length}
+            value={totalMembers}
             Icon={Users}
             description="Active members in the system"
           /> */}
@@ -183,6 +194,7 @@ function SaccoAdminDashboard() {
           <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
+            hidePagination={true}
           />
         </div>
 
@@ -205,6 +217,11 @@ function SaccoAdminDashboard() {
           isOpen={ventureTypeModal}
           onClose={() => setVentureTypeModal(false)}
           refetchVentureTypes={refetchVentureTypes}
+        />
+        <BulkMemberUploadCreate
+          isOpen={memberUploadModal}
+          onClose={() => setMemberUploadModal(false)}
+          refetchMembers={refetchMembers}
         />
       </div>
     </div>

@@ -20,11 +20,17 @@ function Members() {
   const [memberUploadModal, setMemberUploadModal] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false); // Optional: control open state
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     isLoading: isLoadingMembers,
-    data: members,
+    data: membersData,
     refetch: refetchMembers,
-  } = useFetchMembers();
+  } = useFetchMembers(page, pageSize);
+
+  const members = membersData?.results || [];
+  const totalMembers = membersData?.count || 0;
 
   if (isLoadingMembers) return <LoadingSpinner />;
 
@@ -84,20 +90,29 @@ function Members() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <StatsCard
             title="Total Members"
-            value={members?.length || 0}
+            value={totalMembers}
             Icon={Users}
             description="Active members in the system"
           />
+          {/* Note: Pending approvals count might only be accurate for current page without separate API call */}
           <StatsCard
-            title="Pending Approvals"
+            title="Pending Approvals (Page)"
             value={pendingApprovals}
             Icon={Users}
-            description="Members awaiting approval"
+            description="Members awaiting approval on this page"
           />
         </div>
 
         {/* Members Table */}
-        <SaccoMembersTable members={members} refetchMembers={refetchMembers} />
+        <SaccoMembersTable
+          members={members}
+          refetchMembers={refetchMembers}
+          totalMembers={totalMembers}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+        />
 
         {/* Modals */}
         <CreateMember

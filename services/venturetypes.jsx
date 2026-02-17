@@ -8,16 +8,16 @@ export const createVentureType = async (values, token) => {
 };
 
 // Get venture types
-export const getVentureTypes = async (token) => {
-  const response = await apiActions?.get("/api/v1/venturetypes/", token);
+export const getVentureTypes = async (auth) => {
+  const response = await apiActions?.get("/api/v1/venturetypes/", auth);
   return response?.data?.results;
 };
 
 // Get venture type detail by reference
-export const getVentureTypeDetail = async (reference, token) => {
+export const getVentureTypeDetail = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/venturetypes/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

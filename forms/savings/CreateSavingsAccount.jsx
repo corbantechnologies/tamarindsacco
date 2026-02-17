@@ -21,7 +21,7 @@ function CreateSavingsAccount({
   savingTypes,
 }) {
   const [loading, setLoading] = useTransition(false);
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -39,7 +39,7 @@ function CreateSavingsAccount({
           onSubmit={async (values) => {
             try {
               setLoading(async () => {
-                await createSavingAccount(values, token);
+                await createSavingAccount(values, auth);
                 toast?.success("Savings account created successfully!");
                 onClose();
                 refetchSavings();
@@ -73,7 +73,7 @@ function CreateSavingsAccount({
                 <Button
                   type="submit"
                   size={"sm"}
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white text-sm sm:text-base py-2 px-3 sm:px-4 flex-1 sm:flex-none"
                 >
                   {loading ? "Saving..." : "Save"}

@@ -22,7 +22,7 @@ function NextOfKinFormDialog({
   refetchAccount,
   nextOfKin = null,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
   const isEdit = !!nextOfKin;
 
@@ -51,10 +51,10 @@ function NextOfKinFormDialog({
     setLoading(true);
     try {
       if (isEdit) {
-        await updateNextOfKin(nextOfKin?.reference, values, token);
+        await updateNextOfKin(nextOfKin?.reference, values, auth);
         toast.success("Next of kin updated successfully");
       } else {
-        await createNextOfKin(values, token);
+        await createNextOfKin(values, auth);
         toast.success("Next of kin added successfully");
       }
       onClose();
@@ -147,7 +147,7 @@ function NextOfKinFormDialog({
               <Button
                 type="submit"
                 className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
-                disabled={loading}
+                disabled={loading || !auth.isEnabled}
               >
                 {loading ? "Saving..." : isEdit ? "Update" : "Add"}
               </Button>

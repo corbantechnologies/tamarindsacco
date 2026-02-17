@@ -8,21 +8,22 @@ import {
 import useMemberNo from "../authentication/useMemberNo";
 
 export function useFetchGuarantorProfiles() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["guarantorprofiles"],
-    queryFn: () => getGuarantorProfiles(token),
+    queryFn: () => getGuarantorProfiles(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchGuarantorProfile() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const member = useMemberNo();
 
   return useQuery({
     queryKey: ["guarantorprofile", member],
-    queryFn: () => getGuarantorProfile(member, token),
-    enabled: !!member,
+    queryFn: () => getGuarantorProfile(member, auth),
+    enabled: !!member && auth.isEnabled,
   });
 }

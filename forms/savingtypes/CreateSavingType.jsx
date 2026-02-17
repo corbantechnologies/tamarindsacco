@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
   const [loading, setLoading] = useTransition();
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -39,7 +39,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
           onSubmit={async (values) => {
             try {
               setLoading(async () => {
-                await createSavingType(values, token);
+                await createSavingType(values, auth);
                 toast?.success("Saving type created successfully!");
                 onClose();
                 refetchSavingTypes();
@@ -99,7 +99,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                 <Button
                   type="submit"
                   className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                 >
                   {loading ? "Creating..." : "Create"}
                 </Button>

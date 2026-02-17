@@ -9,16 +9,16 @@ export const createSavingType = async (values, token) => {
 };
 
 // get saving types
-export const getSavingTypes = async (token) => {
-  const response = await apiActions?.get("/api/v1/savingstypes/", token);
+export const getSavingTypes = async (auth) => {
+  const response = await apiActions?.get("/api/v1/savingstypes/", auth);
   return response?.data?.results;
 };
 
 // get saving type detail by reference
-export const getSavingTypeDetail = async (reference, token) => {
+export const getSavingTypeDetail = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/savingstypes/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

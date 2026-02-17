@@ -5,20 +5,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { getVenture, getVentures } from "@/services/ventures";
 
 export function useFetchVentures() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["ventures"],
-    queryFn: () => getVentures(token),
+    queryFn: () => getVentures(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchVentureDetail(identity) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["venture", identity],
-    queryFn: () => getVenture(identity, token),
-    enabled: !!identity,
+    queryFn: () => getVenture(identity, auth),
+    enabled: !!identity && auth.isEnabled,
   });
 }

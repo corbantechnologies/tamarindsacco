@@ -23,7 +23,7 @@ export default function AmendLoanApplication({
   onClose,
   onSuccess,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
   const initialValues = {
@@ -49,14 +49,14 @@ export default function AmendLoanApplication({
           onSubmit={async (values, { setSubmitting }) => {
             setLoading(true);
             try {
-              await amendLoanApplication(loan.reference, values, token);
+              await amendLoanApplication(loan.reference, values, auth);
               toast.success("Loan application updated successfully");
               onClose();
               onSuccess?.();
             } catch (err) {
               toast.error(
                 err.response?.data?.message ||
-                  "Failed to update loan application."
+                "Failed to update loan application."
               );
             } finally {
               setLoading(false);
@@ -167,7 +167,7 @@ export default function AmendLoanApplication({
                 <Button
                   type="submit"
                   className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                 >
                   {loading ? (
                     <>

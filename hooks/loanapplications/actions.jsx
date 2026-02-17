@@ -9,29 +9,31 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
 export function useFetchLoanApplications() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["loanapplications"],
-    queryFn: () => getLoanApplications(token),
+    queryFn: () => getLoanApplications(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchLoanApplication(reference) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["loanapplication", reference],
-    queryFn: () => getLoanApplication(reference, token),
-    enabled: !!reference,
+    queryFn: () => getLoanApplication(reference, auth),
+    enabled: !!reference && auth.isEnabled,
   });
 }
 
 export function useFetchMyLoanApplications() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["myloanapplications"],
-    queryFn: () => getMyLoanApplications(token),
+    queryFn: () => getMyLoanApplications(auth),
+    enabled: auth.isEnabled,
   });
 }

@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 function CreateVentureType({ isOpen, onClose, refetchVentureTypes }) {
   const [loading, setLoading] = useState(false);
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -40,7 +40,7 @@ function CreateVentureType({ isOpen, onClose, refetchVentureTypes }) {
           onSubmit={async (values) => {
             setLoading(true);
             try {
-              await createVentureType(values, token);
+              await createVentureType(values, auth);
               toast?.success("Venture type created successfully!");
               onClose();
               refetchVentureTypes();
@@ -99,7 +99,7 @@ function CreateVentureType({ isOpen, onClose, refetchVentureTypes }) {
                 <Button
                   type="submit"
                   className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                 >
                   {loading ? "Creating..." : "Create"}
                 </Button>

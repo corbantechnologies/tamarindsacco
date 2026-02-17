@@ -24,7 +24,7 @@ export default function CreateLoanApplication({
   products,
   route,
 }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +49,7 @@ export default function CreateLoanApplication({
           onSubmit={async (values, { setSubmitting }) => {
             setLoading(true);
             try {
-              const response = await createLoanApplication(values, token);
+              const response = await createLoanApplication(values, auth);
               toast.success("Loan application created successfully");
               onClose();
               router.push(
@@ -58,7 +58,7 @@ export default function CreateLoanApplication({
             } catch (error) {
               toast.error(
                 error.response?.data?.message ||
-                  "Failed to create loan application. Please try again."
+                "Failed to create loan application. Please try again."
               );
             } finally {
               setLoading(false);
@@ -173,7 +173,7 @@ export default function CreateLoanApplication({
                 <Button
                   type="submit"
                   className="bg-[#045e32] hover:bg-[#022007] text-white w-full sm:w-auto"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                 >
                   {loading ? (
                     <>

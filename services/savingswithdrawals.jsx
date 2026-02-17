@@ -6,15 +6,15 @@ export const createSavingsWithdrawals = async (values, token) => {
   await apiActions?.post("/api/v1/savingswithdrawals/", values, token);
 };
 
-export const getSavingsWithdrawals = async (token) => {
-  const response = await apiActions?.get("/api/v1/savingswithdrawals/", token);
+export const getSavingsWithdrawals = async (auth) => {
+  const response = await apiActions?.get("/api/v1/savingswithdrawals/", auth);
   return response?.data?.results;
 };
 
-export const getSavingsWithdrawal = async (reference, token) => {
+export const getSavingsWithdrawal = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/savingswithdrawals/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

@@ -4,20 +4,21 @@ import useAxiosAuth from "../authentication/useAxiosAuth";
 import { getSaving, getSavings } from "@/services/savings";
 
 export function useFetchSavings() {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["savings"],
-    queryFn: () => getSavings(token),
+    queryFn: () => getSavings(auth),
+    enabled: auth.isEnabled,
   });
 }
 
 export function useFetchSavingDetail(identity) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
 
   return useQuery({
     queryKey: ["saving", identity],
-    queryFn: () => getSaving(identity, token),
-    enabled: !!identity,
+    queryFn: () => getSaving(identity, auth),
+    enabled: !!identity && auth.isEnabled,
   });
 }

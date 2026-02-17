@@ -2,19 +2,19 @@
 import { apiActions, apiMultipartActions } from "@/tools/axios";
 
 // Should not be used
-export const createSavingsDeposit = async (values, token) => {
-  await apiActions?.post("/api/v1/savingsdeposits/", values, token);
+export const createSavingsDeposit = async (values, auth) => {
+  await apiActions?.post("/api/v1/savingsdeposits/", values, auth);
 };
 
-export const getSavingsDeposits = async (token) => {
-  const response = await apiActions?.get("/api/v1/savingsdeposits/", token);
+export const getSavingsDeposits = async (auth) => {
+  const response = await apiActions?.get("/api/v1/savingsdeposits/", auth);
   return response?.data;
 };
 
-export const getSavingsDeposit = async (reference, token) => {
+export const getSavingsDeposit = async (reference, auth) => {
   const response = await apiActions?.get(
     `/api/v1/savingsdeposits/${reference}/`,
-    token
+    auth
   );
   return response?.data;
 };

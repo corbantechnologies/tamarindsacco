@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 import { createBulkCombinedUpdates } from "@/services/transactions";
 
 function BulkCombinedUpload({ isOpen, onClose, refetchTransactions }) {
-  const token = useAxiosAuth();
+  const auth = useAxiosAuth();
   const [loading, setLoading] = useState(false);
 
   const handleBulkUpdate = async (values, { resetForm }) => {
@@ -26,7 +26,7 @@ function BulkCombinedUpload({ isOpen, onClose, refetchTransactions }) {
       if (values.file) {
         formData.append("file", values.file);
       }
-      await createBulkCombinedUpdates(formData, token);
+      await createBulkCombinedUpdates(formData, auth);
       toast.success("Bulk combined transactions uploaded successfully");
       resetForm();
       onClose();
@@ -93,7 +93,7 @@ function BulkCombinedUpload({ isOpen, onClose, refetchTransactions }) {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !auth.isEnabled}
                   className="bg-[#045e32] hover:bg-[#022007] text-white"
                 >
                   {loading ? "Uploading..." : "Upload"}
