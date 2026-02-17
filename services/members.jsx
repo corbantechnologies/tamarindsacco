@@ -31,6 +31,15 @@ export const addMember = async (values, token) => {
   return response;
 };
 
+export const addMemberInBulkUpload = async (formData, token) => {
+  const response = await apiActions?.post(
+    "/api/v1/auth/new-members/bulk-create/upload/",
+    formData,
+    token
+  );
+  return response;
+};
+
 // View all members
 export const getMembers = async (token) => {
   const response = await apiActions?.get("/api/v1/auth/", token);
@@ -53,7 +62,7 @@ export const approveMember = async (member_no, token) => {
 
 // Bulk upload
 export const createBulkMembers = async (formData, token) => {
-    await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
+  await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
