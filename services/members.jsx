@@ -31,19 +31,14 @@ export const addMember = async (values, token) => {
   return response;
 };
 
-export const addMemberInBulkUpload = async (formData, token) => {
-  const response = await apiActions?.post(
-    "/api/v1/auth/new-members/bulk-create/upload/",
-    formData,
-    token
-  );
-  return response;
-};
 
 // View all members
-export const getMembers = async (token) => {
-  const response = await apiActions?.get("/api/v1/auth/", token);
-  return response?.data?.results;
+export const getMembers = async (token, page = 1, pageSize = 20) => {
+  const response = await apiActions?.get(
+    `/api/v1/auth/?page=${page}&page_size=${pageSize}`,
+    token
+  );
+  return response?.data;
 };
 
 // View member details

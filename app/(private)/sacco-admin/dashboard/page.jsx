@@ -51,9 +51,11 @@ function SaccoAdminDashboard() {
   } = useFetchMember();
   const {
     isLoading: isLoadingMembers,
-    data: members,
+    data: membersData,
     refetch: refetchMembers,
-  } = useFetchMembers();
+  } = useFetchMembers(1, 20);
+  const members = membersData?.results || [];
+  const totalMembers = membersData?.count || 0;
   const {
     isLoading: isLoadingSavingTypes,
     data: savingTypes,
@@ -157,7 +159,7 @@ function SaccoAdminDashboard() {
           <AdminInfoCard member={member} />
           {/* <StatsCard
             title="Total Members"
-            value={members?.length}
+            value={totalMembers}
             Icon={Users}
             description="Active members in the system"
           /> */}
@@ -192,6 +194,7 @@ function SaccoAdminDashboard() {
           <SaccoMembersTable
             members={members}
             refetchMembers={refetchMembers}
+            hidePagination={true}
           />
         </div>
 
