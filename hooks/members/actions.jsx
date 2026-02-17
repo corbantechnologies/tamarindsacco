@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, keepPreviousData } from "@tanstack/react-query";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import useUserId from "../authentication/useUserId";
 import { approveMember, getMember, getMemberDetail, getMembers } from "@/services/members";
@@ -28,6 +28,7 @@ export function useFetchMembers(page = 1, pageSize = 20) {
   return useQuery({
     queryKey: ["members", page, pageSize],
     queryFn: () => getMembers(token, page, pageSize),
+    placeholderData: keepPreviousData,
   });
 }
 
