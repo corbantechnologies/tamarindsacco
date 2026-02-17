@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createSavingType } from "@/services/savingstypes";
@@ -33,8 +34,8 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
         <Formik
           initialValues={{
             name: "",
-            description: "",
             interest_rate: 0,
+            is_guaranteed: false,
           }}
           onSubmit={async (values) => {
             try {
@@ -49,7 +50,7 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
             }
           }}
         >
-          {({ values }) => (
+          {({ values, setFieldValue }) => (
             <Form className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-black">
@@ -75,18 +76,19 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
                   className="border-black focus:ring-[#cc5500]"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-black">
-                  Description
-                </Label>
-                <Field
-                  as={Textarea}
-                  rows={4}
-                  id="description"
-                  name="description"
-                  className="border-black focus:ring-[#cc5500]"
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is_guaranteed"
+                  checked={values.is_guaranteed}
+                  onCheckedChange={(checked) =>
+                    setFieldValue("is_guaranteed", checked)
+                  }
                 />
+                <Label htmlFor="is_guaranteed" className="text-black font-medium">
+                  Is Guaranteed?
+                </Label>
               </div>
+              
               <DialogFooter>
                 <Button
                   type="button"
