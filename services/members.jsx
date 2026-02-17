@@ -35,7 +35,7 @@ export const addMember = async (values, token) => {
 // View all members
 export const getMembers = async (token, page = 1, pageSize = 20) => {
   const response = await apiActions?.get(
-    `/api/v1/auth/?page=${page}&page_size=${pageSize}`,
+    `/api/v1/auth/members/all/?page=${page}&page_size=${pageSize}`,
     token
   );
   return response?.data;
