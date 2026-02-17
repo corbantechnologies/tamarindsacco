@@ -161,8 +161,8 @@ function SaccoMembersTable({
                       <Badge
                         variant={member?.is_approved ? "default" : "secondary"}
                         className={`font-normal ${member?.is_approved
-                            ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
-                            : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-yellow-200"
+                          ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
+                          : "bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-yellow-200"
                           }`}
                       >
                         {member?.is_approved ? (
@@ -203,8 +203,8 @@ function SaccoMembersTable({
 
         {!hidePagination && totalMembers > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t bg-gray-50/50">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>Rows per page</span>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-500 order-2 sm:order-1">
+              <span className="whitespace-nowrap">Rows per page</span>
               <Select
                 value={`${pageSize}`}
                 onValueChange={(value) => {
@@ -224,12 +224,12 @@ function SaccoMembersTable({
                   <SelectItem value="100">100</SelectItem>
                 </SelectContent>
               </Select>
-              <span className="ml-2">
+              <span className="whitespace-nowrap ml-1 sm:ml-2">
                 Page {page} of {totalPages || 1}
               </span>
             </div>
 
-            <div className="flex gap-1">
+            <div className="flex items-center gap-1 order-1 sm:order-2">
               <Button
                 variant="outline"
                 size="icon"
