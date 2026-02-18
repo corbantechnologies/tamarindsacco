@@ -30,6 +30,7 @@ import {
   XCircle,
   Loader2,
   UserCheck,
+  CreditCard,
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplication";
@@ -374,6 +375,34 @@ export default function LoanApplicationDetail() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Loan Account Details (if approved/disbursed) */}
+        {loan?.loan_account && (
+          <Card className="border-l-4 border-[#045e32] bg-green-50/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-[#045e32] flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Loan Account Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Account Number</p>
+                  <p className="text-xl font-bold text-gray-900 font-mono">
+                    {loan.loan_account.account_number}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Outstanding Balance</p>
+                  <p className="text-xl font-bold text-red-600">
+                    {formatCurrency(loan.loan_account.outstanding_balance)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Amendment Notes if present */}
         {loan?.amendment_notes && (
