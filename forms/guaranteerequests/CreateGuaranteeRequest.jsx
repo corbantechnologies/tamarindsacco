@@ -49,8 +49,8 @@ export default function CreateGuaranteeRequest({
         g.member.toLowerCase().includes(query) ||
         (g.guarantor_name && g.guarantor_name.toLowerCase().includes(query));
 
-      // 3. Must have available amount > 0
-      return matchesSearch && Number(g.available_amount) > 0;
+      // 3. Must have available amount >= remaining to cover
+      return matchesSearch && Number(g.available_amount) >= Number(remaining);
     })
     .sort((a, b) => b.available_amount - a.available_amount);
 
@@ -86,14 +86,11 @@ export default function CreateGuaranteeRequest({
           initialValues={{
             guarantor: "",
             loan_application: loanapplication?.reference || "",
-            guaranteed_amount: "",
           }}
           validate={(values) => {
             const errors = {};
             if (!values.guarantor)
               errors.guarantor = "Please select a guarantor";
-            if (!values.guaranteed_amount || values.guaranteed_amount <= 0)
-              errors.guaranteed_amount = "Enter a valid amount";
             return errors;
           }}
           onSubmit={async (values, { resetForm }) => {
@@ -115,11 +112,6 @@ export default function CreateGuaranteeRequest({
           }}
         >
           {({ values, errors, touched, setFieldValue }) => {
-            const selectedGuarantor = guarantors.find(
-              (g) => g.member === values.guarantor
-            );
-            const maxAvailable = selectedGuarantor?.available_amount || 0;
-
             return (
               <Form className="space-y-6 mt-6">
                 {/* Search + Select */}
@@ -155,8 +147,8 @@ export default function CreateGuaranteeRequest({
                         <label
                           key={g.member}
                           className={`flex items-center justify-between p-4 cursor-pointer hover:bg-green-50 transition ${values.guarantor === g.member
-                              ? "bg-green-100 border-l-4 border-[#045e32]"
-                              : ""
+                            ? "bg-green-100 border-l-4 border-[#045e32]"
+                            : ""
                             }`}
                         >
                           <div className="flex items-center gap-3">
@@ -167,10 +159,6 @@ export default function CreateGuaranteeRequest({
                               checked={values.guarantor === g.member}
                               onChange={() => {
                                 setFieldValue("guarantor", g.member);
-                                setFieldValue(
-                                  "guaranteed_amount",
-                                  Math.min(g.available_amount, remaining)
-                                );
                               }}
                               className="h-4 w-4 text-[#045e32]"
                             />
@@ -183,12 +171,6 @@ export default function CreateGuaranteeRequest({
                               </p>
                             </div>
                           </div>
-                          {/* <div className="text-right">
-                            <p className="font-semibold text-[#045e32]">
-                              {formatCurrency(g.available_amount)}
-                            </p>
-                            <p className="text-xs text-gray-500">Available</p>
-                          </div> */}
                         </label>
                       ))
                     )}
@@ -200,39 +182,6 @@ export default function CreateGuaranteeRequest({
                     </p>
                   )}
                 </div>
-
-                {/* Amount Input */}
-                {values.guarantor && (
-                  <div className="space-y-3 p-5 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                    <Label className="text-base font-semibold">
-                      Amount to Request from{" "}
-                      <span className="text-[#045e32]">
-                        {selectedGuarantor?.guarantor_name ||
-                          selectedGuarantor?.member}
-                      </span>
-                    </Label>
-                    <Field
-                      name="guaranteed_amount"
-                      as={Input}
-                      type="number"
-                      placeholder={`Max: ${formatCurrency(maxAvailable)}`}
-                      className="text-xl font-bold border-2 focus:border-[#045e32]"
-                    />
-                    <div className="text-sm space-y-1">
-                      <p>
-                        Max available:{" "}
-                        <strong className="text-[#045e32]">
-                          {formatCurrency(maxAvailable)}
-                        </strong>
-                      </p>
-                      {Number(values.guaranteed_amount) > maxAvailable && (
-                        <p className="text-red-600 font-medium">
-                          Amount exceeds available guarantee
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -248,7 +197,7 @@ export default function CreateGuaranteeRequest({
                   <Button
                     type="submit"
                     disabled={
-                      loading || !values.guarantor || !values.guaranteed_amount || !auth.isEnabled
+                      loading || !values.guarantor || !auth.isEnabled
                     }
                     className="flex-1 bg-[#045e32] hover:bg-[#022007] text-white font-semibold text-lg py-6"
                   >
