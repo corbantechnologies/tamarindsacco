@@ -317,10 +317,7 @@ function LoanDetail() {
                 Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/member/loans">Loans</BreadcrumbLink>
-            </BreadcrumbItem>
+
             <BreadcrumbSeparator />
             <BreadcrumbPage>Loan Details</BreadcrumbPage>
           </BreadcrumbList>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchMember } from "@/hooks/members/actions";
 import { Button } from "@/components/ui/button";
@@ -306,14 +308,18 @@ function AccountSettings() {
                   {member?.savings_accounts?.length > 0 ? (
                     <>
                       {member?.savings_accounts.map((account) => (
-                        <div key={account?.reference} className="space-y-2">
+                        <Link
+                          href={`/member/savings/${account?.identity}`}
+                          key={account?.reference}
+                          className="block transition-transform hover:scale-[1.01]"
+                        >
                           <InfoField
                             icon={Wallet2}
                             label={`${account?.account_type} - ${account?.account_number}`}
                             value={`${account?.balance} ${account?.currency || "KES"
                               }`}
                           />
-                        </div>
+                        </Link>
                       ))}
                     </>
                   ) : (
@@ -335,14 +341,18 @@ function AccountSettings() {
                   {member?.loans?.length > 0 ? (
                     <>
                       {member?.loans.map((account) => (
-                        <div key={account?.reference} className="space-y-2">
+                        <Link
+                          href={`/member/loans/${account?.identity}`}
+                          key={account?.reference}
+                          className="block transition-transform hover:scale-[1.01]"
+                        >
                           <InfoField
                             icon={CreditCard}
                             label={`${account?.loan_type} - ${account?.account_number}`}
                             value={`${account?.outstanding_balance} ${account?.currency || "KES"
                               }`}
                           />
-                        </div>
+                        </Link>
                       ))}
                     </>
                   ) : (
@@ -364,14 +374,18 @@ function AccountSettings() {
                   {member?.venture_accounts?.length > 0 ? (
                     <>
                       {member?.venture_accounts.map((account) => (
-                        <div key={account?.reference} className="space-y-2">
+                        <Link
+                          href={`/member/ventures/${account?.identity}`}
+                          key={account?.reference}
+                          className="block transition-transform hover:scale-[1.01]"
+                        >
                           <InfoField
                             icon={TrendingUp}
                             label={`${account?.venture_type} - ${account?.account_number}`}
                             value={`${account?.balance} ${account?.currency || "KES"
                               }`}
                           />
-                        </div>
+                        </Link>
                       ))}
                     </>
                   ) : (
@@ -383,36 +397,45 @@ function AccountSettings() {
               </Card>
 
               {member?.guarantor_profile && (
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-2xl">
-                      <ShieldCheck className="h-6 w-6 text-[#045e32]" />
-                      Guarantor Profile
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="grid md:grid-cols-2 gap-4">
-                    <InfoField
-                      icon={ShieldCheck}
-                      label="Limit Status"
-                      value={member.guarantor_profile.has_reached_limit ? "Limit Reached" : "Active"}
-                    />
-                    <InfoField
-                      icon={Wallet}
-                      label="Max Guarantee Limit"
-                      value={`${member.guarantor_profile.max_guarantee_amount} KES`}
-                    />
-                    <InfoField
-                      icon={CheckCircle}
-                      label="Available Limit"
-                      value={`${member.guarantor_profile.available_amount} KES`}
-                    />
-                    <InfoField
-                      icon={User}
-                      label="Active Guarantees"
-                      value={`${member.guarantor_profile.active_guarantees_count} / ${member.guarantor_profile.max_active_guarantees}`}
-                    />
-                  </CardContent>
-                </Card>
+                <Link
+                  href="/member/guarantor-profile"
+                  className="block transition-transform hover:scale-[1.01]"
+                >
+                  <Card className="shadow-md h-full hover:border-[#045e32]/50 transition-colors">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-2xl">
+                        <ShieldCheck className="h-6 w-6 text-[#045e32]" />
+                        Guarantor Profile
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid md:grid-cols-2 gap-4">
+                      <InfoField
+                        icon={ShieldCheck}
+                        label="Limit Status"
+                        value={
+                          member.guarantor_profile.has_reached_limit
+                            ? "Limit Reached"
+                            : "Active"
+                        }
+                      />
+                      <InfoField
+                        icon={Wallet}
+                        label="Max Guarantee Limit"
+                        value={`${member.guarantor_profile.max_guarantee_amount} KES`}
+                      />
+                      <InfoField
+                        icon={CheckCircle}
+                        label="Available Limit"
+                        value={`${member.guarantor_profile.available_amount} KES`}
+                      />
+                      <InfoField
+                        icon={User}
+                        label="Active Guarantees"
+                        value={`${member.guarantor_profile.active_guarantees_count} / ${member.guarantor_profile.max_active_guarantees}`}
+                      />
+                    </CardContent>
+                  </Card>
+                </Link>
               )}
             </div>
           </TabsContent>
