@@ -105,3 +105,13 @@ export const amendLoanApplication = async (reference, values, auth) => {
   );
   return response;
 };
+
+// Disburse
+export const makeDisbursementLoanApplication = async (reference, values, auth) => {
+  const response = await apiActions?.post(
+    `/api/v1/loanapplications/${reference}/disburse/`,
+    values,
+    auth
+  );
+  return response;
+};

@@ -35,6 +35,7 @@ import { adminApproveDeclineLoanApplication, amendLoanApplication } from "@/serv
 import toast from "react-hot-toast";
 import useMemberNo from "@/hooks/authentication/useMemberNo";
 import AmendLoanApplication from "@/forms/loanapplications/AmendLoanApplication";
+import DisburseLoanApplication from "@/forms/loanapplications/DisburseLoanApplication";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -82,6 +83,7 @@ export default function AdminLoanApplicationDetail() {
 
   // AMEND
   const [amendOpen, setAmendOpen] = useState(false);
+  const [disburseOpen, setDisburseOpen] = useState(false);
 
 
 
@@ -119,6 +121,20 @@ export default function AdminLoanApplicationDetail() {
         </Button>
       );
     }
+
+    if (status === "Approved") {
+      return (
+        <Button
+          size="sm"
+          className="w-full bg-[#045e32] hover:bg-[#022007] text-white"
+          onClick={() => setDisburseOpen(true)}
+        >
+          <CreditCard className="mr-2 h-4 w-4" />
+          Disburse Loan
+        </Button>
+      );
+    }
+
     if (!status || status !== "Submitted") {
       return (
         <p className="text-xs text-muted-foreground text-center">
@@ -208,7 +224,7 @@ export default function AdminLoanApplicationDetail() {
           </div>
         </div>
 
-        {/* Summary Cards */}
+        {/* ... existing summary cards ... */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
@@ -531,6 +547,13 @@ export default function AdminLoanApplicationDetail() {
         loan={loan}
         open={amendOpen}
         onClose={() => setAmendOpen(false)}
+        onSuccess={refetch}
+      />
+
+      <DisburseLoanApplication
+        loan={loan}
+        open={disburseOpen}
+        onClose={() => setDisburseOpen(false)}
         onSuccess={refetch}
       />
     </>
