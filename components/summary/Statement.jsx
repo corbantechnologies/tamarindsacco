@@ -180,14 +180,14 @@ const SaccoStatement = ({ summaryData, member }) => {
                 {/* other deductions */}
                 <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Holiday/i, 'total_deposits'))}</td>
                 <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'guarantees', null, 'new_guarantees'))}</td>
-                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'ventures', /Sodas/i, 'total_venture_deposits'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'ventures', /Sodas/i, 'balance_carried_forward'))}</td>
 
                 {/* total deductions */}
                 <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600 text-right">
                   {format(
                     getAmount(r, 'savings', /Holiday/i, 'total_deposits') +
                     getAmount(r, 'guarantees', null, 'new_guarantees') +
-                    getAmount(r, 'ventures', /Sodas/i, 'total_venture_deposits')
+                    getAmount(r, 'ventures', /Sodas/i, 'balance_carried_forward')
                   )}
                 </td>
               </tr>
