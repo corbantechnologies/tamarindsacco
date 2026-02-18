@@ -381,12 +381,20 @@ function MemberDetail() {
                         Loan Accounts
                       </CardTitle>
                       {member?.is_approved && (
-                        <Button
-                          size="sm"
-                          className="bg-[#045e32] hover:bg-[#022007] text-white"
-                        >
-                          Loan
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            className="bg-[#045e32] hover:bg-[#022007] text-white"
+                          >
+                            Add
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+                          >
+                            Pay
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardHeader>
