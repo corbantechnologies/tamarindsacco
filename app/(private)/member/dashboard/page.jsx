@@ -110,11 +110,21 @@ function MemberDashboard() {
                 {showSummary ? "Hide" : "View"} Summary
               </button>
               <button
+                onClick={() => {
+                  import('@/lib/pdfGenerator').then(mod => {
+                    mod.generateStatementPDF(summary, member);
+                  });
+                }}
+                className="px-4 py-2 rounded-md font-medium text-white transition bg-[#045e32] hover:bg-[#037a40]"
+              >
+                Download Statement
+              </button>
+              <button
                 onClick={() => handleSummaryDownload()}
                 disabled={downloading}
                 className={`px-4 py-2 rounded-md font-medium text-white transition ${downloading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-[#045e32] hover:bg-[#037a40]"
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#045e32] hover:bg-[#037a40]"
                   }`}
               >
                 {downloading ? "Downloading…" : "Download Summary"}
