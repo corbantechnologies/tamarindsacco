@@ -54,7 +54,7 @@ export const submitLoanApplication = async (reference, auth) => {
   );
 };
 
-// submit for amendment
+// submit for amendment / Submit for First Approval
 export const submitForAmendmentLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/submit-amendment/`,
