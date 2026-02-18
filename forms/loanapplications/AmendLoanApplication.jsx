@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
@@ -33,6 +34,7 @@ export default function AmendLoanApplication({
     calculation_mode: loan?.calculation_mode ?? "",
     term_months: loan?.term_months ?? "",
     monthly_payment: loan?.monthly_payment ?? "",
+    amendment_notes: loan?.amendment_notes ?? "",
   };
 
   return (
@@ -152,6 +154,18 @@ export default function AmendLoanApplication({
                     />
                   </div>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="amendment_notes">Amendment Notes</Label>
+                <Field
+                  type="textarea"
+                  id="amendment_notes"
+                  name="amendment_notes"
+                  required
+                  as={Textarea}
+                  placeholder="e.g., Additional information or notes"
+                />
               </div>
 
               <DialogFooter className="flex flex-col sm:flex-row gap-3">

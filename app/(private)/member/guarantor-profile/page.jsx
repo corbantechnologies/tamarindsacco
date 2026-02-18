@@ -57,13 +57,15 @@ const getStatusBadge = (status) => {
   return map[status] || "bg-gray-100 text-gray-800";
 };
 
+import UpdateGuaranteeRequest from "@/forms/guaranteerequests/UpdateGuaranteeRequest";
+
 export default function GuarantorProfile() {
   const token = useAxiosAuth();
   const { isLoading, data: profile, refetch } = useFetchGuarantorProfile();
   const [processing, setProcessing] = useState({});
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [amount, setAmount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [processingAction, setProcessingAction] = useState(null);
 
   if (isLoading) return <MemberLoadingSpinner />;
 
@@ -71,55 +73,36 @@ export default function GuarantorProfile() {
   const pendingRequests = allRequests.filter((r) => r.status === "Pending");
   const historyRequests = allRequests.filter((r) => r.status !== "Pending");
 
-  const handleAction = async (requestRef, action) => {
-    if (action === "Accepted") {
-      const req = pendingRequests.find((r) => r.reference === requestRef);
-      if (req) {
-        setSelectedRequest(req);
-        setAmount(req.guaranteed_amount || 0);
-        setIsModalOpen(true);
-      }
-      return;
-    }
-
-    setProcessing((prev) => ({ ...prev, [requestRef]: action }));
-    try {
-      await acceptDeclineGuaranteeRequest(requestRef, { status: action }, token);
-      toast.success(`Request ${action.toLowerCase()}ed successfully`);
-      refetch();
-    } catch (err) {
-      toast.error(err.response?.data?.detail || "Action failed");
-    } finally {
-      setProcessing((prev) => ({ ...prev, [requestRef]: null }));
-    }
+  const openReviewModal = (req) => {
+    setSelectedRequest(req);
+    setIsModalOpen(true);
+    setProcessingAction(null);
   };
 
-  const handleConfirmAccept = async () => {
-    if (!selectedRequest) return;
-    
-    const requestRef = selectedRequest.reference;
-    setProcessing((prev) => ({ ...prev, [requestRef]: "Accepted" }));
-    setIsModalOpen(false);
-
+  const handleProcessRequest = async (requestRef, status, guaranteedAmount) => {
+    setProcessingAction(status);
     try {
-      await acceptDeclineGuaranteeRequest(
-        requestRef,
-        { status: "Accepted", guaranteed_amount: amount },
-        token
+      const payload = { status };
+      if (status === "Accepted") {
+        payload.guaranteed_amount = guaranteedAmount;
+      }
+
+      await acceptDeclineGuaranteeRequest(requestRef, payload, token);
+
+      toast.success(
+        `Request ${status === "Accepted" ? "accepted" : "declined"} successfully`
       );
-      toast.success("Request accepted successfully");
+      setIsModalOpen(false);
       refetch();
     } catch (err) {
       toast.error(err.response?.data?.detail || "Action failed");
     } finally {
-      setProcessing((prev) => ({ ...prev, [requestRef]: null }));
-      setSelectedRequest(null);
+      setProcessingAction(null);
     }
   };
 
   const RequestRow = ({ req }) => {
     const detail = req.loan_application_detail;
-    const isProcessing = processing[req.reference];
 
     return (
       <TableRow className="hover:bg-gray-50">
@@ -134,37 +117,17 @@ export default function GuarantorProfile() {
         <TableCell>
           <Badge className={getStatusBadge(req.status)}>{req.status}</Badge>
         </TableCell>
-        {req.status === "Pending" && (
-          <TableCell>
-            <div className="flex justify-center gap-2">
-              <Button
-                size="sm"
-                className="bg-[#045e32] hover:bg-[#022007]"
-                disabled={!!isProcessing}
-                onClick={() => handleAction(req.reference, "Accepted")}
-              >
-                {isProcessing === "Accepted" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <CheckCircle className="h-4 w-4" />
-                )}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-red-300 text-red-600 hover:bg-red-50"
-                disabled={!!isProcessing}
-                onClick={() => handleAction(req.reference, "Declined")}
-              >
-                {isProcessing === "Declined" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <XCircle className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </TableCell>
-        )}
+        <TableCell>
+          {req.status === "Pending" && (
+            <Button
+              size="sm"
+              className="bg-[#045e32] hover:bg-[#022007]"
+              onClick={() => openReviewModal(req)}
+            >
+              Review Request
+            </Button>
+          )}
+        </TableCell>
       </TableRow>
     );
   };
@@ -323,39 +286,13 @@ export default function GuarantorProfile() {
         </CardContent>
       </Card>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Confirm Guarantee Amount</DialogTitle>
-            <DialogDescription>
-              Please review and adjust the amount you wish to guarantee for{" "}
-              {selectedRequest?.member}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="amount" className="text-right">
-                Amount
-              </Label>
-              <Input
-                id="amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmAccept} className="bg-[#045e32]">
-              Confirm Accept
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <UpdateGuaranteeRequest
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        request={selectedRequest}
+        onProcess={handleProcessRequest}
+        processingAction={processingAction}
+      />
     </div>
   );
 }

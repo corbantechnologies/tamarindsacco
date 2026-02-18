@@ -54,7 +54,7 @@ export const submitLoanApplication = async (reference, auth) => {
   );
 };
 
-// submit for amendment
+// submit for amendment / Submit for First Approval
 export const submitForAmendmentLoanApplication = async (reference, auth) => {
   await apiActions?.post(
     `/api/v1/loanapplications/${reference}/submit-amendment/`,
@@ -100,6 +100,16 @@ export const adminApproveDeclineLoanApplication = async (
 export const amendLoanApplication = async (reference, values, auth) => {
   const response = await apiActions?.patch(
     `/api/v1/loanapplications/${reference}/amend/`,
+    values,
+    auth
+  );
+  return response;
+};
+
+// Disburse
+export const makeDisbursementLoanApplication = async (reference, values, auth) => {
+  const response = await apiActions?.post(
+    `/api/v1/loanapplications/${reference}/disburse/`,
     values,
     auth
   );

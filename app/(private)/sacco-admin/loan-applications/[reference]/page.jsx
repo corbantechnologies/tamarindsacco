@@ -27,6 +27,7 @@ import {
   XCircle,
   Loader2,
   UserCheck,
+  CreditCard,
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
@@ -34,6 +35,7 @@ import { adminApproveDeclineLoanApplication, amendLoanApplication } from "@/serv
 import toast from "react-hot-toast";
 import useMemberNo from "@/hooks/authentication/useMemberNo";
 import AmendLoanApplication from "@/forms/loanapplications/AmendLoanApplication";
+import DisburseLoanApplication from "@/forms/loanapplications/DisburseLoanApplication";
 
 const formatCurrency = (val) =>
   Number(val || 0).toLocaleString("en-KE", {
@@ -81,8 +83,9 @@ export default function AdminLoanApplicationDetail() {
 
   // AMEND
   const [amendOpen, setAmendOpen] = useState(false);
+  const [disburseOpen, setDisburseOpen] = useState(false);
 
-  
+
 
 
   // --------------------------------------------------------------------
@@ -118,6 +121,20 @@ export default function AdminLoanApplicationDetail() {
         </Button>
       );
     }
+
+    if (status === "Approved") {
+      return (
+        <Button
+          size="sm"
+          className="w-full bg-[#045e32] hover:bg-[#022007] text-white"
+          onClick={() => setDisburseOpen(true)}
+        >
+          <CreditCard className="mr-2 h-4 w-4" />
+          Disburse Loan
+        </Button>
+      );
+    }
+
     if (!status || status !== "Submitted") {
       return (
         <p className="text-xs text-muted-foreground text-center">
@@ -174,7 +191,7 @@ export default function AdminLoanApplicationDetail() {
   // --------------------------------------------------------------------
   if (isLoading) return <MemberLoadingSpinner />;
 
-return (
+  return (
     <>
       <div className="min-h-screen bg-gray-100 p-4 sm:p-6 space-y-6">
         {/* Header */}
@@ -187,7 +204,7 @@ return (
               Loan Application
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Reference: <span className="font-mono">{loan.reference}</span>
+              Reference: <span className="font-mono">{loan?.reference}</span>
             </p>
           </div>
 
@@ -207,7 +224,7 @@ return (
           </div>
         </div>
 
-        {/* Summary Cards */}
+        {/* ... existing summary cards ... */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
@@ -217,7 +234,7 @@ return (
             </CardHeader>
             <CardContent>
               <p className="text-2xl font in-bold">
-                {formatCurrency(loan.requested_amount)}
+                {formatCurrency(loan?.requested_amount)}
               </p>
             </CardContent>
           </Card>
@@ -230,7 +247,7 @@ return (
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-red-600">
-                {formatCurrency(loan.repayment_amount)}
+                {formatCurrency(loan?.repayment_amount)}
               </p>
             </CardContent>
           </Card>
@@ -243,7 +260,7 @@ return (
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-amber-600">
-                {formatCurrency(loan.total_interest)}
+                {formatCurrency(loan?.total_interest)}
               </p>
             </CardContent>
           </Card>
@@ -256,14 +273,58 @@ return (
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(loan.projection?.monthly_payment)}
+                {formatCurrency(loan?.projection?.monthly_payment)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {loan.projection?.term_months} months
+                {loan?.projection?.term_months} months
               </p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Loan Account Details (if approved/disbursed) */}
+        {loan?.loan_account && (
+          <Card className="border-l-4 border-[#045e32] bg-green-50/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-[#045e32] flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Loan Account Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Account Number</p>
+                  <p className="text-xl font-bold text-gray-900 font-mono">
+                    {loan.loan_account.account_number}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Outstanding Balance</p>
+                  <p className="text-xl font-bold text-red-600">
+                    {formatCurrency(loan.loan_account.outstanding_balance)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Amendment Notes if present */}
+        {loan?.amendment_notes && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-md">
+            <div className="flex">
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-amber-800">
+                  Amendment Notes
+                </h3>
+                <div className="mt-2 text-sm text-amber-700">
+                  <p>{loan.amendment_notes}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Details Grid */}
         <Card>
@@ -275,20 +336,36 @@ return (
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Product</span>
-                  <span className="font-medium">{loan.product}</span>
+                  <span className="font-medium">{loan?.product}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Application Date
+                  </span>
+                  <span className="font-medium">
+                    {formatDate(loan?.created_at)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
                     Start Date
                   </span>
                   <span className="font-medium">
-                    {formatDate(loan.start_date)}
+                    {formatDate(loan?.start_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Mode</span>
                   <span className="font-medium capitalize">
-                    {loan.calculation_mode.replace("_", " ")}
+                    {loan?.calculation_mode?.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Repayment Frequency
+                  </span>
+                  <span className="font-medium capitalize">
+                    {loan?.repayment_frequency}
                   </span>
                 </div>
               </div>
@@ -296,10 +373,34 @@ return (
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Self Guarantee
+                    Total Savings
                   </span>
                   <span className="font-medium">
-                    {formatCurrency(loan.self_guaranteed_amount)}
+                    {formatCurrency(loan?.total_savings)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Available Self Guarantee
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.available_self_guarantee)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Self Guarantee (Used)
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.self_guaranteed_amount)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Guaranteed by Others
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.total_guaranteed_by_others)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -307,14 +408,14 @@ return (
                     Remaining to Cover
                   </span>
                   <span className="font-medium text-red-600">
-                    {formatCurrency(loan.remaining_to_cover)}
+                    {formatCurrency(loan?.remaining_to_cover)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
                     Fully Covered
                   </span>
-                  {loan.is_fully_covered ? (
+                  {loan?.is_fully_covered ? (
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   ) : (
                     <XCircle className="h-5 w-5 text-red-600" />
@@ -416,25 +517,25 @@ return (
               <div>
                 <p className="text-muted-foreground">Total Interest</p>
                 <p className="font-bold text-amber-600">
-                  {formatCurrency(loan.projection?.total_interest)}
+                  {formatCurrency(loan?.projection?.total_interest)}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Total Repayment</p>
                 <p className="font-bold text-red-600">
-                  {formatCurrency(loan.projection?.total_repayment)}
+                  {formatCurrency(loan?.projection?.total_repayment)}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Term</p>
                 <p className="font-bold">
-                  {loan.projection?.term_months} months
+                  {loan?.projection?.term_months} months
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Monthly</p>
                 <p className="font-bold">
-                  {formatCurrency(loan.projection?.monthly_payment)}
+                  {formatCurrency(loan?.projection?.monthly_payment)}
                 </p>
               </div>
             </div>
@@ -446,6 +547,13 @@ return (
         loan={loan}
         open={amendOpen}
         onClose={() => setAmendOpen(false)}
+        onSuccess={refetch}
+      />
+
+      <DisburseLoanApplication
+        loan={loan}
+        open={disburseOpen}
+        onClose={() => setDisburseOpen(false)}
         onSuccess={refetch}
       />
     </>
