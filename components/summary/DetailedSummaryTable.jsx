@@ -1,4 +1,4 @@
-import React,{ useMemo } from "react";
+import React, { useMemo } from "react";
 
 const SummaryTable = ({ data }) => {
   const { monthly_summary = [] } = data || {};
@@ -31,51 +31,51 @@ const SummaryTable = ({ data }) => {
   const runningBalances = useMemo(() => {
     // Initial running totals
     const bal = {
-      savings: Object.fromEntries(savingsTypes.map(t => [t, 0])),
-      venture: Object.fromEntries(ventureTypes.map(t => [t, 0])),
-      loan: Object.fromEntries(loanTypes.map(t => [t, 0]))
+      savings: Object.fromEntries(savingsTypes.map((t) => [t, 0])),
+      venture: Object.fromEntries(ventureTypes.map((t) => [t, 0])),
+      loan: Object.fromEntries(loanTypes.map((t) => [t, 0])),
     };
-  
+
     // Final accumulated result per month
     const result = { savings: {}, venture: {}, loan: {} };
-  
-    monthly_summary.forEach(m => {
+
+    monthly_summary.forEach((m) => {
       const key = m.month;
-  
+
       // ======== SAVINGS ========
-      (m.savings?.by_type ?? []).forEach(entry => {
+      (m.savings?.by_type ?? []).forEach((entry) => {
         const type = entry.type;
         const amount = Number(entry.amount) || 0;
-  
+
         bal.savings[type] += amount;
       });
       result.savings[key] = { ...bal.savings };
-  
+
       // ======== VENTURES ========
-      (m.ventures?.by_type ?? []).forEach(vt => {
+      (m.ventures?.by_type ?? []).forEach((vt) => {
         const type = vt.venture_type;
-  
+
         const deposits = vt.total_venture_deposits;
         const payments = vt.total_venture_payments;
-  
+
         bal.venture[type] += deposits - payments;
       });
       result.venture[key] = { ...bal.venture };
-  
+
       // ======== LOANS ========
-      (m.loans?.by_type ?? []).forEach(lt => {
+      (m.loans?.by_type ?? []).forEach((lt) => {
         const type = lt.loan_type;
-  
+
         const disb = lt.total_amount_disbursed;
         const rep = lt.total_amount_repaid;
-  
+
         bal.loan[type] += disb - rep;
       });
       result.loan[key] = { ...bal.loan };
     });
-  
+
     return result;
-  }, [monthly_summary, savingsTypes, ventureTypes, loanTypes]);  
+  }, [monthly_summary, savingsTypes, ventureTypes, loanTypes]);
 
   // Format number with 2 decimal places
   const format = (n) =>
@@ -88,7 +88,7 @@ const SummaryTable = ({ data }) => {
   const getValue = (month, sec, type) => {
     const m = monthly_summary.find((x) => x.month === month);
     if (!m) {
-      return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0 };
+      return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0 };
     }
 
     if (sec === "savings") {
@@ -101,6 +101,7 @@ const SummaryTable = ({ data }) => {
         rep: 0,
         int: 0,
         out: 0,
+        newG: 0,
       };
     }
 
@@ -116,6 +117,7 @@ const SummaryTable = ({ data }) => {
         rep: 0,
         int: 0,
         out: 0,
+        newG: 0,
       };
     }
 
@@ -125,10 +127,15 @@ const SummaryTable = ({ data }) => {
       const rep = t?.total_amount_repaid;
       const int = t?.total_interest_charged;
       const out = t?.total_amount_outstanding || 0;
-      return { disb, rep, int, out, dep: 0, pay: 0, bal: 0 };
+      return { disb, rep, int, out, dep: 0, pay: 0, bal: 0, newG: 0 };
     }
 
-    return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0 };
+    if (sec === "guarantees") {
+      const newG = m.guarantees?.new_guarantees || 0;
+      return { newG, dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0 };
+    }
+
+    return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0 };
   };
 
   if (monthly_summary.length === 0) {
@@ -169,6 +176,12 @@ const SummaryTable = ({ data }) => {
             >
               Loans
             </th>
+            <th
+              colSpan={1}
+              className="text-center font-semibold border-x px-3 py-2 align-bottom"
+            >
+              Guarantees
+            </th>
           </tr>
 
           {/* Level 2: Type Headers */}
@@ -200,6 +213,12 @@ const SummaryTable = ({ data }) => {
                 {t}
               </th>
             ))}
+            <th
+              colSpan={1}
+              className="text-center font-medium px-3 py-1 align-bottom border-r last:border-r-0"
+            >
+              General
+            </th>
           </tr>
 
           {/* Level 3: Column Labels */}
@@ -246,6 +265,9 @@ const SummaryTable = ({ data }) => {
                 Out
               </th>,
             ])}
+            <th className="text-right px-3 py-1 border-r last:border-r-0">
+              New
+            </th>
           </tr>
         </thead>
 
@@ -299,6 +321,11 @@ const SummaryTable = ({ data }) => {
                     </React.Fragment>
                   );
                 })}
+
+                {/* Guarantees Columns */}
+                <td className="text-right px-3 py-1 border-r last:border-r-0">
+                  {format(getValue(month, "guarantees").newG)}
+                </td>
               </tr>
             );
           })}

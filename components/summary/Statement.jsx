@@ -1,18 +1,41 @@
+import React from "react";
+
 const SaccoStatement = ({ summaryData, member }) => {
   const summary = summaryData?.monthly_summary || [];
   const bFSummary = summaryData?.monthly_summary?.[0] || {};
-  const loans = bFSummary?.loans?.by_type || [];
+  const currentYear = summaryData?.year || new Date().getFullYear();
+  const previousYear = currentYear - 1;
 
-  const totalLoans = loans.reduce((sum, item) => {
-    return item?.loan_type === "Instant Loan"
-      ? sum
-      : sum + (item?.balance_brought_forward || 0);
-  }, 0);
+  // Helper to safely access nested properties and find by type
+  const getAmount = (monthData, section, typePattern, field) => {
+    if (!monthData || !monthData[section]) return 0;
 
-  // Helper to safely access nested properties
-  const safeGet = (obj, path, defaultValue = 0) => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj) || defaultValue;
+    // Handle Guarantees (no 'by_type' array)
+    if (section === 'guarantees') {
+      return monthData.guarantees?.[field] || 0;
+    }
+
+    const list = monthData[section]?.by_type || [];
+
+    // Sum of all types identifying as LOAN but NOT Instant Loan
+    if (typePattern === 'NOT_INSTANT_LOAN') {
+      return list.reduce((sum, item) => {
+        if (!item.loan_type?.match(/Instant Loan/i)) {
+          return sum + (Number(item[field]) || 0);
+        }
+        return sum;
+      }, 0);
+    }
+
+    const item = list.find(i => {
+      const typeName = i.type || i.loan_type || i.venture_type || "";
+      return typeName.match(typePattern);
+    });
+
+    return item ? (Number(item[field]) || 0) : 0;
   };
+
+  const format = (val) => Number(val || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <div className="bg-white text-sm">
@@ -41,7 +64,7 @@ const SaccoStatement = ({ summaryData, member }) => {
       {/* === Table === */}
       <div className="overflow-x-auto">
 
-        <table className="w-full border border-gray-400 text-xs">
+        <table className="w-full border border-gray-400 text-xs text-[10px]">
           <thead className="bg-gray-100 text-center">
             <tr>
               <th rowSpan={2} className="border border-gray-400 px-2 py-1">DATE</th>
@@ -87,72 +110,86 @@ const SaccoStatement = ({ summaryData, member }) => {
               ))}
             </tr>
             {/* BF */}
-            <tr className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-1 py-1">2024 - BF</td>
+            <tr className="hover:bg-gray-50 bg-gray-50/50">
+              <td className="border border-gray-300 px-1 py-1 font-medium text-left">{previousYear} - BF</td>
               {/* shares */}
-              <td className="border border-gray-300 px-1 py-1">
-                {bFSummary?.savings?.by_type?.find(item => item?.type === "Share Capital")?.balance_brought_forward || 0}
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'savings', /Share Capital/i, 'balance_brought_forward'))}
               </td>
               {/* deposits */}
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1">
-                {bFSummary?.savings?.by_type?.find(item => item?.type === "Member Contributions")?.balance_brought_forward || 0}
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'savings', /Member Contribution/i, 'balance_brought_forward'))}
               </td>
               {/* loans */}
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1">{totalLoans}</td>
-              <td className="border border-gray-300 px-1 py-1"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'loans', 'NOT_INSTANT_LOAN', 'balance_brought_forward'))}
+              </td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
               {/* instant loans */}
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1">
-                {bFSummary?.loans?.by_type?.find(item => item?.loan_type === "Instant Loan")?.balance_brought_forward || 0}
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'loans', /Instant Loan/i, 'balance_brought_forward'))}
               </td>
-              <td className="border border-gray-300 px-1 py-1"></td>
+              <td className="border border-gray-300 px-1 py-1 text-right"></td>
               {/* other deductions */}
-              <td className="border border-gray-300 px-1 py-1">
-                {bFSummary?.savings?.by_type?.find(item => item?.type === "Holiday Savings")?.balance_brought_forward || 0}
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'savings', /Holiday/i, 'balance_brought_forward'))}
               </td>
-              <td className="border border-gray-300 px-1 py-1"></td>
-              <td className="border border-gray-300 px-1 py-1">
-                {bFSummary?.ventures?.by_type?.find(item => item?.venture_type === "Sodas")?.balance_brought_forward || 0}
+              <td className="border border-gray-300 px-1 py-1 text-right">0.00</td>
+              <td className="border border-gray-300 px-1 py-1 text-right">
+                {format(getAmount(bFSummary, 'ventures', /Sodas/i, 'balance_brought_forward'))}
               </td>
               {/* total deductions */}
-              <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600"></td>
+              <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600 text-right"></td>
             </tr>
             <tr>
               {Array.from({ length: 17 }).map((_, index) => (
                 <td key={index} className="border border-gray-300">&nbsp;</td>
               ))}
             </tr>
-            {/* Example data rows (you can map through a real dataset later) */}
+
             {summary?.map((r, i) => (
               <tr key={i} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-1 py-1">{r?.month?.split(' ')?.[0] || '-'}</td>
+                <td className="border border-gray-300 px-1 py-1 text-left">{r?.month?.split(' ')?.[0] || '-'}</td>
+
                 {/* shares */}
-                <td className="border border-gray-300 px-1 py-1">{r?.savings?.by_type?.[2]?.total_deposits || 0}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Share Capital/i, 'balance_carried_forward'))}</td>
+
                 {/* deposits */}
-                <td className="border border-gray-300 px-1 py-1">{r?.savings?.by_type?.[1]?.total_deposits || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">-</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.savings?.by_type?.[1]?.amount || 0}</td>
-                {/* loans */}
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.total_loans_disbursed || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.total_loans_repaid || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.total_loans_outstanding || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.total_interest_charged || 0}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Member Contribution/i, 'total_deposits'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">0.00</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Member Contribution/i, 'balance_carried_forward'))}</td>
+
+                {/* loans (Not Instant) */}
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', 'NOT_INSTANT_LOAN', 'total_amount_disbursed'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', 'NOT_INSTANT_LOAN', 'total_amount_repaid'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', 'NOT_INSTANT_LOAN', 'total_amount_outstanding'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', 'NOT_INSTANT_LOAN', 'total_interest_charged'))}</td>
+
                 {/* instant loans */}
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.by_type?.[2]?.total_amount_disbursed || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.by_type?.[2]?.total_amount_repaid || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.by_type?.[2]?.total_amount_outstanding || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.loans?.by_type?.[2]?.total_interest_charged || 0}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', /Instant Loan/i, 'total_amount_disbursed'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', /Instant Loan/i, 'total_amount_repaid'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', /Instant Loan/i, 'total_amount_outstanding'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'loans', /Instant Loan/i, 'total_interest_charged'))}</td>
+
                 {/* other deductions */}
-                <td className="border border-gray-300 px-1 py-1">{r?.savings?.by_type?.[0]?.total_deposits || 0}</td>
-                <td className="border border-gray-300 px-1 py-1">-</td>
-                <td className="border border-gray-300 px-1 py-1">{r?.ventures?.venture_balance || 0}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Holiday/i, 'total_deposits'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'guarantees', null, 'new_guarantees'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'ventures', /Sodas/i, 'total_venture_deposits'))}</td>
+
                 {/* total deductions */}
-                <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600">-</td>
+                <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600 text-right">
+                  {format(
+                    getAmount(r, 'savings', /Holiday/i, 'total_deposits') +
+                    getAmount(r, 'guarantees', null, 'new_guarantees') +
+                    getAmount(r, 'ventures', /Sodas/i, 'total_venture_deposits')
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -164,4 +201,3 @@ const SaccoStatement = ({ summaryData, member }) => {
 };
 
 export default SaccoStatement;
-
