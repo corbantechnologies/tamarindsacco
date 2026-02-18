@@ -30,6 +30,7 @@ import {
   XCircle,
   Loader2,
   UserCheck,
+  CreditCard,
 } from "lucide-react";
 import { useFetchLoanApplication } from "@/hooks/loanapplications/actions";
 import UpdateLoanApplication from "@/forms/loanapplications/UpdateLoanApplication";
@@ -103,7 +104,7 @@ export default function LoanApplicationDetail() {
     } catch (err) {
       toast.error(
         err.response?.data?.detail ||
-          "Failed to submit loan application. Please try again."
+        "Failed to submit loan application. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -120,7 +121,7 @@ export default function LoanApplicationDetail() {
     } catch (err) {
       toast.error(
         err.response?.data?.detail ||
-          "Failed to submit loan application for amendment. Please try again."
+        "Failed to submit loan application for amendment. Please try again."
       );
     } finally {
       setSubmittingForAmendment(false);
@@ -137,7 +138,7 @@ export default function LoanApplicationDetail() {
     } catch (err) {
       toast.error(
         err.response?.data?.detail ||
-          "Failed to accept loan application. Please try again."
+        "Failed to accept loan application. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -153,7 +154,7 @@ export default function LoanApplicationDetail() {
     } catch (err) {
       toast.error(
         err.response?.data?.detail ||
-          "Failed to cancel loan application. Please try again."
+        "Failed to cancel loan application. Please try again."
       );
     } finally {
       setSubmitting(false);
@@ -180,7 +181,7 @@ export default function LoanApplicationDetail() {
               Update Application
             </Button>
 
-            
+
 
             <Button
               size="sm"
@@ -205,10 +206,10 @@ export default function LoanApplicationDetail() {
         );
 
       case "Amended":
-      // accept changes
+        // accept changes
         return (
           <>
-          <Button
+            <Button
               size="sm"
               className="w-full justify-start bg-[#045e32] hover:bg-[#022007] text-white"
               onClick={() => acceptChanges()}
@@ -232,7 +233,7 @@ export default function LoanApplicationDetail() {
         // accept changes
         return (
           <>
-          <Button
+            <Button
               size="sm"
               variant="outline"
               className="w-full justify-start"
@@ -327,7 +328,7 @@ export default function LoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(loan.requested_amount)}
+                {formatCurrency(loan?.requested_amount)}
               </p>
             </CardContent>
           </Card>
@@ -340,7 +341,7 @@ export default function LoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-red-600">
-                {formatCurrency(loan.repayment_amount)}
+                {formatCurrency(loan?.repayment_amount)}
               </p>
             </CardContent>
           </Card>
@@ -353,7 +354,7 @@ export default function LoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold text-amber-600">
-                {formatCurrency(loan.total_interest)}
+                {formatCurrency(loan?.total_interest)}
               </p>
             </CardContent>
           </Card>
@@ -366,14 +367,58 @@ export default function LoanApplicationDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                {formatCurrency(loan.projection?.monthly_payment)}
+                {formatCurrency(loan?.projection?.monthly_payment)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {loan.projection?.term_months} months
+                {loan?.projection?.term_months} months
               </p>
             </CardContent>
           </Card>
         </div>
+
+        {/* Loan Account Details (if approved/disbursed) */}
+        {loan?.loan_account && (
+          <Card className="border-l-4 border-[#045e32] bg-green-50/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-[#045e32] flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Loan Account Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Account Number</p>
+                  <p className="text-xl font-bold text-gray-900 font-mono">
+                    {loan.loan_account.account_number}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Outstanding Balance</p>
+                  <p className="text-xl font-bold text-red-600">
+                    {formatCurrency(loan.loan_account.outstanding_balance)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Amendment Notes if present */}
+        {loan?.amendment_notes && (
+          <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-md">
+            <div className="flex">
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-amber-800">
+                  Amendment Notes
+                </h3>
+                <div className="mt-2 text-sm text-amber-700">
+                  <p>{loan.amendment_notes}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Details Grid */}
         <Card>
@@ -385,20 +430,36 @@ export default function LoanApplicationDetail() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Product</span>
-                  <span className="font-medium">{loan.product}</span>
+                  <span className="font-medium">{loan?.product}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Application Date
+                  </span>
+                  <span className="font-medium">
+                    {formatDate(loan?.created_at)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
                     Start Date
                   </span>
                   <span className="font-medium">
-                    {formatDate(loan.start_date)}
+                    {formatDate(loan?.start_date)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Mode</span>
                   <span className="font-medium capitalize">
-                    {loan.calculation_mode.replace("_", " ")}
+                    {loan?.calculation_mode?.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Repayment Frequency
+                  </span>
+                  <span className="font-medium capitalize">
+                    {loan?.repayment_frequency}
                   </span>
                 </div>
               </div>
@@ -406,10 +467,34 @@ export default function LoanApplicationDetail() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">
-                    Self Guarantee
+                    Total Savings
                   </span>
                   <span className="font-medium">
-                    {formatCurrency(loan.self_guaranteed_amount)}
+                    {formatCurrency(loan?.total_savings)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Available Self Guarantee
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.available_self_guarantee)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Self Guarantee (Used)
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.self_guaranteed_amount)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Guaranteed by Others
+                  </span>
+                  <span className="font-medium">
+                    {formatCurrency(loan?.total_guaranteed_by_others)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -417,14 +502,14 @@ export default function LoanApplicationDetail() {
                     Remaining to Cover
                   </span>
                   <span className="font-medium text-red-600">
-                    {formatCurrency(loan.remaining_to_cover)}
+                    {formatCurrency(loan?.remaining_to_cover)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">
                     Fully Covered
                   </span>
-                  {loan.is_fully_covered ? (
+                  {loan?.is_fully_covered ? (
                     <CheckCircle className="h-5 w-5 text-green-600" />
                   ) : (
                     <XCircle className="h-5 w-5 text-red-600" />
@@ -526,25 +611,25 @@ export default function LoanApplicationDetail() {
               <div>
                 <p className="text-muted-foreground">Total Interest</p>
                 <p className="font-bold text-amber-600">
-                  {formatCurrency(loan.projection?.total_interest)}
+                  {formatCurrency(loan?.projection?.total_interest)}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Total Repayment</p>
                 <p className="font-bold text-red-600">
-                  {formatCurrency(loan.projection?.total_repayment)}
+                  {formatCurrency(loan?.projection?.total_repayment)}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Term</p>
                 <p className="font-bold">
-                  {loan.projection?.term_months} months
+                  {loan?.projection?.term_months} months
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Monthly</p>
                 <p className="font-bold">
-                  {formatCurrency(loan.projection?.monthly_payment)}
+                  {formatCurrency(loan?.projection?.monthly_payment)}
                 </p>
               </div>
             </div>

@@ -4,7 +4,10 @@ import React, { useState } from "react";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import LoanApplicationsTable from "@/components/loanapplications/LoanApplicationsTable";
 import { Button } from "@/components/ui/button";
-import { useFetchMyLoanApplications } from "@/hooks/loanapplications/actions";
+import {
+  useFetchLoanApplications,
+  useFetchMyLoanApplications,
+} from "@/hooks/loanapplications/actions";
 import CreateLoanApplication from "@/forms/loanapplications/CreateLoanApplication";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 
@@ -50,17 +53,14 @@ export default function LoanApplications() {
 
         {/* Table */}
         <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-          <LoanApplicationsTable
-            route="sacco-admin/personal"
-            data={loanApplications}
-          />
+          <LoanApplicationsTable route="member" data={loanApplications} />
         </div>
 
         <CreateLoanApplication
           isOpen={loanApplicationModal}
           onClose={() => setLoanApplicationModal(false)}
           products={loanTypes}
-          route="sacco-admin/personal"
+          route="member"
         />
       </div>
     </div>
