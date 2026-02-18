@@ -293,7 +293,7 @@ function AccountSettings() {
           </TabsContent>
 
           <TabsContent value="accounts">
-            <div className="grid gap-8 mt-6">
+            <div className="grid md:grid-cols-2 gap-8 mt-6">
               {/* Savings Accounts */}
               <Card className="shadow-md">
                 <CardHeader>
