@@ -331,7 +331,6 @@ function VentureDetail() {
             <Button
               size="sm"
               className="bg-[#045e32] hover:bg-[#022007] text-white"
-              onClick={() => setPaymentModal(true)}
             >
               Make Payment
             </Button>
