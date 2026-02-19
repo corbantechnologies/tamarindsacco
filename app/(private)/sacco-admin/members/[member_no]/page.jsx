@@ -384,12 +384,12 @@ function MemberDetail() {
                       </CardTitle>
                       {member?.is_approved && (
                         <div className="flex gap-2">
-                          <Button
+                          {/* <Button
                             size="sm"
                             className="bg-[#045e32] hover:bg-[#022007] text-white"
                           >
                             Add
-                          </Button>
+                          </Button> */}
                           <Button
                             onClick={() => setLoanRepaymentModal(true)}
                             size="sm"
