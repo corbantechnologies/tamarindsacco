@@ -316,7 +316,7 @@ function MemberDetail() {
                           <div key={account?.reference} className="space-y-2">
                             <InfoField
                               icon={Wallet2}
-                              label={`${account?.account_type} - ${account?.account_number}`}
+                              label={`${account?.account_type?.name} - ${account?.account_number}`}
                               value={`${account?.balance} ${account?.currency || "KES"
                                 }`}
                             />
