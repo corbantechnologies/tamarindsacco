@@ -130,22 +130,22 @@ function MemberDashboard() {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-12">
       {/* Top Decoration */}
-      <div className="h-32 w-full absolute top-0 left-0 z-0 bg-gradient-to-r from-[#045e32] to-[#067d43]" />
+      <div className="h-32 w-full absolute top-0 left-0 z-0" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-white">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Welcome back, {member?.first_name}
             </h1>
-            <p className="text-[#e0e7ff] mt-1 text-lg">
+            <p className="text-[#045e32] mt-1 text-lg">
               Member No: <span className="font-mono font-medium opacity-90">{member?.member_no}</span>
             </p>
           </div>
           <div className="flex gap-2">
-            <Badge variant="outline" className="text-white border-white/30 bg-white/10 backdrop-blur-sm px-3 py-1">
+            <Badge variant="outline" className="text-[#045e32] border-[#045e32]/30 bg-[#045e32]/10 backdrop-blur-sm px-3 py-1">
               Active Member
             </Badge>
           </div>
