@@ -17,14 +17,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+  Download,
+  Calendar,
+  Wallet,
+  CreditCard,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Filter,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  FileText
+} from "lucide-react";
+import Link from "next/link";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -131,7 +142,16 @@ function LoanDetail() {
 
   // Early returns after all Hooks
   if (isLoadingLoan || isLoadingMember) return <MemberLoadingSpinner />;
-  if (!loan || !member) return <div>No loan or member data found.</div>;
+  if (!loan || !member) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="text-center space-y-4">
+        <p className="text-lg text-gray-500">Loan details not found.</p>
+        <Button asChild variant="outline">
+          <Link href="/member/dashboard">Return to Dashboard</Link>
+        </Button>
+      </div>
+    </div>
+  );
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -153,18 +173,18 @@ function LoanDetail() {
     return format(new Date(dateString), "MMM dd, yyyy");
   };
 
-  const getStatusColor = (status) => {
+  const getStatusBadge = (status) => {
     switch (status) {
       case "Completed":
-        return "bg-green-100 text-green-700";
+        return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-emerald-200 shadow-none">Completed</Badge>;
       case "Processing":
-        return "bg-yellow-100 text-yellow-700";
+        return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-200 shadow-none">Processing</Badge>;
       case "Pending":
-        return "bg-blue-100 text-blue-700";
+        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200 shadow-none">Pending</Badge>;
       case "Failed":
-        return "bg-red-100 text-red-700";
+        return <Badge className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200 shadow-none">Failed</Badge>;
       default:
-        return "bg-gray-100 text-gray-700";
+        return <Badge variant="outline" className="text-gray-500">Unknown</Badge>;
     }
   };
 
@@ -268,10 +288,10 @@ function LoanDetail() {
         head: [
           [
             "Date",
-            "Transaction Type",
+            "Type",
             "Amount",
             "Outstanding Balance",
-            "Payment Method",
+            "Method",
             "Status",
             "Details",
           ],
@@ -290,7 +310,7 @@ function LoanDetail() {
         theme: "grid",
         headStyles: { fillColor: [4, 94, 50], textColor: [255, 255, 255] },
         bodyStyles: { textColor: [51, 51, 51] },
-        alternateRowStyles: { fillColor: [245, 245, 220] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
         margin: { left: margin, right: margin },
       });
     } else {
@@ -308,159 +328,132 @@ function LoanDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-2 sm:p-6 space-y-6">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/member/dashboard">
-                Dashboard
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+    <div className="min-h-screen bg-gray-50/50 pb-12">
+      {/* Top Decoration */}
+      <div className="h-48 w-full absolute top-0 left-0 z-0 bg-gradient-to-r from-[#045e32] to-[#067d43]" />
 
-            <BreadcrumbSeparator />
-            <BreadcrumbPage>Loan Details</BreadcrumbPage>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <Card className="border-l-4 border-l-[#045e32] shadow-md">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-[#045e32]">
-              Loan Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <p className="text-base font-medium">
-                Loan Type: <span className="font-normal">{loan.loan_type}</span>
-              </p>
-              <p className="text-base font-medium">
-                Account Number:{" "}
-                <span className="font-normal">{loan.account_number}</span>
-              </p>
-              <p className="text-base font-medium">
-                Loan Amount:{" "}
-                <span className="font-normal">
-                  KES {parseFloat(loan.loan_amount).toFixed(2)}
-                </span>
-              </p>
-              <p className="text-base font-medium">
-                Outstanding Balance:{" "}
-                <span className="font-normal">
-                  KES {parseFloat(loan.outstanding_balance).toFixed(2)}
-                </span>
-              </p>
-              <p className="text-base font-medium">
-                Status:{" "}
-                <span
-                  className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
-                    loan.is_approved
-                      ? loan.is_active
-                        ? "Active"
-                        : "Inactive"
-                      : "Pending"
-                  )}`}
-                >
-                  {loan.is_approved
-                    ? loan.is_active
-                      ? "Active"
-                      : "Inactive"
-                    : "Pending"}
-                </span>
-              </p>
-            </div>
-            <Button
-              onClick={generatePDF}
-              className="bg-[#045e32] hover:bg-[#067a46] text-white text-sm sm:text-base"
-            >
-              Download Report
+      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+        {/* Navigation */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white/90">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild className="text-white hover:text-white hover:bg-white/10 -ml-2">
+              <Link href="/member/dashboard">
+                <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
+              </Link>
             </Button>
-          </CardContent>
+          </div>
+        </div>
+
+        {/* Loan Details Card */}
+        <Card className="border-none shadow-lg overflow-hidden">
+          <div className="bg-white p-6 border-b">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-emerald-100 rounded-lg">
+                    <FileText className="h-6 w-6 text-emerald-700" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-gray-900">{loan?.loan_type}</h1>
+                </div>
+                <p className="text-muted-foreground flex items-center gap-2">
+                  <span>{loan?.account_number}</span>
+                  <span className="text-gray-300">•</span>
+                  <span>Applied {format(new Date(loan?.created_at), "MMM d, yyyy")}</span>
+                </p>
+              </div>
+              <div className="text-left md:text-right space-y-1">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Outstanding Balance</p>
+                  <h2 className="text-3xl font-bold text-[#045e32]">KES {parseFloat(loan?.outstanding_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+                </div>
+
+                <div className="flex items-center md:justify-end gap-3 pt-2">
+                  <div className="text-right">
+                    <p className="text-xs text-muted-foreground">Original Amount</p>
+                    <p className="font-medium">KES {parseFloat(loan?.loan_amount).toLocaleString()}</p>
+                  </div>
+                  <div className="h-8 w-px bg-gray-200"></div>
+                  <Badge className={loan?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
+                    {loan?.is_approved ? (loan?.is_active ? "Active" : "Inactive") : "Pending Approval"}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-gray-50/50 p-4 flex justify-end">
+            <Button onClick={generatePDF} variant="outline" className="border-[#045e32] text-[#045e32] hover:bg-emerald-50">
+              <Download className="h-4 w-4 mr-2" /> Download Report
+            </Button>
+          </div>
         </Card>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-[#045e32]">
-              Filter Transactions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Filters & Transactions */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+          {/* Filters Sidebar */}
+          <Card className="lg:col-span-1 h-fit shadow-md border-none sticky top-24">
+            <CardHeader className="bg-gray-50/50 border-b pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Filter className="h-4 w-4" /> Filter Transactions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
               <div className="space-y-2">
-                <Label
-                  htmlFor="month"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Month
-                </Label>
-                <input
-                  type="month"
-                  id="month"
-                  value={monthFilter}
-                  onChange={(e) => {
-                    setMonthFilter(e.target.value);
-                    setStartDateFilter(""); // Clear date range when month is selected
-                    setEndDateFilter("");
-                    setCurrentPage(1);
-                  }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
-                />
+                <Label className="text-xs font-semibold text-muted-foreground uppercase">By Month</Label>
+                <div className="relative">
+                  <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                  <input
+                    type="month"
+                    value={monthFilter}
+                    onChange={(e) => {
+                      setMonthFilter(e.target.value);
+                      setStartDateFilter("");
+                      setEndDateFilter("");
+                      setCurrentPage(1);
+                    }}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32] pl-9"
+                  />
+                </div>
               </div>
+
               <div className="space-y-2">
-                <Label
-                  htmlFor="startDate"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Start Date
-                </Label>
-                <input
-                  type="date"
-                  id="startDate"
-                  value={startDateFilter}
-                  onChange={(e) => {
-                    setStartDateFilter(e.target.value);
-                    setMonthFilter(""); // Clear month when date range is selected
-                    setCurrentPage(1);
-                  }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
-                />
+                <Label className="text-xs font-semibold text-muted-foreground uppercase">Date Range</Label>
+                <div className="grid gap-2">
+                  <input
+                    type="date"
+                    placeholder="Start Date"
+                    value={startDateFilter}
+                    onChange={(e) => {
+                      setStartDateFilter(e.target.value);
+                      setMonthFilter("");
+                      setCurrentPage(1);
+                    }}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
+                  />
+                  <input
+                    type="date"
+                    placeholder="End Date"
+                    value={endDateFilter}
+                    onChange={(e) => {
+                      setEndDateFilter(e.target.value);
+                      setMonthFilter("");
+                      setCurrentPage(1);
+                    }}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
+                  />
+                </div>
               </div>
+
               <div className="space-y-2">
-                <Label
-                  htmlFor="endDate"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  End Date
-                </Label>
-                <input
-                  type="date"
-                  id="endDate"
-                  value={endDateFilter}
-                  onChange={(e) => {
-                    setEndDateFilter(e.target.value);
-                    setMonthFilter(""); // Clear month when date range is selected
-                    setCurrentPage(1);
-                  }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label
-                  htmlFor="paymentMethod"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Payment Method
-                </Label>
+                <Label className="text-xs font-semibold text-muted-foreground uppercase">Details</Label>
                 <select
-                  id="paymentMethod"
                   value={paymentMethodFilter}
-                  onChange={(e) => {
-                    setPaymentMethodFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                  onChange={(e) => { setPaymentMethodFilter(e.target.value); setCurrentPage(1); }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
                 >
-                  <option value="all">All Methods</option>
+                  <option value="">All Methods</option>
                   <option value="Cash">Cash</option>
                   <option value="Mpesa">Mpesa</option>
                   <option value="Bank Transfer">Bank Transfer</option>
@@ -469,169 +462,126 @@ function LoanDetail() {
                   <option value="Standing Order">Standing Order</option>
                   <option value="Mobile Banking">Mobile Banking</option>
                 </select>
-              </div>
-              <div className="space-y-2">
-                <Label
-                  htmlFor="status"
-                  className="text-sm font-medium text-gray-700"
-                >
-                  Status
-                </Label>
+
                 <select
-                  id="status"
                   value={statusFilter}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-[#045e32] focus:border-[#045e32] transition-colors"
+                  onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
                 >
-                  <option value="all">All Statuses</option>
+                  <option value="">All Statuses</option>
                   <option value="Pending">Pending</option>
                   <option value="Processing">Processing</option>
                   <option value="Completed">Completed</option>
                   <option value="Failed">Failed</option>
                 </select>
               </div>
-              <div className="flex items-end">
-                <Button
-                  onClick={resetFilters}
-                  className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300"
-                >
-                  Reset Filters
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-[#045e32]">
-              Repayments & Interest Transactions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {filteredTransactions.length === 0 ? (
-              <div className="text-center text-gray-700">
-                No transactions found.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-[#045e32] hover:bg-[#045e32]">
-                      <TableHead className="text-white font-semibold">
-                        Date
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Transaction Type
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Amount
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Outstanding Balance
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Payment Method
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Status
-                      </TableHead>
-                      <TableHead className="text-white font-semibold">
-                        Details
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {paginatedTransactions.map((transaction, index) => (
-                      <TableRow
-                        key={`${transaction.created_at}-${transaction.transaction_type}-${index}`}
-                      >
-                        <TableCell className="text-sm text-gray-700">
-                          {formatDate(transaction.created_at)}
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-700">
-                          {transaction.transaction_type}
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-700">
-                          KES {parseFloat(transaction.amount).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-700">
-                          {transaction.outstanding_balance
-                            ? `KES ${parseFloat(
-                                transaction.outstanding_balance
-                              ).toFixed(2)}`
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-700">
-                          {transaction.payment_method || "N/A"}
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          <span
-                            className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
-                              transaction.transaction_status
-                            )}`}
-                          >
-                            {transaction.transaction_status || "N/A"}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-700">
-                          {transaction.details || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4">
-                <div className="text-sm text-gray-500">
-                  Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                  {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
-                  {totalItems} entries
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="w-full text-xs"
+              >
+                Reset Filters
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Transactions List */}
+          <Card className="lg:col-span-3 shadow-md border-none min-h-[500px] flex flex-col">
+            <CardHeader className="bg-white border-b flex flex-row items-center justify-between pb-4">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Clock className="h-5 w-5 text-gray-500" /> Repayments & Interest
+              </CardTitle>
+              <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                {totalItems} Records
+              </Badge>
+            </CardHeader>
+            <CardContent className="p-0 flex-1">
+              {filteredTransactions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-64 text-center p-8">
+                  <div className="p-4 bg-gray-50 rounded-full mb-3">
+                    <Search className="h-8 w-8 text-gray-300" />
+                  </div>
+                  <p className="text-gray-900 font-medium">No transactions found</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting your filters to see more results.</p>
                 </div>
-                <div className="flex items-center gap-2">
+              ) : (
+                <div className="relative w-full overflow-auto">
+                  <Table>
+                    <TableHeader className="bg-gray-50">
+                      <TableRow>
+                        <TableHead className="w-[120px]">Date</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Amount</TableHead>
+                        <TableHead className="hidden md:table-cell">Method</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Outstanding Balance</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {paginatedTransactions.map((t, idx) => (
+                        <TableRow key={idx} className="hover:bg-gray-50/50">
+                          <TableCell className="font-medium text-xs sm:text-sm whitespace-nowrap">
+                            {formatDate(t.created_at)}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {t.transaction_type === 'Repayment' ? (
+                                <ArrowDownLeft className="h-4 w-4 text-emerald-600" />
+                              ) : (
+                                <ArrowUpRight className="h-4 w-4 text-amber-600" />
+                              )}
+                              <span className="text-xs sm:text-sm font-medium">{t.transaction_type}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-bold text-gray-900 text-xs sm:text-sm">
+                            <span className={t.transaction_type === 'Repayment' ? "text-emerald-700" : ""}>
+                              {t.transaction_type === 'Repayment' ? '+' : '-'} {parseFloat(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </span>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{t.payment_method}</TableCell>
+                          <TableCell>{getStatusBadge(t.transaction_status)}</TableCell>
+                          <TableCell className="text-right font-mono text-xs sm:text-sm">
+                            {t.outstanding_balance ? parseFloat(t.outstanding_balance).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="p-4 border-t bg-gray-50/30 flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                  Page {currentPage} of {totalPages}
+                </p>
+                <div className="flex gap-2">
                   <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="bg-[#045e32] hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
-                    aria-label="Previous page"
+                    className="h-8 px-2 lg:px-4"
                   >
-                    Previous
+                    <ChevronLeft className="h-4 w-4" /> <span className="hidden sm:inline ml-1">Previous</span>
                   </Button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <Button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        variant={currentPage === page ? "default" : "outline"}
-                        className={`${
-                          currentPage === page
-                            ? "bg-[#045e32] text-white"
-                            : "border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white"
-                        } text-sm`}
-                        aria-label={`Go to page ${page}`}
-                      >
-                        {page}
-                      </Button>
-                    )
-                  )}
                   <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="bg-[#045e32] hover:bg-[#067a46] text-white text-sm disabled:opacity-50"
-                    aria-label="Next page"
+                    className="h-8 px-2 lg:px-4"
                   >
-                    Next
+                    <span className="hidden sm:inline mr-1">Next</span> <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );
