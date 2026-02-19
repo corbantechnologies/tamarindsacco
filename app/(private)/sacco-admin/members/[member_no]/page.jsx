@@ -43,6 +43,7 @@ import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits";
 import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
 import CreateLoanRepayment from "@/forms/loanrepayments/CreateLoanRepayment";
+import ResetMemberPassword from "@/forms/auth/ResetMemberPassword";
 import { createGuarantorProfile } from "@/services/guarantorprofile";
 import SaccoStatement from "@/components/summary/Statement";
 import { downloadMemberYearlySummary } from "@/services/transactions";
@@ -71,6 +72,7 @@ function MemberDetail() {
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
   const [loanRepaymentModal, setLoanRepaymentModal] = useState(false);
+  const [resetPasswordModal, setResetPasswordModal] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -244,6 +246,14 @@ function MemberDetail() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              {member?.is_approved && (
+                <Button
+                  onClick={() => setResetPasswordModal(true)}
+                  className="bg-[#cc5500] hover:bg-[#e66b00] text-white w-full sm:w-auto"
+                >
+                  Reset Password
+                </Button>
+              )}
               {!member?.is_approved && (
                 <Button
                   onClick={() => handleApprove()}
@@ -687,6 +697,12 @@ function MemberDetail() {
           onClose={() => setLoanRepaymentModal(false)}
           refetchMember={refetchMember}
           loans={member?.loans}
+        />
+
+        <ResetMemberPassword
+          isOpen={resetPasswordModal}
+          onClose={() => setResetPasswordModal(false)}
+          member_no={member_no}
         />
       </div>
     </div>

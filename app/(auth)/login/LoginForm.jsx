@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { getSession, signIn } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import toast from "react-hot-toast";
@@ -108,7 +109,14 @@ function LoginForm() {
             </div>
           </div>
 
-          {/* TODO: Add forgot password link */}
+          <div className="flex justify-end">
+            <Link
+              href="/forgot-password"
+              className="text-sm font-medium text-[#cc5500] hover:text-[#e66b00]"
+            >
+              Forgot Password?
+            </Link>
+          </div>
 
           {/* Login Button */}
           <Button

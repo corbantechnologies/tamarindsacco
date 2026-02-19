@@ -19,6 +19,23 @@ export const signUpMember = async (values) => {
   return response;
 };
 
+// Password Reset
+export const forgotPassword = async (values) => {
+  const response = await apiActions?.post(
+    "/api/v1/auth/password/forgot/",
+    values
+  );
+  return response?.data;
+};
+
+export const resetPassword = async (values) => {
+  const response = await apiActions?.post(
+    "/api/v1/auth/password/reset/",
+    values
+  );
+  return response?.data;
+};
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 // SACCO Admins
 // Add new member
@@ -58,6 +75,11 @@ export const approveMember = async (member_no, token) => {
 // Bulk upload
 export const createBulkMembers = async (formData, token) => {
   await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
+};
+
+// Reset a member's password
+export const resetMemberPassword = async (member_no, password, token) => {
+  await apiActions?.patch(`/api/v1/auth/member/${member_no}/reset-password/`, password, token);
 };
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
