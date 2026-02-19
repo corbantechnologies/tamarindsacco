@@ -27,55 +27,8 @@ const SummaryTable = ({ data }) => {
     return Array.from(set);
   }, [monthly_summary]);
 
-  // Calculate running balances
-  const runningBalances = useMemo(() => {
-    // Initial running totals
-    const bal = {
-      savings: Object.fromEntries(savingsTypes.map((t) => [t, 0])),
-      venture: Object.fromEntries(ventureTypes.map((t) => [t, 0])),
-      loan: Object.fromEntries(loanTypes.map((t) => [t, 0])),
-    };
-
-    // Final accumulated result per month
-    const result = { savings: {}, venture: {}, loan: {} };
-
-    monthly_summary.forEach((m) => {
-      const key = m.month;
-
-      // ======== SAVINGS ========
-      (m.savings?.by_type ?? []).forEach((entry) => {
-        const type = entry.type;
-        const amount = Number(entry.amount) || 0;
-
-        bal.savings[type] += amount;
-      });
-      result.savings[key] = { ...bal.savings };
-
-      // ======== VENTURES ========
-      (m.ventures?.by_type ?? []).forEach((vt) => {
-        const type = vt.venture_type;
-
-        const deposits = vt.total_venture_deposits;
-        const payments = vt.total_venture_payments;
-
-        bal.venture[type] += deposits - payments;
-      });
-      result.venture[key] = { ...bal.venture };
-
-      // ======== LOANS ========
-      (m.loans?.by_type ?? []).forEach((lt) => {
-        const type = lt.loan_type;
-
-        const disb = lt.total_amount_disbursed;
-        const rep = lt.total_amount_repaid;
-
-        bal.loan[type] += disb - rep;
-      });
-      result.loan[key] = { ...bal.loan };
-    });
-
-    return result;
-  }, [monthly_summary, savingsTypes, ventureTypes, loanTypes]);
+  // Calculate running balances - REMOVED as server provides balances now
+  // const runningBalances = useMemo(() => { ... }, []);
 
   // Format number with 2 decimal places
   const format = (n) =>
@@ -95,7 +48,7 @@ const SummaryTable = ({ data }) => {
       const t = m.savings.by_type.find((x) => x.type === type);
       return {
         dep: t?.amount || 0,
-        bal: runningBalances.savings[month]?.[type] || 0,
+        bal: t?.balance_carried_forward || 0,
         pay: 0,
         disb: 0,
         rep: 0,
@@ -112,7 +65,7 @@ const SummaryTable = ({ data }) => {
       return {
         dep,
         pay,
-        bal: runningBalances.venture[month]?.[type] || 0,
+        bal: t?.balance_carried_forward || 0,
         disb: 0,
         rep: 0,
         int: 0,
@@ -126,13 +79,18 @@ const SummaryTable = ({ data }) => {
       const disb = t?.total_amount_disbursed;
       const rep = t?.total_amount_repaid;
       const int = t?.total_interest_charged;
-      const out = t?.total_amount_outstanding || 0;
+      const out = t?.balance_carried_forward || 0;
       return { disb, rep, int, out, dep: 0, pay: 0, bal: 0, newG: 0 };
     }
 
     if (sec === "guarantees") {
       const newG = m.guarantees?.new_guarantees || 0;
-      return { newG, dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0 };
+      const bal =
+        m.guarantees?.transactions?.reduce(
+          (sum, t) => sum + (t.current_balance || 0),
+          0
+        ) || 0;
+      return { newG, dep: 0, pay: 0, bal, disb: 0, rep: 0, int: 0, out: 0 };
     }
 
     return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0 };
@@ -177,7 +135,7 @@ const SummaryTable = ({ data }) => {
               Loans
             </th>
             <th
-              colSpan={1}
+              colSpan={2}
               className="text-center font-semibold border-x px-3 py-2 align-bottom"
             >
               Guarantees
@@ -214,7 +172,7 @@ const SummaryTable = ({ data }) => {
               </th>
             ))}
             <th
-              colSpan={1}
+              colSpan={2}
               className="text-center font-medium px-3 py-1 align-bottom border-r last:border-r-0"
             >
               General
@@ -265,8 +223,11 @@ const SummaryTable = ({ data }) => {
                 Out
               </th>,
             ])}
-            <th className="text-right px-3 py-1 border-r last:border-r-0">
+            <th className="text-right px-3 py-1">
               New
+            </th>
+            <th className="text-right px-3 py-1 border-r last:border-r-0">
+              Active
             </th>
           </tr>
         </thead>
@@ -323,9 +284,17 @@ const SummaryTable = ({ data }) => {
                 })}
 
                 {/* Guarantees Columns */}
-                <td className="text-right px-3 py-1 border-r last:border-r-0">
-                  {format(getValue(month, "guarantees").newG)}
-                </td>
+                {(() => {
+                  const val = getValue(month, "guarantees");
+                  return (
+                    <>
+                      <td className="text-right px-3 py-1">{format(val.newG)}</td>
+                      <td className="text-right px-3 py-1 border-r last:border-r-0">
+                        {format(val.bal)}
+                      </td>
+                    </>
+                  );
+                })()}
               </tr>
             );
           })}
