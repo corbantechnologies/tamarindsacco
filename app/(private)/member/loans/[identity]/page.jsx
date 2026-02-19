@@ -60,6 +60,9 @@ function LoanDetail() {
     refetch: refetchMember,
   } = useFetchMember();
 
+
+  console.log(loan)
+
   // Combine repayments and interest transactions
   const allTransactions = useMemo(() => {
     if (!loan) return [];
@@ -374,19 +377,14 @@ function LoanDetail() {
                   </div>
                   <div className="h-8 w-px bg-gray-200"></div>
                   <Badge className={loan?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
-                    {loan?.is_approved ? (loan?.is_active ? "Active" : "Inactive") : "Pending Approval"}
+                    {loan?.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-gray-50/50 p-4 flex justify-end">
-            <Button onClick={generatePDF} variant="outline" className="border-[#045e32] text-[#045e32] hover:bg-emerald-50">
-              <Download className="h-4 w-4 mr-2" /> Download Report
-            </Button>
-          </div>
+
         </Card>
 
         {/* Filters & Transactions */}
