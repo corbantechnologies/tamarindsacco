@@ -69,6 +69,7 @@ function MemberDetail() {
   const [isCreatingGuarantor, setIsCreatingGuarantor] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingStatement, setDownloadingStatement] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
   const [loanRepaymentModal, setLoanRepaymentModal] = useState(false);
@@ -100,6 +101,20 @@ function MemberDetail() {
       toast.error("Failed to download summary. Please try again");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleStatementDownload = async () => {
+    setDownloadingStatement(true);
+    try {
+      const { generateStatementPDF } = await import('@/lib/pdfGenerator');
+      await generateStatementPDF(summary, member);
+      toast.success("Statement generated successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to generate statement. Please try again");
+    } finally {
+      setDownloadingStatement(false);
     }
   };
 
@@ -273,6 +288,17 @@ function MemberDetail() {
               >
                 <Download className="mr-2 h-4 w-4" />
                 {downloading ? "Downloading..." : "Download Summary"}
+              </Button>
+
+              <Button
+                onClick={() => handleStatementDownload()}
+                disabled={downloadingStatement || !auth.isEnabled}
+                variant="outline"
+                className={`w-full sm:w-auto border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white transition-colors ${downloadingStatement ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {downloadingStatement ? "Generating..." : "Download Statement"}
               </Button>
             </div>
           </CardContent>

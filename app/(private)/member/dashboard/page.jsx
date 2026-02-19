@@ -231,6 +231,19 @@ function MemberDashboard() {
                     {showSummary ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
                     {showSummary ? "Hide" : "View"} Summary
                   </Button>
+                  
+                  {showSummary && (
+                    <Button
+                      onClick={handleSummaryDownload}
+                      disabled={downloading}
+                      variant="outline"
+                      className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white w-full sm:w-auto justify-center"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      {downloading ? "Downloading..." : "Download Summary"}
+                    </Button>
+                  )}
+
                   <Button
                     onClick={() => {
                       import('@/lib/pdfGenerator').then(mod => {
