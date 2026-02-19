@@ -19,12 +19,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
-  Download,
   Calendar,
-  Wallet,
-  CreditCard,
-  CheckCircle2,
-  XCircle,
   Clock,
   ArrowUpRight,
   ArrowDownLeft,
@@ -33,11 +28,10 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
-  FileText
+  FileText,
+  AlertCircle
 } from "lucide-react";
 import Link from "next/link";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 function LoanDetail() {
   const { identity } = useParams();
@@ -60,28 +54,32 @@ function LoanDetail() {
     refetch: refetchMember,
   } = useFetchMember();
 
-
-  console.log(loan)
-
-  // Combine repayments and interest transactions
+  // Combine repayments and disbursements
   const allTransactions = useMemo(() => {
     if (!loan) return [];
+
     const repayments = (loan.repayments || []).map((repayment) => ({
       ...repayment,
       transaction_type: "Repayment",
+      outstanding_balance: loan.outstanding_balance, // Ideally this should be snapshot balance if available
+      details: repayment.receipt_number || "N/A",
+      description: `Repayment via ${repayment.payment_method}`
+    }));
+
+    const disbursements = (loan.loan_disbursements || []).map((disbursement) => ({
+      ...disbursement,
+      transaction_type: "Disbursement",
+      payment_method: "Transfer",
+      transaction_status: disbursement.transaction_status,
       outstanding_balance: loan.outstanding_balance,
-      details: "N/A",
+      details: disbursement.reference,
+      description: `Loan Disbursement`
     }));
-    const interests = (loan.loan_interests || []).map((interest) => ({
-      ...interest,
-      transaction_type: "Interest",
-      outstanding_balance:
-        interest.outstanding_balance || loan.outstanding_balance,
-      payment_method: interest.payment_method || "N/A",
-      transaction_status: interest.transaction_status || "Completed",
-      details: "N/A",
-    }));
-    return [...repayments, ...interests].sort(
+
+    // If there were any interest transactions in the future, map them here.
+    // For now based on sample, rely on repayments and disbursements.
+
+    return [...repayments, ...disbursements].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
   }, [loan]);
@@ -191,144 +189,15 @@ function LoanDetail() {
     }
   };
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 20;
-    let yOffset = 20;
+  // Derived Data
+  const activeApplication = loan.applications?.[0];
+  const principalAmount = activeApplication?.requested_amount || 0;
+  const interestAccrued = loan.interest_accrued || 0;
 
-    // Add member details
-    doc.setFontSize(16);
-    doc.text("Loan Transaction Report", margin, yOffset);
-    yOffset += 10;
-    doc.setFontSize(12);
-    doc.text(`Member Number: ${member.member_no}`, margin, yOffset);
-    yOffset += 10;
-    doc.text(
-      `Member Name: ${member.first_name} ${member.last_name}`,
-      margin,
-      yOffset
-    );
-    yOffset += 10;
-    doc.text(
-      `Report Generated: ${format(new Date(), "MMM dd, yyyy HH:mm")}`,
-      margin,
-      yOffset
-    );
-    yOffset += 20;
-
-    // Add loan details
-    doc.setFontSize(14);
-    doc.text("Loan Details", margin, yOffset);
-    yOffset += 10;
-    doc.setFontSize(12);
-    doc.text(`Loan Type: ${loan.loan_type}`, margin, yOffset);
-    yOffset += 10;
-    doc.text(`Account Number: ${loan.account_number}`, margin, yOffset);
-    yOffset += 10;
-    doc.text(
-      `Loan Amount: KES ${parseFloat(loan.loan_amount).toFixed(2)}`,
-      margin,
-      yOffset
-    );
-    yOffset += 10;
-    doc.text(
-      `Outstanding Balance: KES ${parseFloat(loan.outstanding_balance).toFixed(
-        2
-      )}`,
-      margin,
-      yOffset
-    );
-    yOffset += 20;
-
-    // Add filter details
-    doc.setFontSize(14);
-    doc.text("Applied Filters", margin, yOffset);
-    yOffset += 10;
-    doc.setFontSize(12);
-    if (monthFilter) {
-      const [year, month] = monthFilter.split("-").map(Number);
-      doc.text(
-        `Month: ${format(new Date(year, month - 1), "MMMM yyyy")}`,
-        margin,
-        yOffset
-      );
-      yOffset += 10;
-    } else if (startDateFilter && endDateFilter) {
-      doc.text(
-        `Date Range: ${formatDate(startDateFilter)} to ${formatDate(
-          endDateFilter
-        )}`,
-        margin,
-        yOffset
-      );
-      yOffset += 10;
-    }
-    if (paymentMethodFilter && paymentMethodFilter !== "all") {
-      doc.text(`Payment Method: ${paymentMethodFilter}`, margin, yOffset);
-      yOffset += 10;
-    }
-    if (statusFilter && statusFilter !== "all") {
-      doc.text(`Status: ${statusFilter}`, margin, yOffset);
-      yOffset += 10;
-    }
-    if (
-      !monthFilter &&
-      !startDateFilter &&
-      !endDateFilter &&
-      !paymentMethodFilter &&
-      !statusFilter
-    ) {
-      doc.text("No filters applied", margin, yOffset);
-      yOffset += 10;
-    }
-    yOffset += 10;
-
-    // Add transactions table
-    if (filteredTransactions.length > 0) {
-      autoTable(doc, {
-        startY: yOffset,
-        head: [
-          [
-            "Date",
-            "Type",
-            "Amount",
-            "Outstanding Balance",
-            "Method",
-            "Status",
-            "Details",
-          ],
-        ],
-        body: filteredTransactions.map((t) => [
-          formatDate(t.created_at),
-          t.transaction_type,
-          `KES ${parseFloat(t.amount).toFixed(2)}`,
-          t.outstanding_balance
-            ? `KES ${parseFloat(t.outstanding_balance).toFixed(2)}`
-            : "N/A",
-          t.payment_method || "N/A",
-          t.transaction_status || "N/A",
-          t.details || "N/A",
-        ]),
-        theme: "grid",
-        headStyles: { fillColor: [4, 94, 50], textColor: [255, 255, 255] },
-        bodyStyles: { textColor: [51, 51, 51] },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        margin: { left: margin, right: margin },
-      });
-    } else {
-      doc.text(
-        "No transactions found for the selected filters.",
-        margin,
-        yOffset
-      );
-    }
-
-    // Save PDF
-    doc.save(
-      `loan_report_${loan.account_number}_${format(new Date(), "yyyyMMdd")}.pdf`
-    );
-  };
+  // Find next payment date
+  const nextPayment = activeApplication?.projection?.schedule?.find(
+    (s) => new Date(s.due_date) > new Date()
+  );
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-12">
@@ -351,40 +220,61 @@ function LoanDetail() {
         <Card className="border-none shadow-lg overflow-hidden">
           <div className="bg-white p-6 border-b">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-emerald-100 rounded-lg">
-                    <FileText className="h-6 w-6 text-emerald-700" />
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="p-2 bg-emerald-100 rounded-lg">
+                      <FileText className="h-6 w-6 text-emerald-700" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-900">{loan?.loan_type}</h1>
                   </div>
-                  <h1 className="text-2xl font-bold text-gray-900">{loan?.loan_type}</h1>
+                  <p className="text-muted-foreground flex items-center gap-2">
+                    <span>{loan?.account_number}</span>
+                    <span className="text-gray-300">•</span>
+                    <span>Applied {format(new Date(activeApplication?.created_at || loan?.created_at), "MMM d, yyyy")}</span>
+                  </p>
                 </div>
-                <p className="text-muted-foreground flex items-center gap-2">
-                  <span>{loan?.account_number}</span>
-                  <span className="text-gray-300">•</span>
-                  <span>Applied {format(new Date(loan?.created_at), "MMM d, yyyy")}</span>
-                </p>
+
+                {nextPayment && (
+                  <div className="bg-amber-50 border border-amber-100 rounded-md p-3 flex items-center gap-3 w-fit">
+                    <AlertCircle className="h-5 w-5 text-amber-600" />
+                    <div>
+                      <p className="text-xs text-amber-800 font-medium">Next Payment Due</p>
+                      <p className="text-sm font-bold text-amber-900">
+                        {format(new Date(nextPayment.due_date), "MMM dd, yyyy")} • KES {parseFloat(nextPayment.total_due).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
+
               <div className="text-left md:text-right space-y-1">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider">Outstanding Balance</p>
                   <h2 className="text-3xl font-bold text-[#045e32]">KES {parseFloat(loan?.outstanding_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
                 </div>
 
-                <div className="flex items-center md:justify-end gap-3 pt-2">
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Original Amount</p>
-                    <p className="font-medium">KES {parseFloat(loan?.loan_amount).toLocaleString()}</p>
+                <div className="flex flex-col items-end gap-1 pt-2">
+                  <div className="flex justify-between w-full md:w-auto md:justify-end gap-8 text-sm">
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Original Loan</p>
+                      <p className="font-medium">KES {parseFloat(principalAmount).toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Interest Accrued</p>
+                      <p className="font-medium text-amber-700">KES {parseFloat(interestAccrued).toLocaleString()}</p>
+                    </div>
                   </div>
-                  <div className="h-8 w-px bg-gray-200"></div>
-                  <Badge className={loan?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
-                    {loan?.is_active ? "Active" : "Inactive"}
-                  </Badge>
+
+                  <div className="mt-2">
+                    <Badge className={loan?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
+                      {loan?.is_active ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-
         </Card>
 
         {/* Filters & Transactions */}
@@ -459,6 +349,7 @@ function LoanDetail() {
                   <option value="Cheque">Cheque</option>
                   <option value="Standing Order">Standing Order</option>
                   <option value="Mobile Banking">Mobile Banking</option>
+                  <option value="Transfer">Transfer</option>
                 </select>
 
                 <select
@@ -488,7 +379,7 @@ function LoanDetail() {
           <Card className="lg:col-span-3 shadow-md border-none min-h-[500px] flex flex-col">
             <CardHeader className="bg-white border-b flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5 text-gray-500" /> Repayments & Interest
+                <Clock className="h-5 w-5 text-gray-500" /> Transactions History
               </CardTitle>
               <Badge variant="secondary" className="bg-gray-100 text-gray-600">
                 {totalItems} Records
@@ -513,7 +404,7 @@ function LoanDetail() {
                         <TableHead>Amount</TableHead>
                         <TableHead className="hidden md:table-cell">Method</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Outstanding Balance</TableHead>
+                        <TableHead className="text-right">Details</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -533,14 +424,14 @@ function LoanDetail() {
                             </div>
                           </TableCell>
                           <TableCell className="font-bold text-gray-900 text-xs sm:text-sm">
-                            <span className={t.transaction_type === 'Repayment' ? "text-emerald-700" : ""}>
+                            <span className={t.transaction_type === 'Repayment' ? "text-emerald-700" : "text-amber-700"}>
                               {t.transaction_type === 'Repayment' ? '+' : '-'} {parseFloat(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </span>
                           </TableCell>
                           <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{t.payment_method}</TableCell>
                           <TableCell>{getStatusBadge(t.transaction_status)}</TableCell>
-                          <TableCell className="text-right font-mono text-xs sm:text-sm">
-                            {t.outstanding_balance ? parseFloat(t.outstanding_balance).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}
+                          <TableCell className="text-right font-mono text-xs sm:text-sm text-muted-foreground">
+                            {t.details}
                           </TableCell>
                         </TableRow>
                       ))}
