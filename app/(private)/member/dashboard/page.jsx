@@ -50,19 +50,19 @@ const StatCard = ({ title, value, icon: Icon, colorClass, borderClass }) => (
 
 const AccountListItem = ({ href, title, subtitle, amount, icon: Icon }) => (
   <Link href={href} className="group block">
-    <div className="flex items-center justify-between p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-white hover:shadow-sm transition-all duration-200 bg-gray-50/50">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-white hover:shadow-sm transition-all duration-200 bg-gray-50/50 gap-4 sm:gap-0">
       <div className="flex items-center gap-4">
-        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors shrink-0">
           <Icon className="h-5 w-5 text-primary" />
         </div>
-        <div>
-          <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors">{title}</h4>
-          <p className="text-sm text-gray-500">{subtitle}</p>
+        <div className="min-w-0">
+          <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">{title}</h4>
+          <p className="text-sm text-gray-500 truncate">{subtitle}</p>
         </div>
       </div>
-      <div className="text-right">
+      <div className="text-left sm:text-right pl-14 sm:pl-0">
         <p className="font-bold text-gray-900">{amount}</p>
-        <div className="flex items-center justify-end text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center sm:justify-end text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
           View Details <ChevronRight className="h-3 w-3 ml-1" />
         </div>
       </div>
@@ -130,17 +130,17 @@ function MemberDashboard() {
   return (
     <div className="min-h-screen bg-gray-50/50 pb-12">
       {/* Top Decoration */}
-      <div className="h-32 w-full absolute top-0 left-0 z-0" />
+      <div className="h-32 w-full absolute top-0 left-0 z-0 bg-gradient-to-r from-[#045e32] to-[#067d43]" />
 
-      <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-[#045e32]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 text-white">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Welcome back, {member?.first_name}
             </h1>
-            <p className="text-[#045e32] mt-1 text-lg">
+            <p className="text-[#e0e7ff] mt-1 text-lg">
               Member No: <span className="font-mono font-medium opacity-90">{member?.member_no}</span>
             </p>
           </div>
@@ -180,14 +180,14 @@ function MemberDashboard() {
         <Tabs defaultValue="reports" className="w-full space-y-6">
           <div className="sticky top-0 z-20 bg-gray-50/50 backdrop-blur-sm pt-2 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="bg-white border shadow-sm p-1 rounded-xl w-full sm:w-auto grid grid-cols-3 sm:inline-flex h-auto">
-              <TabsTrigger value="reports" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
-                <FileText className="h-4 w-4 mr-2" /> Reports
+              <TabsTrigger value="reports" className="rounded-lg px-2 sm:px-6 py-2.5 text-xs sm:text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
+                <FileText className="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Reports</span><span className="sm:hidden">Reports</span>
               </TabsTrigger>
-              <TabsTrigger value="accounts" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
-                <LayoutDashboard className="h-4 w-4 mr-2" /> Accounts
+              <TabsTrigger value="accounts" className="rounded-lg px-2 sm:px-6 py-2.5 text-xs sm:text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
+                <LayoutDashboard className="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Accounts</span><span className="sm:hidden">Accts</span>
               </TabsTrigger>
-              <TabsTrigger value="guarantor" className="rounded-lg px-6 py-2.5 data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
-                <ShieldCheck className="h-4 w-4 mr-2" /> Guarantor
+              <TabsTrigger value="guarantor" className="rounded-lg px-2 sm:px-6 py-2.5 text-xs sm:text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white">
+                <ShieldCheck className="h-4 w-4 mr-2" /> <span className="hidden sm:inline">Guarantor Profile</span><span className="sm:hidden">Guarantor</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -195,19 +195,19 @@ function MemberDashboard() {
           {/* REPORTS TAB */}
           <TabsContent value="reports" className="space-y-6 animate-in fade-in-50 duration-300">
             <Card className="border-none shadow-md overflow-hidden">
-              <div className="bg-white p-6 border-b flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="bg-white p-6 border-b flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Financial Reports</h2>
                   <p className="text-muted-foreground text-sm">View your statement summary and detailed transaction history.</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     onClick={() => setShowSummary(prev => !prev)}
-                    className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white"
+                    className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white w-full sm:w-auto justify-center"
                   >
                     {showSummary ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
-                    {showSummary ? "Hide" : "View"} Monthly Summary
+                    {showSummary ? "Hide" : "View"} Summary
                   </Button>
                   <Button
                     onClick={() => {
@@ -215,7 +215,7 @@ function MemberDashboard() {
                         mod.generateStatementPDF(summary, member);
                       });
                     }}
-                    className="bg-[#045e32] hover:bg-[#037a40] text-white"
+                    className="bg-[#045e32] hover:bg-[#037a40] text-white w-full sm:w-auto justify-center"
                   >
                     <Download className="h-4 w-4 mr-2" /> Download PDF
                   </Button>
