@@ -19,6 +19,23 @@ export const signUpMember = async (values) => {
   return response;
 };
 
+// Password Reset
+export const forgotPassword = async (values) => {
+  const response = await apiActions?.post(
+    "/api/v1/auth/password/forgot/",
+    values
+  );
+  return response?.data;
+};
+
+export const resetPassword = async (values) => {
+  const response = await apiActions?.post(
+    "/api/v1/auth/password/reset/",
+    values
+  );
+  return response?.data;
+};
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 // SACCO Admins
 // Add new member
