@@ -77,6 +77,11 @@ export const createBulkMembers = async (formData, token) => {
   await apiActions.post("api/v1/auth/new-members/bulk-create/upload/", formData, token);
 };
 
+// Reset a member's password
+export const resetMemberPassword = async (member_no, password, token) => {
+  await apiActions?.patch(`/api/v1/auth/member/${member_no}/reset-password/`, password, token);
+};
+
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 // Member Views
 export const getMember = async (userId, token) => {
