@@ -266,7 +266,7 @@ function MemberDashboard() {
                     member.savings_accounts.map(account => (
                       <AccountListItem
                         key={account.identity}
-                        href={`/member/savings/${account.identity}`}
+                        href={`/personal/sacco-admin/savings/${account.identity}`}
                         title={account.account_type}
                         subtitle={account.account_number}
                         amount={`${account.currency || 'KES'} ${account.balance?.toLocaleString()}`}
@@ -300,7 +300,7 @@ function MemberDashboard() {
                     member.loans.map(account => (
                       <AccountListItem
                         key={account.identity}
-                        href={`/member/loans/${account.identity}`}
+                        href={`/personal/sacco-admin/loans/${account.identity}`}
                         title={account.loan_type}
                         subtitle={account.account_number}
                         amount={`${account.currency || 'KES'} ${account.outstanding_balance?.toLocaleString()}`}
@@ -334,7 +334,7 @@ function MemberDashboard() {
                     member.venture_accounts.map(account => (
                       <AccountListItem
                         key={account.identity}
-                        href={`/member/ventures/${account.identity}`}
+                        href={`/personal/sacco-admin/ventures/${account.identity}`}
                         title={account.venture_type}
                         subtitle={account.account_number}
                         amount={`${account.currency || 'KES'} ${account.balance?.toLocaleString()}`}
@@ -371,7 +371,7 @@ function MemberDashboard() {
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
                     <Button asChild className="w-full" variant="outline">
-                      <Link href="/member/guarantor-profile">View Full Profile</Link>
+                      <Link href="/personal/sacco-admin/guarantor-profile">View Full Profile</Link>
                     </Button>
                   </CardContent>
                 </Card>
