@@ -148,7 +148,7 @@ function LoanDetail() {
       <div className="text-center space-y-4">
         <p className="text-lg text-gray-500">Loan details not found.</p>
         <Button asChild variant="outline">
-          <Link href="/member/dashboard">Return to Dashboard</Link>
+          <Link href="/sacco-admin/personal">Return to Dashboard</Link>
         </Button>
       </div>
     </div>
@@ -209,7 +209,7 @@ function LoanDetail() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white/90">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild className="text-white hover:text-white hover:bg-white/10 -ml-2">
-              <Link href="/member/dashboard">
+              <Link href="/sacco-admin/personal">
                 <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
               </Link>
             </Button>

@@ -3,11 +3,11 @@
 import React, { useState, useMemo } from "react";
 import { format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { useParams } from "next/navigation";
-import { useFetchLoanDetail } from "@/hooks/loans/actions";
+import { useFetchSavingDetail } from "@/hooks/savings/actions";
 import { useFetchMember } from "@/hooks/members/actions";
 import MemberLoadingSpinner from "@/components/general/MemberLoadingSpinner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -17,9 +17,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
+  Wallet,
+  CreditCard,
+  CheckCircle2,
+  XCircle,
   Clock,
   ArrowUpRight,
   ArrowDownLeft,
@@ -27,62 +39,56 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  ArrowLeft,
-  FileText,
-  AlertCircle
+  ArrowLeft
 } from "lucide-react";
 import Link from "next/link";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
-function LoanDetail() {
+function SavingsDetail() {
   const { identity } = useParams();
   const [monthFilter, setMonthFilter] = useState("");
   const [startDateFilter, setStartDateFilter] = useState("");
   const [endDateFilter, setEndDateFilter] = useState("");
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState("");
+  const [methodFilter, setMethodFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const {
-    isLoading: isLoadingLoan,
-    data: loan,
-    refetch: refetchLoan,
-  } = useFetchLoanDetail(identity);
+    isLoading: isLoadingSaving,
+    data: saving,
+    refetch: refetchSaving,
+  } = useFetchSavingDetail(identity);
   const {
     isLoading: isLoadingMember,
     data: member,
     refetch: refetchMember,
   } = useFetchMember();
 
-  // Combine repayments and disbursements
+  // Combine deposits and withdrawals
   const allTransactions = useMemo(() => {
-    if (!loan) return [];
-
-    const repayments = (loan.repayments || []).map((repayment) => ({
-      ...repayment,
-      transaction_type: "Repayment",
-      outstanding_balance: loan.outstanding_balance, // Ideally this should be snapshot balance if available
-      details: repayment.receipt_number || "N/A",
-      description: `Repayment via ${repayment.payment_method}`
+    if (!saving) return [];
+    const deposits = (saving.deposits || []).map((deposit) => ({
+      ...deposit,
+      transaction_type: "Deposit",
+      balance: saving.balance,
+      payment_method: deposit.payment_method || "N/A",
+      transaction_status: deposit.transaction_status || "Completed",
+      details: "N/A",
     }));
-
-    const disbursements = (loan.loan_disbursements || []).map((disbursement) => ({
-      ...disbursement,
-      transaction_type: "Disbursement",
-      payment_method: "Transfer",
-      transaction_status: disbursement.transaction_status,
-      outstanding_balance: loan.outstanding_balance,
-      details: disbursement.reference,
-      description: `Loan Disbursement`
+    const withdrawals = (saving.withdrawals || []).map((withdrawal) => ({
+      ...withdrawal,
+      transaction_type: "Withdrawal",
+      balance: saving.balance,
+      payment_method: withdrawal.payment_method || "N/A",
+      transaction_status: withdrawal.transaction_status || "Completed",
+      details: "N/A",
     }));
-
-    // If there were any interest transactions in the future, map them here.
-    // For now based on sample, rely on repayments and disbursements.
-
-    return [...repayments, ...disbursements].sort(
+    return [...deposits, ...withdrawals].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
-  }, [loan]);
+  }, [saving]);
 
   // Filter transactions
   const filteredTransactions = useMemo(() => {
@@ -115,10 +121,7 @@ function LoanDetail() {
           return false;
         }
       }
-      if (
-        paymentMethodFilter &&
-        transaction.payment_method !== paymentMethodFilter
-      )
+      if (methodFilter && transaction.payment_method !== methodFilter)
         return false;
       if (statusFilter && transaction.transaction_status !== statusFilter)
         return false;
@@ -129,7 +132,7 @@ function LoanDetail() {
     monthFilter,
     startDateFilter,
     endDateFilter,
-    paymentMethodFilter,
+    methodFilter,
     statusFilter,
   ]);
 
@@ -142,13 +145,13 @@ function LoanDetail() {
   );
 
   // Early returns after all Hooks
-  if (isLoadingLoan || isLoadingMember) return <MemberLoadingSpinner />;
-  if (!loan || !member) return (
+  if (isLoadingSaving || isLoadingMember) return <MemberLoadingSpinner />;
+  if (!saving || !member) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className="text-center space-y-4">
-        <p className="text-lg text-gray-500">Loan details not found.</p>
+        <p className="text-lg text-gray-500">Account details not found.</p>
         <Button asChild variant="outline">
-          <Link href="/member/dashboard">Return to Dashboard</Link>
+          <Link href="/sacco-admin/personal">Return to Dashboard</Link>
         </Button>
       </div>
     </div>
@@ -164,7 +167,7 @@ function LoanDetail() {
     setMonthFilter("");
     setStartDateFilter("");
     setEndDateFilter("");
-    setPaymentMethodFilter("");
+    setMethodFilter("");
     setStatusFilter("");
     setCurrentPage(1);
   };
@@ -189,15 +192,143 @@ function LoanDetail() {
     }
   };
 
-  // Derived Data
-  const activeApplication = loan.applications?.[0];
-  const principalAmount = activeApplication?.requested_amount || 0;
-  const interestAccrued = loan.interest_accrued || 0;
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let yOffset = 20;
 
-  // Find next payment date
-  const nextPayment = activeApplication?.projection?.schedule?.find(
-    (s) => new Date(s.due_date) > new Date()
-  );
+    // Add member details
+    doc.setFontSize(16);
+    doc.text("Savings Transaction Report", margin, yOffset);
+    yOffset += 10;
+    doc.setFontSize(12);
+    doc.text(`Member Number: ${member.member_no}`, margin, yOffset);
+    yOffset += 10;
+    doc.text(
+      `Member Name: ${member.first_name} ${member.last_name}`,
+      margin,
+      yOffset
+    );
+    yOffset += 10;
+    doc.text(
+      `Report Generated: ${format(new Date(), "MMM dd, yyyy HH:mm")}`,
+      margin,
+      yOffset
+    );
+    yOffset += 20;
+
+    // Add savings details
+    doc.setFontSize(14);
+    doc.text("Savings Details", margin, yOffset);
+    yOffset += 10;
+    doc.setFontSize(12);
+    doc.text(`Account Type: ${saving.account_type}`, margin, yOffset);
+    yOffset += 10;
+    doc.text(`Account Number: ${saving.account_number}`, margin, yOffset);
+    yOffset += 10;
+    doc.text(
+      `Balance: KES ${parseFloat(saving.balance).toFixed(2)}`,
+      margin,
+      yOffset
+    );
+    yOffset += 10;
+    doc.text(
+      `Status: ${saving.is_active ? "Active" : "Inactive"}`,
+      margin,
+      yOffset
+    );
+    yOffset += 20;
+
+    // Add filter details
+    doc.setFontSize(14);
+    doc.text("Applied Filters", margin, yOffset);
+    yOffset += 10;
+    doc.setFontSize(12);
+    if (monthFilter) {
+      const [year, month] = monthFilter.split("-").map(Number);
+      doc.text(
+        `Month: ${format(new Date(year, month - 1), "MMMM yyyy")}`,
+        margin,
+        yOffset
+      );
+      yOffset += 10;
+    } else if (startDateFilter && endDateFilter) {
+      doc.text(
+        `Date Range: ${formatDate(startDateFilter)} to ${formatDate(
+          endDateFilter
+        )}`,
+        margin,
+        yOffset
+      );
+      yOffset += 10;
+    }
+    if (methodFilter && methodFilter !== "all") {
+      doc.text(`Payment Method: ${methodFilter}`, margin, yOffset);
+      yOffset += 10;
+    }
+    if (statusFilter && statusFilter !== "all") {
+      doc.text(`Status: ${statusFilter}`, margin, yOffset);
+      yOffset += 10;
+    }
+    if (
+      !monthFilter &&
+      !startDateFilter &&
+      !endDateFilter &&
+      !methodFilter &&
+      !statusFilter
+    ) {
+      doc.text("No filters applied", margin, yOffset);
+      yOffset += 10;
+    }
+    yOffset += 10;
+
+    // Add transactions table
+    if (filteredTransactions.length > 0) {
+      autoTable(doc, {
+        startY: yOffset,
+        head: [
+          [
+            "Date",
+            "Type",
+            "Amount",
+            "Balance",
+            "Method",
+            "Status",
+            "Details",
+          ],
+        ],
+        body: filteredTransactions.map((t) => [
+          formatDate(t.created_at),
+          t.transaction_type,
+          `KES ${parseFloat(t.amount).toFixed(2)}`,
+          t.balance ? `KES ${parseFloat(t.balance).toFixed(2)}` : "-",
+          t.payment_method || "-",
+          t.transaction_status || "-",
+          t.details || "-",
+        ]),
+        theme: "grid",
+        headStyles: { fillColor: [4, 94, 50], textColor: [255, 255, 255] },
+        bodyStyles: { textColor: [51, 51, 51] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { left: margin, right: margin },
+      });
+    } else {
+      doc.text(
+        "No transactions found for the selected filters.",
+        margin,
+        yOffset
+      );
+    }
+
+    // Save PDF
+    doc.save(
+      `savings_report_${saving.account_number}_${format(
+        new Date(),
+        "yyyyMMdd"
+      )}.pdf`
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-12">
@@ -205,76 +336,47 @@ function LoanDetail() {
       <div className="h-48 w-full absolute top-0 left-0 z-0 bg-gradient-to-r from-[#045e32] to-[#067d43]" />
 
       <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        {/* Navigation */}
+        {/* Breadcrumb & Navigation */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white/90">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" asChild className="text-white hover:text-white hover:bg-white/10 -ml-2">
-              <Link href="/member/dashboard">
+              <Link href="/sacco-admin/personal">
                 <ArrowLeft className="h-4 w-4 mr-1" /> Back to Dashboard
               </Link>
             </Button>
           </div>
         </div>
 
-        {/* Loan Details Card */}
+        {/* Account Details Card */}
         <Card className="border-none shadow-lg overflow-hidden">
           <div className="bg-white p-6 border-b">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-emerald-100 rounded-lg">
-                      <FileText className="h-6 w-6 text-emerald-700" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-gray-900">{loan?.loan_type}</h1>
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-emerald-100 rounded-lg">
+                    <Wallet className="h-6 w-6 text-emerald-700" />
                   </div>
-                  <p className="text-muted-foreground flex items-center gap-2">
-                    <span>{loan?.account_number}</span>
-                    <span className="text-gray-300">•</span>
-                    <span>Applied {format(new Date(activeApplication?.created_at || loan?.created_at), "MMM d, yyyy")}</span>
-                  </p>
+                  <h1 className="text-2xl font-bold text-gray-900">{saving?.account_type}</h1>
                 </div>
-
-                {nextPayment && (
-                  <div className="bg-amber-50 border border-amber-100 rounded-md p-3 flex items-center gap-3 w-fit">
-                    <AlertCircle className="h-5 w-5 text-amber-600" />
-                    <div>
-                      <p className="text-xs text-amber-800 font-medium">Next Payment Due</p>
-                      <p className="text-sm font-bold text-amber-900">
-                        {format(new Date(nextPayment.due_date), "MMM dd, yyyy")} • KES {parseFloat(nextPayment.total_due).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                )}
+                <p className="text-muted-foreground flex items-center gap-2">
+                  <span>{saving?.account_number}</span>
+                  <span className="text-gray-300">•</span>
+                  <span>Created {format(new Date(saving?.created_at), "MMM d, yyyy")}</span>
+                </p>
               </div>
-
-              <div className="text-left md:text-right space-y-1">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Outstanding Balance</p>
-                  <h2 className="text-3xl font-bold text-[#045e32]">KES {parseFloat(loan?.outstanding_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
-                </div>
-
-                <div className="flex flex-col items-end gap-1 pt-2">
-                  <div className="flex justify-between w-full md:w-auto md:justify-end gap-8 text-sm">
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Original Loan</p>
-                      <p className="font-medium">KES {parseFloat(principalAmount).toLocaleString()}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Interest Accrued</p>
-                      <p className="font-medium text-amber-700">KES {parseFloat(interestAccrued).toLocaleString()}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-2">
-                    <Badge className={loan?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
-                      {loan?.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
+              <div className="text-left md:text-right">
+                <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
+                <h2 className="text-3xl font-bold text-[#045e32]">KES {parseFloat(saving?.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+                <div className="mt-2 flex md:justify-end gap-2">
+                  <Badge className={saving?.is_active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-red-100 text-red-700 hover:bg-red-200"}>
+                    {saving?.is_active ? "Active Account" : "Inactive Account"}
+                  </Badge>
                 </div>
               </div>
             </div>
           </div>
+
+
         </Card>
 
         {/* Filters & Transactions */}
@@ -337,19 +439,15 @@ function LoanDetail() {
               <div className="space-y-2">
                 <Label className="text-xs font-semibold text-muted-foreground uppercase">Details</Label>
                 <select
-                  value={paymentMethodFilter}
-                  onChange={(e) => { setPaymentMethodFilter(e.target.value); setCurrentPage(1); }}
+                  value={methodFilter}
+                  onChange={(e) => { setMethodFilter(e.target.value); setCurrentPage(1); }}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
                 >
                   <option value="">All Methods</option>
                   <option value="Cash">Cash</option>
                   <option value="Mpesa">Mpesa</option>
                   <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="Mobile Transfer">Mobile Transfer</option>
                   <option value="Cheque">Cheque</option>
-                  <option value="Standing Order">Standing Order</option>
-                  <option value="Mobile Banking">Mobile Banking</option>
-                  <option value="Transfer">Transfer</option>
                 </select>
 
                 <select
@@ -358,9 +456,8 @@ function LoanDetail() {
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#045e32]"
                 >
                   <option value="">All Statuses</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Processing">Processing</option>
                   <option value="Completed">Completed</option>
+                  <option value="Pending">Pending</option>
                   <option value="Failed">Failed</option>
                 </select>
               </div>
@@ -379,7 +476,7 @@ function LoanDetail() {
           <Card className="lg:col-span-3 shadow-md border-none min-h-[500px] flex flex-col">
             <CardHeader className="bg-white border-b flex flex-row items-center justify-between pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Clock className="h-5 w-5 text-gray-500" /> Transactions History
+                <Clock className="h-5 w-5 text-gray-500" /> Transaction History
               </CardTitle>
               <Badge variant="secondary" className="bg-gray-100 text-gray-600">
                 {totalItems} Records
@@ -404,7 +501,7 @@ function LoanDetail() {
                         <TableHead>Amount</TableHead>
                         <TableHead className="hidden md:table-cell">Method</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Details</TableHead>
+                        <TableHead className="text-right">Balance</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -415,7 +512,7 @@ function LoanDetail() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {t.transaction_type === 'Repayment' ? (
+                              {t.transaction_type === 'Deposit' ? (
                                 <ArrowDownLeft className="h-4 w-4 text-emerald-600" />
                               ) : (
                                 <ArrowUpRight className="h-4 w-4 text-amber-600" />
@@ -424,14 +521,14 @@ function LoanDetail() {
                             </div>
                           </TableCell>
                           <TableCell className="font-bold text-gray-900 text-xs sm:text-sm">
-                            <span className={t.transaction_type === 'Repayment' ? "text-emerald-700" : "text-amber-700"}>
-                              {t.transaction_type === 'Repayment' ? '+' : '-'} {parseFloat(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            <span className={t.transaction_type === 'Deposit' ? "text-emerald-700" : ""}>
+                              {t.transaction_type === 'Deposit' ? '+' : '-'} {parseFloat(t.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                             </span>
                           </TableCell>
                           <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{t.payment_method}</TableCell>
                           <TableCell>{getStatusBadge(t.transaction_status)}</TableCell>
-                          <TableCell className="text-right font-mono text-xs sm:text-sm text-muted-foreground">
-                            {t.details}
+                          <TableCell className="text-right font-mono text-xs sm:text-sm">
+                            {t.balance ? parseFloat(t.balance).toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -476,4 +573,4 @@ function LoanDetail() {
   );
 }
 
-export default LoanDetail;
+export default SavingsDetail;

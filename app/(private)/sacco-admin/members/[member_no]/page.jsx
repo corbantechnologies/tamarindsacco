@@ -42,6 +42,7 @@ import { apiActions } from "@/tools/axios";
 import CreateDepositAdmin from "@/forms/savingsdepostis/CreateDepositAdmin";
 import CreateVentureDeposits from "@/forms/venturedeposits/CreateVentureDeposits";
 import CreateVenturePayment from "@/forms/venturepayments/CreateVenturePayment";
+import CreateLoanRepayment from "@/forms/loanrepayments/CreateLoanRepayment";
 import { createGuarantorProfile } from "@/services/guarantorprofile";
 import SaccoStatement from "@/components/summary/Statement";
 import { downloadMemberYearlySummary } from "@/services/transactions";
@@ -69,6 +70,7 @@ function MemberDetail() {
   const [downloading, setDownloading] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
+  const [loanRepaymentModal, setLoanRepaymentModal] = useState(false);
 
   const handleApprove = async () => {
     try {
@@ -382,13 +384,14 @@ function MemberDetail() {
                       </CardTitle>
                       {member?.is_approved && (
                         <div className="flex gap-2">
-                          <Button
+                          {/* <Button
                             size="sm"
                             className="bg-[#045e32] hover:bg-[#022007] text-white"
                           >
                             Add
-                          </Button>
+                          </Button> */}
                           <Button
+                            onClick={() => setLoanRepaymentModal(true)}
                             size="sm"
                             className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
                           >
@@ -677,6 +680,13 @@ function MemberDetail() {
           onClose={() => setVenturePaymentModal(false)}
           refetchMember={refetchMember}
           ventures={member?.venture_accounts}
+        />
+
+        <CreateLoanRepayment
+          isOpen={loanRepaymentModal}
+          onClose={() => setLoanRepaymentModal(false)}
+          refetchMember={refetchMember}
+          loans={member?.loans}
         />
       </div>
     </div>
