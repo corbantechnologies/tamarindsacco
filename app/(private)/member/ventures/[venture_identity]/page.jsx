@@ -19,7 +19,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
-  Download,
   Calendar,
   Wallet,
   CreditCard,
@@ -372,15 +371,7 @@ function VentureDetail() {
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-gray-50/50 p-4 flex flex-wrap justify-end gap-3">
-            <Button onClick={() => setPaymentModal(true)} className="bg-[#045e32] hover:bg-[#037a40] text-white">
-              <PlusCircle className="h-4 w-4 mr-2" /> Make Payment
-            </Button>
-            <Button onClick={generatePDF} variant="outline" className="border-[#045e32] text-[#045e32] hover:bg-emerald-50">
-              <Download className="h-4 w-4 mr-2" /> Download Report
-            </Button>
-          </div>
+          
         </Card>
 
         {/* Filters & Transactions */}

@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import {
-  Download,
   Calendar,
   Wallet,
   CreditCard,
@@ -377,12 +376,7 @@ function SavingsDetail() {
             </div>
           </div>
 
-          {/* Quick Actions / Stats could go here if needed, keeping it simple for now */}
-          <div className="bg-gray-50/50 p-4 flex justify-end">
-            <Button onClick={generatePDF} className="bg-[#045e32] hover:bg-[#037a40] text-white">
-              <Download className="h-4 w-4 mr-2" /> Download Statement
-            </Button>
-          </div>
+
         </Card>
 
         {/* Filters & Transactions */}
