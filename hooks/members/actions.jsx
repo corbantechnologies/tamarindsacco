@@ -54,12 +54,12 @@ export function useVerifyMember(member_no) {
 }
 
 // fetch member summary in admin dashboard
-export function useFetchMemberYearlySummaryAdmin(member_no) {
+export function useFetchMemberYearlySummaryAdmin(member_no, year) {
   const auth = useAxiosAuth();
 
   return useQuery({
-    queryKey: ["summary", member_no],
-    queryFn: () => getMemberYearlySummary(member_no, auth),
+    queryKey: ["summary", member_no, year],
+    queryFn: () => getMemberYearlySummary(member_no, auth, year),
     enabled: !!auth.isEnabled && !!member_no,
   });
 }

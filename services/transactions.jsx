@@ -51,18 +51,20 @@ export const createBulkCombinedUpdates = async (formData, auth) => {
 };
 
 // Reports
-export const getMemberYearlySummary = async (member_no, auth) => {
+export const getMemberYearlySummary = async (member_no, auth, year) => {
+  const query = year ? `?year=${year}` : "";
   const response = await apiActions?.get(
-    `/api/v1/transactions/${member_no}/summary/`,
+    `/api/v1/transactions/${member_no}/summary/${query}`,
     auth
   );
   return response?.data;
 };
 
-export const downloadMemberYearlySummary = async (member_no, auth) => {
+export const downloadMemberYearlySummary = async (member_no, auth, year) => {
   try {
+    const query = year ? `?year=${year}` : "";
     const response = await apiActions.get(
-      `/api/v1/transactions/${member_no}/summary/download/`,
+      `/api/v1/transactions/${member_no}/summary/download/${query}`,
       { ...auth, responseType: "blob" }
     );
 
