@@ -113,11 +113,26 @@ function MemberDashboard() {
 
     // Find Share Capital specifically if possible, else just sum all savings
     // Assuming 'savings_accounts' contains shares too, or we just sum total savings
-    const totalSavings = sum(member.savings_accounts, 'balance');
+    const totalSavings = (member.savings_accounts || []).reduce((acc, curr) => {
+        // Non-guaranteed = Withdrawable Savings
+        if (curr.account_type?.is_guaranteed === false) {
+           return acc + (Number(curr.balance) || 0);
+        }
+        return acc;
+    }, 0);
+
+    const totalDeposits = (member.savings_accounts || []).reduce((acc, curr) => {
+        // Guaranteed = Deposits / Shares
+        if (curr.account_type?.is_guaranteed === true) {
+           return acc + (Number(curr.balance) || 0);
+        }
+        return acc;
+    }, 0);
+
     const totalLoans = sum(member.loans, 'outstanding_balance');
     const totalVentures = sum(member.venture_accounts, 'balance');
 
-    return { totalSavings, totalLoans, totalVentures };
+    return { totalSavings, totalDeposits, totalLoans, totalVentures };
   }, [member]);
 
   const formatCurrency = (val) =>
@@ -152,13 +167,20 @@ function MemberDashboard() {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            title="Total Savings"
+            title="Total Shares"
             value={formatCurrency(totals.totalSavings)}
             icon={PiggyBank}
             colorClass="text-emerald-600 bg-emerald-600"
             borderClass="border-emerald-600"
+          />
+          <StatCard
+            title="Total Savings"
+            value={formatCurrency(totals.totalDeposits)}
+            icon={Wallet}
+            colorClass="text-purple-600 bg-purple-600"
+            borderClass="border-purple-600"
           />
           <StatCard
             title="Outstanding Loans"
@@ -267,7 +289,7 @@ function MemberDashboard() {
                       <AccountListItem
                         key={account.identity}
                         href={`/member/savings/${account.identity}`}
-                        title={account.account_type}
+                        title={account.account_type?.name || account.account_type}
                         subtitle={account.account_number}
                         amount={`${account.currency || 'KES'} ${account.balance?.toLocaleString()}`}
                         icon={PiggyBank}
