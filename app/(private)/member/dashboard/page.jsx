@@ -162,7 +162,34 @@ function MemberDashboard() {
     new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(val || 0);
 
   if (isLoadingMember || isLoadingSummary) {
-    return <MemberLoadingSpinner />;
+    return (
+      <div className="min-h-screen bg-gray-50/50 pb-12">
+        <div className="h-32 w-full absolute top-0 left-0 z-0" />
+        <div className="relative z-10 mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+          {/* Header Skeleton */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+             <div className="space-y-2">
+               <Skeleton className="h-8 w-64 rounded-md" />
+               <Skeleton className="h-4 w-40 rounded-md" />
+             </div>
+             <Skeleton className="h-8 w-32 rounded-full" />
+          </div>
+
+          {/* Stats Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-32 w-full rounded-xl" />
+            ))}
+          </div>
+
+          {/* Tabs Skeleton */}
+          <div className="space-y-6">
+             <Skeleton className="h-10 w-full sm:w-auto max-w-md rounded-xl" />
+             <Skeleton className="h-[400px] w-full rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
