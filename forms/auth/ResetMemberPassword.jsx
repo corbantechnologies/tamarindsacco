@@ -111,23 +111,24 @@ const ResetMemberPassword = ({ isOpen, onClose, member_no }) => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 mt-4">
+          <DialogFooter className="mt-4">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={loading}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              className="bg-[#cc5500] hover:bg-[#e66b00] text-white"
+              className="bg-[#cc5500] hover:bg-[#e66b00] text-white w-full sm:w-auto"
               disabled={loading}
             >
               {loading ? "Resetting..." : "Reset Password"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
