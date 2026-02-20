@@ -5,6 +5,7 @@ import { useFetchMemberDetail, useFetchMemberYearlySummaryAdmin } from "@/hooks/
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
@@ -48,6 +49,14 @@ import { createGuarantorProfile } from "@/services/guarantorprofile";
 import SaccoStatement from "@/components/summary/Statement";
 import { downloadMemberYearlySummary } from "@/services/transactions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useMemo } from "react";
 
 function MemberDetail() {
   const { member_no } = useParams();
@@ -59,16 +68,21 @@ function MemberDetail() {
     refetch: refetchMember,
   } = useFetchMemberDetail(member_no);
 
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+
   const {
     isLoading: isLoadingSummary,
     data: summary,
-  } = useFetchMemberYearlySummaryAdmin(member_no);
+    isFetching: isFetchingSummary,
+  } = useFetchMemberYearlySummaryAdmin(member_no, selectedYear);
 
   // states
   const [isApproving, setIsApproving] = useState(false);
   const [isCreatingGuarantor, setIsCreatingGuarantor] = useState(false);
   const [depositModal, setDepositModal] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadingStatement, setDownloadingStatement] = useState(false);
   const [ventureDepositModal, setVentureDepositModal] = useState(false);
   const [venturePaymentModal, setVenturePaymentModal] = useState(false);
   const [loanRepaymentModal, setLoanRepaymentModal] = useState(false);
@@ -94,12 +108,26 @@ function MemberDetail() {
   const handleSummaryDownload = async () => {
     setDownloading(true);
     try {
-      await downloadMemberYearlySummary(member_no, auth);
+      await downloadMemberYearlySummary(member_no, auth, selectedYear);
     } catch (error) {
       console.error(error);
       toast.error("Failed to download summary. Please try again");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const handleStatementDownload = async () => {
+    setDownloadingStatement(true);
+    try {
+      const { generateStatementPDF } = await import('@/lib/pdfGenerator');
+      await generateStatementPDF(summary, member);
+      toast.success("Statement generated successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to generate statement. Please try again");
+    } finally {
+      setDownloadingStatement(false);
     }
   };
 
@@ -157,6 +185,15 @@ function MemberDetail() {
       active: member?.is_system_admin,
     },
   ].filter((role) => role?.active);
+
+  // Generate year options (e.g., current year back to 2020 or foundation year)
+  const yearOptions = useMemo(() => {
+    const years = [];
+    for (let i = 0; i < 5; i++) {
+        years.push((currentYear - i).toString());
+    }
+    return years;
+  }, [currentYear]);
 
   if (isLoadingMember) return <LoadingSpinner />;
 
@@ -274,6 +311,17 @@ function MemberDetail() {
                 <Download className="mr-2 h-4 w-4" />
                 {downloading ? "Downloading..." : "Download Summary"}
               </Button>
+
+              <Button
+                onClick={() => handleStatementDownload()}
+                disabled={downloadingStatement || !auth.isEnabled}
+                variant="outline"
+                className={`w-full sm:w-auto border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white transition-colors ${downloadingStatement ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                {downloadingStatement ? "Generating..." : "Download Statement"}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -316,7 +364,7 @@ function MemberDetail() {
                           <div key={account?.reference} className="space-y-2">
                             <InfoField
                               icon={Wallet2}
-                              label={`${account?.account_type} - ${account?.account_number}`}
+                              label={`${account?.account_type?.name} - ${account?.account_number}`}
                               value={`${account?.balance} ${account?.currency || "KES"
                                 }`}
                             />
@@ -651,23 +699,51 @@ function MemberDetail() {
 
           {/* FINANCIALS TAB */}
           <TabsContent value="financials" className="space-y-6">
-            {/* Summary Table */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="h-6 w-6 text-[#045e32]" />
-                <h2 className="text-xl font-bold text-[#045e32]">Yearly Summary</h2>
-              </div>
-              <DetailedSummaryTable data={summary} member={member} />
-            </div>
+            
+             <div className="flex justify-end">
+                <div className="w-[150px]">
+                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                      <SelectTrigger className="bg-white">
+                        <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {yearOptions.map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                </div>
+             </div>
 
-            {/* Statement */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="h-6 w-6 text-[#045e32]" />
-                <h2 className="text-xl font-bold text-[#045e32]">Statement</h2>
-              </div>
-              <SaccoStatement summaryData={summary} member={member} />
-            </div>
+            {isFetchingSummary ? (
+                <div className="space-y-6">
+                    <Skeleton className="h-[200px] w-full rounded-xl" />
+                    <Skeleton className="h-[400px] w-full rounded-xl" />
+                </div>
+            ) : (
+                <>
+                    {/* Summary Table */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                        <FileText className="h-6 w-6 text-[#045e32]" />
+                        <h2 className="text-xl font-bold text-[#045e32]">Yearly Summary ({selectedYear})</h2>
+                    </div>
+                    <DetailedSummaryTable data={summary} member={member} />
+                    </div>
+
+                    {/* Statement */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                        <FileText className="h-6 w-6 text-[#045e32]" />
+                        <h2 className="text-xl font-bold text-[#045e32]">Statement ({selectedYear})</h2>
+                    </div>
+                    <SaccoStatement summaryData={summary} member={member} />
+                    </div>
+                </>
+            )}
           </TabsContent>
         </Tabs>
 

@@ -11,6 +11,7 @@ import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import useMemberNo from "@/hooks/authentication/useMemberNo";
 
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Wallet,
   CreditCard,
@@ -26,11 +27,19 @@ import {
   EyeOff,
   PiggyBank,
   Banknote,
+  Calendar,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // --- Components ---
 
@@ -80,6 +89,10 @@ const InfoRow = ({ label, value }) => (
 function MemberDashboard() {
   const [showSummary, setShowSummary] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+  
   const token = useAxiosAuth();
   const memberNo = useMemberNo();
 
@@ -91,18 +104,28 @@ function MemberDashboard() {
   const {
     isLoading: isLoadingSummary,
     data: summary,
-  } = useFetchMemberYearlySummary();
+    isFetching: isFetchingSummary,
+  } = useFetchMemberYearlySummary(selectedYear);
 
   const handleSummaryDownload = async () => {
     setDownloading(true);
     try {
-      await downloadMemberYearlySummary(memberNo, token);
+      await downloadMemberYearlySummary(memberNo, token, selectedYear);
     } catch (error) {
       console.error(error);
     } finally {
       setDownloading(false);
     }
   };
+  
+  // Generate year options (e.g., current year back to 2020 or foundation year)
+  const yearOptions = useMemo(() => {
+    const years = [];
+    for (let i = 0; i < 5; i++) {
+      years.push((currentYear - i).toString());
+    }
+    return years;
+  }, [currentYear]);
 
   // --- Derived Stats ---
   const totals = useMemo(() => {
@@ -113,11 +136,26 @@ function MemberDashboard() {
 
     // Find Share Capital specifically if possible, else just sum all savings
     // Assuming 'savings_accounts' contains shares too, or we just sum total savings
-    const totalSavings = sum(member.savings_accounts, 'balance');
+    const totalSavings = (member.savings_accounts || []).reduce((acc, curr) => {
+        // Non-guaranteed = Withdrawable Savings
+        if (curr.account_type?.is_guaranteed === false) {
+           return acc + (Number(curr.balance) || 0);
+        }
+        return acc;
+    }, 0);
+
+    const totalDeposits = (member.savings_accounts || []).reduce((acc, curr) => {
+        // Guaranteed = Deposits / Shares
+        if (curr.account_type?.is_guaranteed === true) {
+           return acc + (Number(curr.balance) || 0);
+        }
+        return acc;
+    }, 0);
+
     const totalLoans = sum(member.loans, 'outstanding_balance');
     const totalVentures = sum(member.venture_accounts, 'balance');
 
-    return { totalSavings, totalLoans, totalVentures };
+    return { totalSavings, totalDeposits, totalLoans, totalVentures };
   }, [member]);
 
   const formatCurrency = (val) =>
@@ -152,13 +190,20 @@ function MemberDashboard() {
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            title="Total Savings"
+            title="Total Shares"
             value={formatCurrency(totals.totalSavings)}
             icon={PiggyBank}
             colorClass="text-emerald-600 bg-emerald-600"
             borderClass="border-emerald-600"
+          />
+          <StatCard
+            title="Total Savings"
+            value={formatCurrency(totals.totalDeposits)}
+            icon={Wallet}
+            colorClass="text-purple-600 bg-purple-600"
+            borderClass="border-purple-600"
           />
           <StatCard
             title="Outstanding Loans"
@@ -200,7 +245,24 @@ function MemberDashboard() {
                   <h2 className="text-xl font-bold text-gray-900">Financial Reports</h2>
                   <p className="text-muted-foreground text-sm">View your statement summary and detailed transaction history.</p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
+                   <div className="w-full sm:w-[120px]">
+                    <Select value={selectedYear} onValueChange={setSelectedYear}>
+                      <SelectTrigger className="h-9">
+                        <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {yearOptions.map((year) => (
+                          <SelectItem key={year} value={year}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <Button
                     variant="outline"
                     onClick={() => setShowSummary(prev => !prev)}
@@ -209,6 +271,19 @@ function MemberDashboard() {
                     {showSummary ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
                     {showSummary ? "Hide" : "View"} Summary
                   </Button>
+                  
+                  {showSummary && (
+                    <Button
+                      onClick={handleSummaryDownload}
+                      disabled={downloading}
+                      variant="outline"
+                      className="border-[#045e32] text-[#045e32] hover:bg-[#045e32] hover:text-white w-full sm:w-auto justify-center"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      {downloading ? "Downloading..." : "Download Summary"}
+                    </Button>
+                  )}
+
                   <Button
                     onClick={() => {
                       import('@/lib/pdfGenerator').then(mod => {
@@ -222,24 +297,35 @@ function MemberDashboard() {
                 </div>
               </div>
 
-              <div className="bg-gray-50/50 p-6">
-                {showSummary && (
-                  <div className="mb-8 bg-white rounded-xl shadow-sm border p-6 animate-in slide-in-from-top-4 duration-300">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="h-5 w-5 text-[#045e32]" />
-                      <h3 className="font-bold text-lg text-gray-900">Monthly breakdown</h3>
-                    </div>
-                    <DetailedSummaryTable data={summary} member={member} />
-                  </div>
+              <div className="bg-gray-50/50 p-6 min-h-[400px]">
+                {isFetchingSummary && (
+                   <div className="space-y-4 mb-6">
+                      <Skeleton className="h-[200px] w-full rounded-xl" />
+                      <Skeleton className="h-[300px] w-full rounded-xl" />
+                   </div>
                 )}
 
-                <div className="bg-white rounded-xl shadow-sm border p-6">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Banknote className="h-5 w-5 text-[#045e32]" />
-                    <h3 className="font-bold text-lg text-gray-900">Detailed Statement</h3>
-                  </div>
-                  <SaccoStatement summaryData={summary} member={member} />
-                </div>
+                {!isFetchingSummary && (
+                  <>
+                    {showSummary && (
+                      <div className="mb-8 bg-white rounded-xl shadow-sm border p-6 animate-in slide-in-from-top-4 duration-300">
+                        <div className="flex items-center gap-2 mb-4">
+                          <TrendingUp className="h-5 w-5 text-[#045e32]" />
+                          <h3 className="font-bold text-lg text-gray-900">Monthly breakdown</h3>
+                        </div>
+                        <DetailedSummaryTable data={summary} member={member} />
+                      </div>
+                    )}
+
+                    <div className="bg-white rounded-xl shadow-sm border p-6">
+                      <div className="flex items-center gap-2 mb-6">
+                        <Banknote className="h-5 w-5 text-[#045e32]" />
+                        <h3 className="font-bold text-lg text-gray-900">Detailed Statement</h3>
+                      </div>
+                      <SaccoStatement summaryData={summary} member={member} />
+                    </div>
+                  </>
+                )}
               </div>
             </Card>
           </TabsContent>
@@ -267,7 +353,7 @@ function MemberDashboard() {
                       <AccountListItem
                         key={account.identity}
                         href={`/member/savings/${account.identity}`}
-                        title={account.account_type}
+                        title={account.account_type?.name || account.account_type}
                         subtitle={account.account_number}
                         amount={`${account.currency || 'KES'} ${account.balance?.toLocaleString()}`}
                         icon={PiggyBank}

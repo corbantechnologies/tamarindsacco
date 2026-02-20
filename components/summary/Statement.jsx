@@ -12,6 +12,9 @@ const SaccoStatement = ({ summaryData, member }) => {
 
     // Handle Guarantees (no 'by_type' array)
     if (section === 'guarantees') {
+      if (field === 'active_balance') {
+        return monthData.guarantees?.transactions?.reduce((sum, t) => sum + (Number(t.current_balance) || 0), 0) || 0;
+      }
       return monthData.guarantees?.[field] || 0;
     }
 
@@ -179,14 +182,14 @@ const SaccoStatement = ({ summaryData, member }) => {
 
                 {/* other deductions */}
                 <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'savings', /Holiday/i, 'total_deposits'))}</td>
-                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'guarantees', null, 'new_guarantees'))}</td>
+                <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'guarantees', null, 'active_balance'))}</td>
                 <td className="border border-gray-300 px-1 py-1 text-right">{format(getAmount(r, 'ventures', /Sodas/i, 'balance_carried_forward'))}</td>
 
                 {/* total deductions */}
                 <td className="border border-gray-300 px-1 py-1 font-semibold text-blue-600 text-right">
                   {format(
                     getAmount(r, 'savings', /Holiday/i, 'total_deposits') +
-                    getAmount(r, 'guarantees', null, 'new_guarantees') +
+                    getAmount(r, 'guarantees', null, 'active_balance') +
                     getAmount(r, 'ventures', /Sodas/i, 'balance_carried_forward')
                   )}
                 </td>

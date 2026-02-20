@@ -6,7 +6,7 @@ import {
   getMemberYearlySummary,
 } from "@/services/transactions";
 import useAxiosAuth from "../authentication/useAxiosAuth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import useMemberNo from "../authentication/useMemberNo";
 
 export function useFetchAccountsList() {
@@ -19,13 +19,13 @@ export function useFetchAccountsList() {
   });
 }
 
-export function useFetchMemberYearlySummary() {
+export function useFetchMemberYearlySummary(year) {
   const auth = useAxiosAuth();
   const member_no = useMemberNo();
 
   return useQuery({
-    queryKey: ["summary", member_no],
-    queryFn: () => getMemberYearlySummary(member_no, auth),
+    queryKey: ["summary", member_no, year],
+    queryFn: () => getMemberYearlySummary(member_no, auth, year),
     enabled: auth.isEnabled && !!member_no,
   });
 }
