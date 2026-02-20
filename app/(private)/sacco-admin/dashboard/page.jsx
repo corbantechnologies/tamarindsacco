@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import LoanTypesTable from "@/components/loantypes/LoanTypesTable";
 import SaccoMembersTable from "@/components/members/SaccoMembersTable";
@@ -12,6 +13,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import VentureTypesTable from "@/components/venturetypes/VentureTypesTable";
 import CreateLoanType from "@/forms/loantypes/CreateLoanType";
 import CreateMember from "@/forms/members/CreateMember";
@@ -25,7 +28,6 @@ import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { useFetchVentureTypes } from "@/hooks/venturetypes/actions";
 import {
-  DoorOpen,
   Plus,
   ShoppingCart,
   User,
@@ -34,8 +36,9 @@ import {
   Wallet2,
   Menu,
   Upload,
+  LayoutDashboard,
+  Settings,
 } from "lucide-react";
-import React, { useState } from "react";
 
 function SaccoAdminDashboard() {
   const [savingTypeModal, setSavingTypeModal] = useState(false);
@@ -44,161 +47,218 @@ function SaccoAdminDashboard() {
   const [memberUploadModal, setMemberUploadModal] = useState(false);
   const [ventureTypeModal, setVentureTypeModal] = useState(false);
 
-  const {
-    isLoading: isLoadingMember,
-    data: member,
-    refetch: refetchMember,
-  } = useFetchMember();
-  const {
-    isLoading: isLoadingMembers,
-    data: membersData,
-    refetch: refetchMembers,
-  } = useFetchMembers(1, 20);
+  // Fetch Data
+  const { isLoading: isLoadingMember, data: member } = useFetchMember();
+  const { isLoading: isLoadingMembers, data: membersData, refetch: refetchMembers } = useFetchMembers(1, 20);
   const members = membersData?.results || [];
-  const totalMembers = membersData?.count || 0;
-  const {
-    isLoading: isLoadingSavingTypes,
-    data: savingTypes,
-    refetch: refetchSavingTypes,
-  } = useFetchSavingsTypes();
-  const {
-    isLoading: isLoadingSavings,
-    data: savings,
-    refetch: refetchSavings,
-  } = useFetchSavings();
-  const {
-    isLoading: isLoadingLoanTypes,
-    data: loanTypes,
-    refetch: refetchLoanTypes,
-  } = useFetchLoanTypes();
-  const {
-    isLoading: isLoadingLoans,
-    data: loans,
-    refetch: refetchLoans,
-  } = useFetchLoans();
-  const {
-    isLoading: isLoadingVentureTypes,
-    data: ventureTypes,
-    refetch: refetchVentureTypes,
-  } = useFetchVentureTypes();
+  
+  const { isLoading: isLoadingSavingTypes, data: savingTypes, refetch: refetchSavingTypes } = useFetchSavingsTypes();
+  const { isLoading: isLoadingLoanTypes, data: loanTypes, refetch: refetchLoanTypes } = useFetchLoanTypes();
+  const { isLoading: isLoadingVentureTypes, data: ventureTypes, refetch: refetchVentureTypes } = useFetchVentureTypes();
 
-  if (
-    isLoadingMember ||
-    isLoadingMembers ||
-    isLoadingSavingTypes ||
-    isLoadingSavings ||
-    isLoadingLoanTypes ||
-    isLoadingLoans ||
-    isLoadingVentureTypes
-  ) {
-    return <LoadingSpinner />;
+  const isLoading = isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingLoanTypes || isLoadingVentureTypes;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50/50 p-6 space-y-8">
+        <div className="flex justify-between items-center">
+            <div className="space-y-2">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-4 w-40" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+            <Skeleton className="h-32 w-full rounded-xl" />
+        </div>
+        <Skeleton className="h-10 w-96 rounded-lg" />
+        <Skeleton className="h-96 w-full rounded-xl" />
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="p-2 sm:p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50/50">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-8">
+        
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#cc5500]">
-              Welcome, {member?.salutation} {member?.last_name}
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+              Dashboard
             </h1>
-            <p className="text-gray-500 text-sm sm:text-base mt-1">
-              Manage your members, saving types, savings, and loan types
+            <p className="text-muted-foreground mt-1">
+              Welcome back, {member?.salutation} {member?.last_name}
             </p>
           </div>
 
-          {/* Header Actions in Popover */}
-          <div className="flex items-center justify-end">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button className="bg-[#045e32] hover:bg-[#022007] text-white">
-                  <Menu className="h-5 w-5 mr-2" /> Actions
+          {/* Quick Actions */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button className="bg-[#045e32] hover:bg-[#034b28] text-white shadow-sm transition-all hover:shadow-md">
+                <Menu className="h-4 w-4 mr-2" /> Quick Actions
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="end">
+              <div className="grid gap-1">
+                <p className="text-xs font-medium text-muted-foreground px-2 py-1.5">Members</p>
+                <Button
+                  variant="ghost"
+                  onClick={() => setMemberCreateModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <User className="h-4 w-4 mr-2 text-[#045e32]" /> New Member
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48 p-2">
-                <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => setMemberCreateModal(true)}
-                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
-                  >
-                    <User className="h-4 w-4 mr-2" /> Member
-                  </Button>
-                  <Button
-                    onClick={() => setMemberUploadModal(true)}
-                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
-                  >
-                    <Upload className="h-4 w-4 mr-2" /> Member (Bulk)
-                  </Button>
-                  <Button
-                    onClick={() => setSavingTypeModal(true)}
-                    className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm py-2 px-3 w-full"
-                  >
-                    <Wallet2 className="h-4 w-4 mr-2" /> Saving Type
-                  </Button>
-                  <Button
-                    onClick={() => setLoanTypeModal(true)}
-                    className="bg-[#045e32] hover:bg-[#022007] text-white text-sm py-2 px-3 w-full"
-                  >
-                    <Plus className="h-4 w-4 mr-2" /> Loan Type
-                  </Button>
-                  <Button
-                    onClick={() => setVentureTypeModal(true)}
-                    className="bg-[#cc5500] hover:bg-[#e66b00] text-white text-sm py-2 px-3 w-full"
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" /> Venture Type
-                  </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setMemberUploadModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <Upload className="h-4 w-4 mr-2 text-[#045e32]" /> Bulk Upload
+                </Button>
+                
+                <div className="my-1 border-t" />
+                
+                <p className="text-xs font-medium text-muted-foreground px-2 py-1.5">Products</p>
+                <Button
+                  variant="ghost"
+                  onClick={() => setSavingTypeModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <Wallet2 className="h-4 w-4 mr-2 text-orange-600" /> New Saving Type
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setLoanTypeModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <Plus className="h-4 w-4 mr-2 text-[#045e32]" /> New Loan Type
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setVentureTypeModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2 text-blue-600" /> New Venture Type
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Overview Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+           {/* Admin Card */}
+           <div className="lg:col-span-1">
+              <AdminInfoCard member={member} />
+           </div>
+           
+           {/* Stats Grid */}
+           <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+               <StatsCard
+                title="Total Members"
+                value={membersData?.count || 0}
+                Icon={Users}
+                description="Active members"
+                className="border-l-4 border-l-[#045e32]"
+                iconClassName="text-[#045e32]"
+              />
+               
+               <StatsCard
+                title="Savings Products"
+                value={savingTypes?.length || 0}
+                Icon={Wallet}
+                description="Active saving types"
+                className="border-l-4 border-l-orange-500"
+                iconClassName="text-orange-500"
+              />
+
+               <StatsCard
+                title="Loan Products"
+                value={loanTypes?.length || 0}
+                Icon={Wallet2}
+                description="Active loan types"
+                className="border-l-4 border-l-blue-500"
+                iconClassName="text-blue-500"
+              />
+               
+               <StatsCard
+                title="Venture Products"
+                value={ventureTypes?.length || 0}
+                Icon={ShoppingCart}
+                description="Active venture types"
+                className="border-l-4 border-l-purple-500"
+                iconClassName="text-purple-500"
+              />
+           </div>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="members" className="w-full space-y-6">
+          <TabsList className="bg-white p-1 rounded-xl border shadow-sm h-auto grid grid-cols-2 sm:inline-flex w-full sm:w-auto">
+            <TabsTrigger value="members" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
+                <Users className="h-4 w-4 mr-2" /> Members
+            </TabsTrigger>
+            <TabsTrigger value="savings" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
+                <Wallet className="h-4 w-4 mr-2" /> Savings Types
+            </TabsTrigger>
+            <TabsTrigger value="loans" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
+                <Wallet2 className="h-4 w-4 mr-2" /> Loan Types
+            </TabsTrigger>
+            <TabsTrigger value="ventures" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
+                <ShoppingCart className="h-4 w-4 mr-2" /> Venture Types
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="members" className="animate-in fade-in-50 duration-500">
+             <div className="bg-white rounded-xl shadow-sm border p-1 sm:p-6">
+                <div className="mb-6 px-4 sm:px-0">
+                    <h2 className="text-lg font-semibold text-gray-900">Member Directory</h2>
+                    <p className="text-sm text-gray-500">Manage pending and active members</p>
                 </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
+                <SaccoMembersTable
+                  members={members}
+                  refetchMembers={refetchMembers}
+                  hidePagination={true}
+                />
+             </div>
+          </TabsContent>
 
-        {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <AdminInfoCard member={member} />
-          {/* <StatsCard
-            title="Total Members"
-            value={totalMembers}
-            Icon={Users}
-            description="Active members in the system"
-          /> */}
-          <StatsCard
-            title="Savings Types"
-            value={savingTypes?.length}
-            Icon={Wallet}
-            description="Available saving products"
-          />
-          <StatsCard
-            title="Loan Types"
-            value={loanTypes?.length}
-            Icon={Wallet2}
-            description="Available loan products"
-          />
-          <StatsCard
-            title="Venture Types"
-            value={ventureTypes?.length}
-            Icon={ShoppingCart}
-            description="Available venture products"
-          />
-        </div>
+          <TabsContent value="savings" className="animate-in fade-in-50 duration-500">
+            <div className="bg-white rounded-xl shadow-sm border p-1 sm:p-6">
+                <div className="mb-6 px-4 sm:px-0">
+                    <h2 className="text-lg font-semibold text-gray-900">Savings Products Configuration</h2>
+                    <p className="text-sm text-gray-500">Manage available savings account types</p>
+                </div>
+                <SavingsTypesTable savingTypes={savingTypes} />
+             </div>
+          </TabsContent>
 
-        {/* Tables Section */}
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <SavingsTypesTable savingTypes={savingTypes} />
-            <LoanTypesTable loanTypes={loanTypes} />
-            <VentureTypesTable ventureTypes={ventureTypes} />
-          </div>
+          <TabsContent value="loans" className="animate-in fade-in-50 duration-500">
+             <div className="bg-white rounded-xl shadow-sm border p-1 sm:p-6">
+                <div className="mb-6 px-4 sm:px-0">
+                    <h2 className="text-lg font-semibold text-gray-900">Loan Products Configuration</h2>
+                    <p className="text-sm text-gray-500">Manage available loan account types and interest rates</p>
+                </div>
+                <LoanTypesTable loanTypes={loanTypes} />
+             </div>
+          </TabsContent>
 
-          <SaccoMembersTable
-            members={members}
-            refetchMembers={refetchMembers}
-            hidePagination={true}
-          />
-        </div>
+          <TabsContent value="ventures" className="animate-in fade-in-50 duration-500">
+             <div className="bg-white rounded-xl shadow-sm border p-1 sm:p-6">
+                <div className="mb-6 px-4 sm:px-0">
+                    <h2 className="text-lg font-semibold text-gray-900">Venture Products Configuration</h2>
+                    <p className="text-sm text-gray-500">Manage available venture types</p>
+                </div>
+                <VentureTypesTable ventureTypes={ventureTypes} />
+             </div>
+          </TabsContent>
+        </Tabs>
 
-        {/* Modals */}
+        {/* Modals - Kept available globally */}
         <CreateSavingType
           isOpen={savingTypeModal}
           onClose={() => setSavingTypeModal(false)}

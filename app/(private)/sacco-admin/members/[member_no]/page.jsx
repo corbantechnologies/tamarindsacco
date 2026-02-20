@@ -199,7 +199,7 @@ function MemberDetail() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
@@ -330,7 +330,7 @@ function MemberDetail() {
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="profile">Profile Details</TabsTrigger>
+            <TabsTrigger value="profile"><span className="hidden sm:inline">Profile Details</span><span className="sm:hidden">Profile</span></TabsTrigger>
             <TabsTrigger value="financials">Financials</TabsTrigger>
           </TabsList>
 
