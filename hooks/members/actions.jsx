@@ -22,12 +22,12 @@ export function useFetchMember() {
 
 // SACCO Admin Hooks
 // All members
-export function useFetchMembers(page = 1, pageSize = 20) {
+export function useFetchMembers(page = 1, pageSize = 20, search = "") {
   const auth = useAxiosAuth();
 
   return useQuery({
-    queryKey: ["members", page, pageSize],
-    queryFn: () => getMembers(auth, page, pageSize),
+    queryKey: ["members", page, pageSize, search],
+    queryFn: () => getMembers(auth, page, pageSize, search),
     placeholderData: keepPreviousData,
     enabled: auth.isEnabled,
   });
