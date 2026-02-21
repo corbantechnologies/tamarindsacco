@@ -22,12 +22,13 @@ function Members() {
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState("");
 
   const {
     isLoading: isLoadingMembers,
     data: membersData,
     refetch: refetchMembers,
-  } = useFetchMembers(page, pageSize);
+  } = useFetchMembers(page, pageSize, search);
 
   const members = membersData?.results || [];
   const totalMembers = membersData?.count || 0;
@@ -112,6 +113,8 @@ function Members() {
           setPage={setPage}
           pageSize={pageSize}
           setPageSize={setPageSize}
+          search={search}
+          setSearch={setSearch}
         />
 
         {/* Modals */}

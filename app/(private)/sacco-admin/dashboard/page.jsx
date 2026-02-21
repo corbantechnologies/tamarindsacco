@@ -47,10 +47,19 @@ function SaccoAdminDashboard() {
   const [memberUploadModal, setMemberUploadModal] = useState(false);
   const [ventureTypeModal, setVentureTypeModal] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState("");
+
   // Fetch Data
   const { isLoading: isLoadingMember, data: member } = useFetchMember();
-  const { isLoading: isLoadingMembers, data: membersData, refetch: refetchMembers } = useFetchMembers(1, 20);
+  const {
+    isLoading: isLoadingMembers,
+    data: membersData,
+    refetch: refetchMembers,
+  } = useFetchMembers(page, pageSize, search);
   const members = membersData?.results || [];
+  const totalMembers = membersData?.count || 0;
   
   const { isLoading: isLoadingSavingTypes, data: savingTypes, refetch: refetchSavingTypes } = useFetchSavingsTypes();
   const { isLoading: isLoadingLoanTypes, data: loanTypes, refetch: refetchLoanTypes } = useFetchLoanTypes();
@@ -222,7 +231,14 @@ function SaccoAdminDashboard() {
                 <SaccoMembersTable
                   members={members}
                   refetchMembers={refetchMembers}
-                  hidePagination={true}
+                  totalMembers={totalMembers}
+                  page={page}
+                  setPage={setPage}
+                  pageSize={pageSize}
+                  setPageSize={setPageSize}
+                  search={search}
+                  setSearch={setSearch}
+                  hidePagination={false}
                 />
              </div>
           </TabsContent>
