@@ -57,27 +57,37 @@ const StatCard = ({ title, value, icon: Icon, colorClass, borderClass }) => (
   </Card>
 );
 
-const AccountListItem = ({ href, title, subtitle, amount, icon: Icon }) => (
-  <Link href={href} className="group block">
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-transparent hover:border-gray-200 hover:bg-white hover:shadow-sm transition-all duration-200 bg-gray-50/50 gap-4 sm:gap-0">
+const AccountListItem = ({ href, title, subtitle, amount, icon: Icon, isStatic = false }) => {
+  const content = (
+    <div className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-transparent ${!isStatic ? 'hover:border-gray-200 hover:bg-white hover:shadow-sm' : ''} transition-all duration-200 bg-gray-50/50 gap-4 sm:gap-0`}>
       <div className="flex items-center gap-4">
-        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors shrink-0">
+        <div className={`h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center ${!isStatic ? 'group-hover:bg-primary/20' : ''} transition-colors shrink-0`}>
           <Icon className="h-5 w-5 text-primary" />
         </div>
         <div className="min-w-0">
-          <h4 className="font-semibold text-gray-900 group-hover:text-primary transition-colors truncate">{title}</h4>
+          <h4 className={`font-semibold text-gray-900 ${!isStatic ? 'group-hover:text-primary' : ''} transition-colors truncate`}>{title}</h4>
           <p className="text-sm text-gray-500 truncate">{subtitle}</p>
         </div>
       </div>
       <div className="text-left sm:text-right pl-14 sm:pl-0">
         <p className="font-bold text-gray-900">{amount}</p>
-        <div className="flex items-center sm:justify-end text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-          View Details <ChevronRight className="h-3 w-3 ml-1" />
-        </div>
+        {!isStatic && (
+          <div className="flex items-center sm:justify-end text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+            View Details <ChevronRight className="h-3 w-3 ml-1" />
+          </div>
+        )}
       </div>
     </div>
-  </Link>
-);
+  );
+
+  if (isStatic) return <div className="block">{content}</div>;
+
+  return (
+    <Link href={href} className="group block">
+      {content}
+    </Link>
+  );
+};
 
 const InfoRow = ({ label, value }) => (
   <div className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
@@ -325,14 +335,14 @@ function MemberDashboard() {
               </div>
 
               <div className="bg-gray-50/50 p-6 min-h-[400px]">
-                {isFetchingSummary && (
+                {isLoadingSummary && (
                    <div className="space-y-4 mb-6">
                       <Skeleton className="h-[200px] w-full rounded-xl" />
                       <Skeleton className="h-[300px] w-full rounded-xl" />
                    </div>
                 )}
 
-                {!isFetchingSummary && (
+                {!isLoadingSummary && (
                   <>
                     {showSummary && (
                       <div className="mb-8 bg-white rounded-xl shadow-sm border p-6 animate-in slide-in-from-top-4 duration-300">
@@ -430,7 +440,7 @@ function MemberDashboard() {
               </Card>
 
               {/* Ventures */}
-              <Card className="shadow-md border-none md:col-span-2">
+              <Card className="shadow-md border-none">
                 <CardHeader className="border-b bg-white rounded-t-xl pb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-100 rounded-lg">
@@ -442,7 +452,7 @@ function MemberDashboard() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 grid md:grid-cols-2 gap-4 bg-gray-50/30">
+                <CardContent className="p-6 space-y-3 bg-gray-50/30 min-h-[200px]">
                   {member?.venture_accounts?.length > 0 ? (
                     member.venture_accounts.map(account => (
                       <AccountListItem
@@ -455,9 +465,43 @@ function MemberDashboard() {
                       />
                     ))
                   ) : (
-                    <div className="col-span-2 text-center py-8 text-muted-foreground flex flex-col items-center">
+                    <div className="text-center py-8 text-muted-foreground flex flex-col items-center">
                       <TrendingUp className="h-12 w-12 opacity-20 mb-2" />
                       <p>No venture accounts found</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Fee Accounts */}
+              <Card className="shadow-md border-none">
+                <CardHeader className="border-b bg-white rounded-t-xl pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-orange-100 rounded-lg">
+                      <Banknote className="h-6 w-6 text-orange-700" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">Fee Accounts</CardTitle>
+                      <CardDescription>One-off and recurring fees</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-3 bg-gray-50/30 min-h-[200px]">
+                  {member?.fees?.length > 0 ? (
+                    member.fees.map(fee => (
+                      <AccountListItem
+                        key={fee.reference}
+                        isStatic
+                        title={fee.fee_type?.name}
+                        subtitle={fee.account_number}
+                        amount={`KES ${parseFloat(fee.remaining_balance).toLocaleString()}`}
+                        icon={Banknote}
+                      />
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground flex flex-col items-center">
+                      <Banknote className="h-12 w-12 opacity-20 mb-2" />
+                      <p>No fee accounts found</p>
                     </div>
                   )}
                 </CardContent>

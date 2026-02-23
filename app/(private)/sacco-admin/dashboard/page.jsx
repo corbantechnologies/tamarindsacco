@@ -7,6 +7,7 @@ import SaccoMembersTable from "@/components/members/SaccoMembersTable";
 import AdminInfoCard from "@/components/saccoadmin/AdminInfoCard";
 import StatsCard from "@/components/saccoadmin/StatsCard";
 import SavingsTypesTable from "@/components/savingstypes/SavingsTypesTable";
+import FeeTypesTable from "@/components/feetypes/FeeTypesTable";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -21,12 +22,14 @@ import CreateMember from "@/forms/members/CreateMember";
 import BulkMemberUploadCreate from "@/forms/members/BulkMemberUploadCreate";
 import CreateSavingType from "@/forms/savingtypes/CreateSavingType";
 import CreateVentureType from "@/forms/venturetypes/CreateVentureType";
+import CreateFeeType from "@/forms/feetypes/CreateFeeType";
 import { useFetchLoans } from "@/hooks/loans/actions";
 import { useFetchLoanTypes } from "@/hooks/loantypes/actions";
 import { useFetchMember, useFetchMembers } from "@/hooks/members/actions";
 import { useFetchSavings } from "@/hooks/savings/actions";
 import { useFetchSavingsTypes } from "@/hooks/savingtypes/actions";
 import { useFetchVentureTypes } from "@/hooks/venturetypes/actions";
+import { useFetchFeeTypes } from "@/hooks/feetypes/actions";
 import {
   Plus,
   ShoppingCart,
@@ -46,6 +49,7 @@ function SaccoAdminDashboard() {
   const [memberCreateModal, setMemberCreateModal] = useState(false);
   const [memberUploadModal, setMemberUploadModal] = useState(false);
   const [ventureTypeModal, setVentureTypeModal] = useState(false);
+  const [feeTypeModal, setFeeTypeModal] = useState(false);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -64,8 +68,9 @@ function SaccoAdminDashboard() {
   const { isLoading: isLoadingSavingTypes, data: savingTypes, refetch: refetchSavingTypes } = useFetchSavingsTypes();
   const { isLoading: isLoadingLoanTypes, data: loanTypes, refetch: refetchLoanTypes } = useFetchLoanTypes();
   const { isLoading: isLoadingVentureTypes, data: ventureTypes, refetch: refetchVentureTypes } = useFetchVentureTypes();
+  const { isLoading: isLoadingFeeTypes, data: feeTypes, refetch: refetchFeeTypes } = useFetchFeeTypes();
 
-  const isLoading = isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingLoanTypes || isLoadingVentureTypes;
+  const isLoading = isLoadingMember || isLoadingMembers || isLoadingSavingTypes || isLoadingLoanTypes || isLoadingVentureTypes || isLoadingFeeTypes;
 
   if (isLoading) {
     return (
@@ -153,6 +158,13 @@ function SaccoAdminDashboard() {
                 >
                   <ShoppingCart className="h-4 w-4 mr-2 text-blue-600" /> New Venture Type
                 </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setFeeTypeModal(true)}
+                  className="justify-start h-9 px-2"
+                >
+                  <Plus className="h-4 w-4 mr-2 text-emerald-600" /> New Fee Type
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
@@ -220,6 +232,9 @@ function SaccoAdminDashboard() {
             <TabsTrigger value="ventures" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
                 <ShoppingCart className="h-4 w-4 mr-2" /> Venture Types
             </TabsTrigger>
+            <TabsTrigger value="feetypes" className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-[#045e32] data-[state=active]:text-white transition-all">
+                <Plus className="h-4 w-4 mr-2" /> Fee Types
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="members" className="animate-in fade-in-50 duration-500">
@@ -272,6 +287,16 @@ function SaccoAdminDashboard() {
                 <VentureTypesTable ventureTypes={ventureTypes} />
              </div>
           </TabsContent>
+
+          <TabsContent value="feetypes" className="animate-in fade-in-50 duration-500">
+             <div className="bg-white rounded-xl shadow-sm border p-1 sm:p-6">
+                <div className="mb-6 px-4 sm:px-0">
+                    <h2 className="text-lg font-semibold text-gray-900">Fee Products Configuration</h2>
+                    <p className="text-sm text-gray-500">Manage available fee types and contributions</p>
+                </div>
+                <FeeTypesTable feeTypes={feeTypes} refetchFeeTypes={refetchFeeTypes} />
+             </div>
+          </TabsContent>
         </Tabs>
 
         {/* Modals - Kept available globally */}
@@ -293,6 +318,11 @@ function SaccoAdminDashboard() {
           isOpen={ventureTypeModal}
           onClose={() => setVentureTypeModal(false)}
           refetchVentureTypes={refetchVentureTypes}
+        />
+        <CreateFeeType
+          isOpen={feeTypeModal}
+          onClose={() => setFeeTypeModal(false)}
+          refetchFeeTypes={refetchFeeTypes}
         />
         <BulkMemberUploadCreate
           isOpen={memberUploadModal}

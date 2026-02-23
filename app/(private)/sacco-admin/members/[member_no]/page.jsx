@@ -3,6 +3,7 @@
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchMemberDetail, useFetchMemberYearlySummaryAdmin } from "@/hooks/members/actions";
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
+import MemberFeesTable from "@/components/members/MemberFeesTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,7 +27,7 @@ import {
   Settings,
   Wallet,
   Wallet2,
-  LucideBanknote,
+  Banknote,
   Download,
   FileText,
   LayoutDashboard,
@@ -480,6 +481,23 @@ function MemberDetail() {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Fee Accounts */}
+              <div className="flex flex-col h-full lg:col-span-3">
+                <Card className="shadow-md flex flex-col h-full">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <Banknote className="h-6 w-6 text-primary" />
+                        Fee Accounts & Payments
+                      </CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <MemberFeesTable memberFees={member?.fees} refetchMemberFees={refetchMember} />
+                  </CardContent>
+                </Card>
+              </div>
             </section>
 
             {/* Account Timeline */}
@@ -621,7 +639,7 @@ function MemberDetail() {
                   <CardHeader>
                     <div className="flex justify-between items-center">
                       <CardTitle className="flex items-center gap-2 text-xl">
-                        <LucideBanknote className="h-5 w-5 text-primary" />
+                        <Banknote className="h-5 w-5 text-primary" />
                         Guarantor
                       </CardTitle>
                       {member?.guarantor_profile === null &&
@@ -718,7 +736,7 @@ function MemberDetail() {
                 </div>
              </div>
 
-            {isFetchingSummary ? (
+            {isLoadingSummary ? (
                 <div className="space-y-6">
                     <Skeleton className="h-[200px] w-full rounded-xl" />
                     <Skeleton className="h-[400px] w-full rounded-xl" />
