@@ -3,6 +3,7 @@
 import LoadingSpinner from "@/components/general/LoadingSpinner";
 import { useFetchMemberDetail, useFetchMemberYearlySummaryAdmin } from "@/hooks/members/actions";
 import DetailedSummaryTable from "@/components/summary/DetailedSummaryTable";
+import MemberFeesTable from "@/components/members/MemberFeesTable";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -477,6 +478,23 @@ function MemberDetail() {
                         No loan accounts found.
                       </p>
                     )}
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Fee Accounts */}
+              <div className="flex flex-col h-full lg:col-span-3">
+                <Card className="shadow-md flex flex-col h-full">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        <LucideBanknote className="h-6 w-6 text-primary" />
+                        Fee Accounts & Payments
+                      </CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <MemberFeesTable memberFees={member?.fees} refetchMemberFees={refetchMember} />
                   </CardContent>
                 </Card>
               </div>

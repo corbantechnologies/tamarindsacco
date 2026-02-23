@@ -44,7 +44,7 @@ const CreateFeesPayments = ({ isOpen, onClose, memberFee, refetchPayments }) => 
         <Formik
           initialValues={{
             member_fee: memberFee?.account_number || "",
-            amount: 0,
+            amount: memberFee?.remaining_balance || 0,
             payment_method: "Mpesa",
             receipt_number: "",
           }}
@@ -68,18 +68,25 @@ const CreateFeesPayments = ({ isOpen, onClose, memberFee, refetchPayments }) => 
                 <Label htmlFor="member_fee" className="text-black">
                   Member Fee Account
                 </Label>
-                <Field
-                  as={Input}
-                  id="member_fee"
-                  name="member_fee"
-                  className="border-black focus:ring-[#045e32] bg-gray-100"
-                  readOnly
-                />
+                <div className="flex flex-col gap-1">
+                  <Field
+                    as={Input}
+                    id="member_fee"
+                    name="member_fee"
+                    className="border-black focus:ring-[#045e32] bg-gray-100"
+                    readOnly
+                  />
+                  {memberFee && (
+                    <p className="text-sm text-gray-500">
+                      Remaining Balance: <span className="font-semibold text-[#cc5500]">KES {parseFloat(memberFee.remaining_balance).toLocaleString()}</span>
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="amount" className="text-black">
-                  Amount
+                  Payment Amount
                 </Label>
                 <Field
                   as={Input}
