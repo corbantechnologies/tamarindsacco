@@ -124,6 +124,14 @@ function SaccoAdminNavbar() {
             </Link>
 
             <Link
+              href="/sacco-admin/reports"
+              className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Reports
+            </Link>
+
+            <Link
               href="/sacco-admin/loan-applications"
               className="block py-3 px-4 text-lg font-medium hover:bg-[#cc5500]/10 hover:text-[#cc5500] rounded-lg transition"
               onClick={() => setIsMenuOpen(false)}
