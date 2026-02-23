@@ -27,7 +27,7 @@ import {
   Settings,
   Wallet,
   Wallet2,
-  LucideBanknote,
+  Banknote,
   Download,
   FileText,
   LayoutDashboard,
@@ -488,7 +488,7 @@ function MemberDetail() {
                   <CardHeader>
                     <div className="flex justify-between items-center">
                       <CardTitle className="flex items-center gap-2 text-xl">
-                        <LucideBanknote className="h-6 w-6 text-primary" />
+                        <Banknote className="h-6 w-6 text-primary" />
                         Fee Accounts & Payments
                       </CardTitle>
                     </div>
