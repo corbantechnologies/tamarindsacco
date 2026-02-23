@@ -325,14 +325,14 @@ function MemberDashboard() {
               </div>
 
               <div className="bg-gray-50/50 p-6 min-h-[400px]">
-                {isFetchingSummary && (
+                {isLoadingSummary && (
                    <div className="space-y-4 mb-6">
                       <Skeleton className="h-[200px] w-full rounded-xl" />
                       <Skeleton className="h-[300px] w-full rounded-xl" />
                    </div>
                 )}
 
-                {!isFetchingSummary && (
+                {!isLoadingSummary && (
                   <>
                     {showSummary && (
                       <div className="mb-8 bg-white rounded-xl shadow-sm border p-6 animate-in slide-in-from-top-4 duration-300">
