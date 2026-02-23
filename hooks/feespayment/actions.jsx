@@ -3,7 +3,7 @@
 import {
   getFeesPayment,
   getFeesPayments,
-} from "@/services/feespayment";
+} from "@/services/feespayments";
 import useAxiosAuth from "../authentication/useAxiosAuth";
 import { useQuery } from "@tanstack/react-query";
 
