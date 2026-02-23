@@ -639,7 +639,7 @@ function MemberDetail() {
                   <CardHeader>
                     <div className="flex justify-between items-center">
                       <CardTitle className="flex items-center gap-2 text-xl">
-                        <LucideBanknote className="h-5 w-5 text-primary" />
+                        <Banknote className="h-5 w-5 text-primary" />
                         Guarantor
                       </CardTitle>
                       {member?.guarantor_profile === null &&
