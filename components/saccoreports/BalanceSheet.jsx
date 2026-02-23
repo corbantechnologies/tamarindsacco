@@ -37,31 +37,31 @@ export default function BalanceSheet({ data }) {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mx-auto">
-      <div className="flex justify-between items-start mb-10">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-8 mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-10 gap-4">
         <div className="space-y-1">
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Balance Sheet</h2>
-          <p className="text-gray-500 font-medium flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Balance Sheet</h2>
+          <p className="text-sm sm:text-base text-gray-500 font-medium flex items-center gap-2">
              As of <span className="text-primary">{new Date(data.as_of_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </p>
         </div>
         {!data.in_balance && (
-          <div className="px-4 py-2 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold uppercase tracking-widest animate-pulse">
+          <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] sm:text-xs font-bold uppercase tracking-widest animate-pulse">
             Out of Balance
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <div className="space-y-6 sm:space-y-8">
           <Section title="Assets" items={data.assets.items} total={data.assets.total} />
         </div>
         
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <Section title="Liabilities" items={data.liabilities.items} total={data.liabilities.total} />
           <Section title="Equity" items={data.equity.items} total={data.equity.total} />
           
-          <div className="mt-12 p-4 bg-primary/5 rounded-2xl border-2 border-primary/10">
+          <div className="mt-8 sm:mt-12 p-3 sm:p-4 bg-primary/5 rounded-2xl border-2 border-primary/10">
             <div className="flex justify-between items-center mb-1">
               <span className="text-[10px] font-black text-primary/60 uppercase tracking-[0.2em]">Total Liabilities & Equity</span>
             </div>

@@ -39,22 +39,22 @@ export default function IncomeStatement({ data }) {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mx-auto">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Income Statement</h2>
-        <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-gray-50 rounded-full border border-gray-100">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Period</span>
-          <span className="text-sm font-black text-primary">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-8 mx-auto">
+      <div className="text-center mb-8 sm:mb-12">
+        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight mb-2">Income Statement</h2>
+        <div className="inline-flex flex-wrap justify-center items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 bg-gray-50 rounded-full border border-gray-100">
+          <span className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">Period</span>
+          <span className="text-xs sm:text-sm font-black text-primary">
             {new Date(data.period.start).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
           <span className="text-gray-300">→</span>
-          <span className="text-sm font-black text-primary">
+          <span className="text-xs sm:text-sm font-black text-primary">
             {new Date(data.period.end).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
           </span>
         </div>
       </div>
 
-      <div className="space-y-12">
+      <div className="space-y-8 sm:space-y-12">
         <Section 
           title="Revenue" 
           items={data.revenue.items} 
@@ -71,25 +71,25 @@ export default function IncomeStatement({ data }) {
           colorClass="text-rose-600"
         />
 
-        <div className="relative group mt-16 pt-8 border-t-4 border-double border-gray-200">
+        <div className="relative group mt-12 sm:mt-16 pt-8 border-t-4 border-double border-gray-200">
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
             Summary
           </div>
           
-          <div className={`p-8 rounded-3xl border-2 transition-all duration-300 ${data.net_income >= 0 ? 'bg-emerald-50/30 border-emerald-100 group-hover:bg-emerald-50' : 'bg-rose-50/30 border-rose-100 group-hover:bg-rose-50'}`}>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex items-center gap-4">
-                <div className={`p-4 rounded-2xl ${data.net_income >= 0 ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white shadow-rose-200 shadow-xl'}`}>
-                  <DollarSign className="h-8 w-8" />
+          <div className={`p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-2 transition-all duration-300 ${data.net_income >= 0 ? 'bg-emerald-50/30 border-emerald-100 group-hover:bg-emerald-50' : 'bg-rose-50/30 border-rose-100 group-hover:bg-rose-50'}`}>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4 text-center sm:text-left">
+                <div className={`p-3 sm:p-4 rounded-2xl ${data.net_income >= 0 ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white shadow-rose-200 shadow-xl'}`}>
+                  <DollarSign className="h-6 w-6 sm:h-8 sm:w-8" />
                 </div>
-                <div className="text-center md:text-left">
+                <div>
                   <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1 block">Net Surplus / Deficit</span>
-                  <h4 className={`text-4xl font-black tracking-tighter ${data.net_income >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                  <h4 className={`text-3xl sm:text-4xl font-black tracking-tighter ${data.net_income >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
                     {formatCurrency(data.net_income)}
                   </h4>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center">
                 <div className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest ${data.net_income >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
                   {data.net_income >= 0 ? 'Profitable' : 'Deficit'}
                 </div>
