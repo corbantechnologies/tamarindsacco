@@ -37,7 +37,7 @@ export default function BalanceSheet({ data }) {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mx-auto">
       <div className="flex justify-between items-start mb-10">
         <div className="space-y-1">
           <h2 className="text-3xl font-black text-gray-900 tracking-tight">Balance Sheet</h2>

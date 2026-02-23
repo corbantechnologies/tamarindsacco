@@ -39,7 +39,7 @@ export default function IncomeStatement({ data }) {
   );
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mx-auto">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Income Statement</h2>
         <div className="inline-flex items-center gap-3 px-4 py-1.5 bg-gray-50 rounded-full border border-gray-100">

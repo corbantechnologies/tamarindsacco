@@ -8,7 +8,7 @@ export default function CashBook({ data, year }) {
   if (!data) return null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-6xl mx-auto">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
         <div>
           <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3">

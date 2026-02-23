@@ -8,7 +8,7 @@ export default function TrialBalance({ data }) {
   if (!data) return null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-5xl mx-auto overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8  mx-auto overflow-hidden">
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
         <div className="text-center md:text-left">
           <h2 className="text-3xl font-black text-gray-900 tracking-tight flex items-center gap-3 justify-center md:justify-start">
