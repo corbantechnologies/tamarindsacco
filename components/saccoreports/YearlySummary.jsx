@@ -124,7 +124,7 @@ export default function YearlySummary({ data, year }) {
            <h3 className="text-xs font-black text-gray-300 uppercase tracking-[0.4em] whitespace-nowrap">Detailed Monthly Breakdown</h3>
            <div className="h-px bg-gray-100 flex-1" />
         </div>
-        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl overflow-hidden">
+        <div className="bg-white p-2 border border-gray-100 shadow-xl overflow-hidden">
           <DetailedSummaryTable data={data} />
         </div>
       </div>
