@@ -68,7 +68,7 @@ function Transactions() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
+      <div className="p-2 sm:p-6 space-y-6">
         {/* Breadcrumbs */}
         <Breadcrumb>
           <BreadcrumbList>
