@@ -41,6 +41,8 @@ const AccountsListTable = ({ accountsList }) => {
   const [openVentures, setOpenVentures] = useState(false);
   const [openLoans, setOpenLoans] = useState(false);
   const [expandedRows, setExpandedRows] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   // Handle flat array or object with results
   const data = accountsList?.results || accountsList || [];
@@ -111,6 +113,13 @@ const AccountsListTable = ({ accountsList }) => {
     selectedLoanTypes,
   ]);
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredAccounts.length / itemsPerPage);
+  const paginatedAccounts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredAccounts.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredAccounts, currentPage]);
+
   // Generate table headers for main table
   const headers = useMemo(() => {
     const allHeaders = ["Member Number", "Member Name", ""];
@@ -160,12 +169,31 @@ const AccountsListTable = ({ accountsList }) => {
     selectedLoanTypes,
   ]);
 
-  // Interest table headers
+  // Headers for expanded tables
   const interestHeaders = [
     "Loan Account",
     "Loan Type",
     "Interest Amount",
     "Outstanding Balance",
+  ];
+
+  const disbursementHeaders = [
+    "Loan Account",
+    "Loan Type",
+    "Disbursed Amount",
+    "Date",
+  ];
+
+  const repaymentHeaders = [
+    "Loan Account",
+    "Loan Type",
+    "Repayment Amount",
+    "Date",
+  ];
+
+  const feeHeaders = [
+    "Account Number",
+    "Fee Type",
   ];
 
   // Handle filter changes
@@ -205,7 +233,13 @@ const AccountsListTable = ({ accountsList }) => {
     setOpenVentures(false);
     setOpenLoans(false);
     setExpandedRows({});
+    setCurrentPage(1);
   };
+
+  // Reset page when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedSavingsTypes, selectedVentureTypes, selectedLoanTypes]);
 
   return (
     <div className="space-y-4">
@@ -402,8 +436,8 @@ const AccountsListTable = ({ accountsList }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAccounts.length > 0 ? (
-              filteredAccounts.map((user) => (
+            {paginatedAccounts.length > 0 ? (
+              paginatedAccounts.map((user) => (
                 <React.Fragment key={user.member_no}>
                   <TableRow>
                     <TableCell className="text-xs sm:text-sm truncate px-2">
@@ -413,19 +447,22 @@ const AccountsListTable = ({ accountsList }) => {
                       {user.member_name}
                     </TableCell>
                     <TableCell className="px-2">
-                      {user.loan_interest.length > 0 && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleRow(user.member_no)}
-                        >
-                          {expandedRows[user.member_no] ? (
-                            <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                          ) : (
-                            <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
-                          )}
-                        </Button>
-                      )}
+                      {(user.loan_interest?.length > 0 ||
+                        user.loan_disbursements?.length > 0 ||
+                        user.loan_repayments?.length > 0 ||
+                        user.fees?.length > 0) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleRow(user.member_no)}
+                          >
+                            {expandedRows[user.member_no] ? (
+                              <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                            ) : (
+                              <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4" />
+                            )}
+                          </Button>
+                        )}
                     </TableCell>
                     {savingsTypes.map((type) => {
                       if (
@@ -492,63 +529,195 @@ const AccountsListTable = ({ accountsList }) => {
                     })}
                   </TableRow>
                   {expandedRows[user.member_no] &&
-                    user.loan_interest.length > 0 && (
-                      <TableRow>
-                        <TableCell colSpan={headers.length} className="p-0">
-                          <div className="p-2 sm:p-4 bg-gray-50">
-                            <Table>
-                              <TableHeader>
-                                <TableRow>
-                                  {interestHeaders.map((header) => (
-                                    <TableHead
-                                      key={header}
-                                      className="text-xs sm:text-sm whitespace-nowrap px-2"
-                                    >
-                                      {header}
-                                    </TableHead>
-                                  ))}
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {user.loan_interest
-                                  .filter(
-                                    ([_, acc_no]) =>
-                                      selectedLoanTypes.length === 0 ||
-                                      user.loan_accounts.some(
-                                        ([loan_acc_no, type]) =>
-                                          loan_acc_no === acc_no &&
-                                          selectedLoanTypes.includes(type)
+                    (user.loan_interest?.length > 0 ||
+                      user.loan_disbursements?.length > 0 ||
+                      user.loan_repayments?.length > 0 ||
+                      user.fees?.length > 0) && (
+                      <TableRow className="bg-gray-50/50">
+                        <TableCell colSpan={headers.length} className="p-0 border-b-2 border-[#cc5500]/20">
+                          <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
+                            {/* Loan Interest Table */}
+                            {user.loan_interest?.length > 0 && (
+                              <div className="bg-white rounded-md border shadow-sm">
+                                <h4 className="px-3 py-2 text-sm font-semibold text-[#cc5500] border-b bg-orange-50/50">
+                                  Loan Interest
+                                </h4>
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                      {interestHeaders.map((header) => (
+                                        <TableHead
+                                          key={header}
+                                          className="text-xs sm:text-sm whitespace-nowrap px-3 h-8 text-gray-500"
+                                        >
+                                          {header}
+                                        </TableHead>
+                                      ))}
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {user.loan_interest
+                                      .filter(
+                                        ([_, acc_no]) =>
+                                          selectedLoanTypes.length === 0 ||
+                                          user.loan_accounts.some(
+                                            ([loan_acc_no, type]) =>
+                                              loan_acc_no === acc_no &&
+                                              selectedLoanTypes.includes(type)
+                                          )
                                       )
-                                  )
-                                  .map(
-                                    (
-                                      [amount, acc_no, outstanding_balance],
-                                      index
-                                    ) => {
-                                      const loan = user.loan_accounts.find(
-                                        ([loan_acc_no]) =>
-                                          loan_acc_no === acc_no
-                                      );
-                                      return (
-                                        <TableRow key={`${acc_no}-${index}`}>
-                                          <TableCell className="text-xs sm:text-sm truncate px-2">
+                                      .map(
+                                        (
+                                          [amount, acc_no, outstanding_balance],
+                                          index
+                                        ) => {
+                                          const loan = user.loan_accounts.find(
+                                            ([loan_acc_no]) =>
+                                              loan_acc_no === acc_no
+                                          );
+                                          return (
+                                            <TableRow key={`interest-${acc_no}-${index}`}>
+                                              <TableCell className="text-xs sm:text-sm truncate px-3 py-2">
+                                                {acc_no}
+                                              </TableCell>
+                                              <TableCell className="text-xs sm:text-sm truncate px-3 py-2 text-gray-600">
+                                                {loan ? loan[1] : "Unknown"}
+                                              </TableCell>
+                                              <TableCell className="text-xs sm:text-sm px-3 py-2 font-medium">
+                                                {amount.toFixed(2)}
+                                              </TableCell>
+                                              <TableCell className="text-xs sm:text-sm px-3 py-2">
+                                                {outstanding_balance.toFixed(2)}
+                                              </TableCell>
+                                            </TableRow>
+                                          );
+                                        }
+                                      )}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            )}
+
+                            {/* Loan Disbursements Table */}
+                            {user.loan_disbursements?.length > 0 && (
+                              <div className="bg-white rounded-md border shadow-sm">
+                                <h4 className="px-3 py-2 text-sm font-semibold text-green-700 border-b bg-green-50/50">
+                                  Loan Disbursements
+                                </h4>
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                      {disbursementHeaders.map((header) => (
+                                        <TableHead
+                                          key={header}
+                                          className="text-xs sm:text-sm whitespace-nowrap px-3 h-8 text-gray-500"
+                                        >
+                                          {header}
+                                        </TableHead>
+                                      ))}
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {user.loan_disbursements.map(
+                                      ([amount, acc_no, type, date], index) => (
+                                        <TableRow key={`disb-${acc_no}-${index}`}>
+                                          <TableCell className="text-xs sm:text-sm truncate px-3 py-2">
                                             {acc_no}
                                           </TableCell>
-                                          <TableCell className="text-xs sm:text-sm truncate px-2">
-                                            {loan ? loan[1] : "Unknown"}
+                                          <TableCell className="text-xs sm:text-sm truncate px-3 py-2 text-gray-600">
+                                            {type}
                                           </TableCell>
-                                          <TableCell className="text-xs sm:text-sm px-2">
+                                          <TableCell className="text-xs sm:text-sm px-3 py-2 font-medium text-green-700">
                                             {amount.toFixed(2)}
                                           </TableCell>
-                                          <TableCell className="text-xs sm:text-sm px-2">
-                                            {outstanding_balance.toFixed(2)}
+                                          <TableCell className="text-xs sm:text-sm px-3 py-2 text-gray-500">
+                                            {new Date(date).toLocaleString()}
                                           </TableCell>
                                         </TableRow>
-                                      );
-                                    }
-                                  )}
-                              </TableBody>
-                            </Table>
+                                      )
+                                    )}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            )}
+
+                            {/* Loan Repayments Table */}
+                            {user.loan_repayments?.length > 0 && (
+                              <div className="bg-white rounded-md border shadow-sm">
+                                <h4 className="px-3 py-2 text-sm font-semibold text-blue-700 border-b bg-blue-50/50">
+                                  Loan Repayments
+                                </h4>
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                      {repaymentHeaders.map((header) => (
+                                        <TableHead
+                                          key={header}
+                                          className="text-xs sm:text-sm whitespace-nowrap px-3 h-8 text-gray-500"
+                                        >
+                                          {header}
+                                        </TableHead>
+                                      ))}
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {user.loan_repayments.map(
+                                      ([amount, acc_no, type, date], index) => (
+                                        <TableRow key={`repay-${acc_no}-${index}`}>
+                                          <TableCell className="text-xs sm:text-sm truncate px-3 py-2">
+                                            {acc_no}
+                                          </TableCell>
+                                          <TableCell className="text-xs sm:text-sm truncate px-3 py-2 text-gray-600">
+                                            {type}
+                                          </TableCell>
+                                          <TableCell className="text-xs sm:text-sm px-3 py-2 font-medium text-blue-700">
+                                            {amount.toFixed(2)}
+                                          </TableCell>
+                                          <TableCell className="text-xs sm:text-sm px-3 py-2 text-gray-500">
+                                            {new Date(date).toLocaleString()}
+                                          </TableCell>
+                                        </TableRow>
+                                      )
+                                    )}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            )}
+
+                            {/* Fees Table */}
+                            {user.fees?.length > 0 && (
+                              <div className="bg-white rounded-md border shadow-sm">
+                                <h4 className="px-3 py-2 text-sm font-semibold text-purple-700 border-b bg-purple-50/50">
+                                  Fees
+                                </h4>
+                                <Table>
+                                  <TableHeader>
+                                    <TableRow className="hover:bg-transparent">
+                                      {feeHeaders.map((header) => (
+                                        <TableHead
+                                          key={header}
+                                          className="text-xs sm:text-sm whitespace-nowrap px-3 h-8 text-gray-500"
+                                        >
+                                          {header}
+                                        </TableHead>
+                                      ))}
+                                    </TableRow>
+                                  </TableHeader>
+                                  <TableBody>
+                                    {user.fees.map((fee, index) => (
+                                      <TableRow key={`fee-${fee.account_number}-${index}`}>
+                                        <TableCell className="text-xs sm:text-sm truncate px-3 py-2">
+                                          {fee.account_number}
+                                        </TableCell>
+                                        <TableCell className="text-xs sm:text-sm truncate px-3 py-2 text-gray-600">
+                                          {fee.fee_type_name}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </div>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -568,6 +737,113 @@ const AccountsListTable = ({ accountsList }) => {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 mt-4 rounded-md">
+          <div className="flex flex-1 justify-between sm:hidden">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="text-xs"
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="text-xs"
+            >
+              Next
+            </Button>
+          </div>
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">
+                  {(currentPage - 1) * itemsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min(currentPage * itemsPerPage, filteredAccounts.length)}
+                </span>{" "}
+                of <span className="font-medium">{filteredAccounts.length}</span>{" "}
+                results
+              </p>
+            </div>
+            <div>
+              <nav
+                className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                aria-label="Pagination"
+              >
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 h-9"
+                >
+                  <span className="sr-only">Previous</span>
+                  {"← Prev"}
+                </Button>
+                {/* Simple page numbers */}
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  const pageNumber = i + 1;
+                  // Show current page, first, last, and immediate siblings
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 &&
+                      pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={currentPage === pageNumber ? "default" : "outline"}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 h-9 ${currentPage === pageNumber
+                          ? "bg-[#045e32] text-white hover:bg-[#022007]"
+                          : "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          }`}
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  } else if (
+                    pageNumber === currentPage - 2 ||
+                    pageNumber === currentPage + 2
+                  ) {
+                    return (
+                      <span
+                        key={pageNumber}
+                        className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0 h-9"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 h-9"
+                >
+                  <span className="sr-only">Next</span>
+                  {"Next →"}
+                </Button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
