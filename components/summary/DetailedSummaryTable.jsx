@@ -30,7 +30,7 @@ const SummaryTable = ({ data }) => {
   const feeTypes = useMemo(() => {
     const set = new Set();
     monthly_summary.forEach((m) =>
-      m.fees?.by_type?.forEach((t) => set.add(t.type))
+      m.fees?.by_type?.forEach((t) => set.add(t.fee_type))
     );
     return Array.from(set);
   }, [monthly_summary]);
@@ -55,7 +55,7 @@ const SummaryTable = ({ data }) => {
     if (sec === "savings") {
       const t = m.savings.by_type.find((x) => x.type === type);
       return {
-        dep: t?.amount || 0,
+        dep: t?.total_deposits || 0,
         bal: t?.balance_carried_forward || 0,
         pay: 0,
         disb: 0,
@@ -104,8 +104,8 @@ const SummaryTable = ({ data }) => {
     }
 
     if (sec === "fees") {
-      const t = m.fees?.by_type?.find((x) => x.type === type);
-      return { fee: t?.amount || 0, bal: t?.remaining_balance || 0, dep: 0, pay: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0 };
+      const t = m.fees?.by_type?.find((x) => x.fee_type === type);
+      return { fee: t?.total_amount_paid || 0, bal: t?.balance_carried_forward || 0, dep: 0, pay: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0 };
     }
 
     return { dep: 0, pay: 0, bal: 0, disb: 0, rep: 0, int: 0, out: 0, newG: 0, fee: 0 };
