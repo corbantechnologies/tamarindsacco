@@ -37,6 +37,7 @@ function CreateMember({ closeModal, openModal }) {
           initialValues={{
             salutation: "",
             first_name: "",
+            middle_name: "",
             last_name: "",
             email: "",
             phone: "",
@@ -99,6 +100,23 @@ function CreateMember({ closeModal, openModal }) {
                     name="first_name"
                     id="first_name"
                     placeholder="John"
+                    className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="middle_name"
+                    className="text-base text-black font-medium"
+                  >
+                    Middle Name
+                  </Label>
+                  <Field
+                    as={Input}
+                    type="text"
+                    name="middle_name"
+                    id="middle_name"
+                    placeholder="Doe"
                     className="border-black focus:ring-[#cc5500] focus:border-[#cc5500] rounded-md text-base py-2"
                   />
                 </div>

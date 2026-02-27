@@ -37,6 +37,10 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
             description: "",
             standard_amount: 0,
             is_income: false,
+            is_expense: false,
+            is_liability: false,
+            is_asset: false,
+            is_equity: false,
             is_active: true,
           }}
           onSubmit={async (values) => {
@@ -94,12 +98,90 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
                 <Checkbox
                   id="is_income"
                   checked={values.is_income}
-                  onCheckedChange={(checked) =>
-                    setFieldValue("is_income", checked)
-                  }
+                  onCheckedChange={(checked) => {
+                    setFieldValue("is_income", checked);
+                    if (checked) {
+                      setFieldValue("is_expense", false);
+                      setFieldValue("is_liability", false);
+                      setFieldValue("is_asset", false);
+                      setFieldValue("is_equity", false);
+                    }
+                  }}
                 />
                 <Label htmlFor="is_income" className="text-black font-medium">
                   Is Income?
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is_expense"
+                  checked={values.is_expense}
+                  onCheckedChange={(checked) => {
+                    setFieldValue("is_expense", checked);
+                    if (checked) {
+                      setFieldValue("is_income", false);
+                      setFieldValue("is_liability", false);
+                      setFieldValue("is_asset", false);
+                      setFieldValue("is_equity", false);
+                    }
+                  }}
+                />
+                <Label htmlFor="is_expense" className="text-black font-medium">
+                  Is Expense?
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is_liability"
+                  checked={values.is_liability}
+                  onCheckedChange={(checked) => {
+                    setFieldValue("is_liability", checked);
+                    if (checked) {
+                      setFieldValue("is_income", false);
+                      setFieldValue("is_expense", false);
+                      setFieldValue("is_asset", false);
+                      setFieldValue("is_equity", false);
+                    }
+                  }}
+                />
+                <Label htmlFor="is_liability" className="text-black font-medium">
+                  Is Liability?
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is_asset"
+                  checked={values.is_asset}
+                  onCheckedChange={(checked) => {
+                    setFieldValue("is_asset", checked);
+                    if (checked) {
+                      setFieldValue("is_income", false);
+                      setFieldValue("is_expense", false);
+                      setFieldValue("is_liability", false);
+                      setFieldValue("is_equity", false);
+                    }
+                  }}
+                />
+                <Label htmlFor="is_asset" className="text-black font-medium">
+                  Is Asset?
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="is_equity"
+                  checked={values.is_equity}
+                  onCheckedChange={(checked) => {
+                    setFieldValue("is_equity", checked);
+                    if (checked) {
+                      setFieldValue("is_income", false);
+                      setFieldValue("is_expense", false);
+                      setFieldValue("is_liability", false);
+                      setFieldValue("is_asset", false);
+                    }
+                  }}
+                />
+                <Label htmlFor="is_equity" className="text-black font-medium">
+                  Is Equity?
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
