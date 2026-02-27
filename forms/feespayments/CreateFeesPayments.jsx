@@ -21,7 +21,7 @@ import {
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createFeesPayment } from "@/services/feespayments";
 import { Field, Form, Formik } from "formik";
-import React, { useTransition } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const PAYMENT_METHODS = [
@@ -32,7 +32,7 @@ const PAYMENT_METHODS = [
 ];
 
 const CreateFeesPayments = ({ isOpen, onClose, memberFee, refetchPayments }) => {
-  const [loading, setLoading] = useTransition();
+  const [loading, setLoading] = useState(false);
   const auth = useAxiosAuth();
 
   return (
@@ -50,15 +50,16 @@ const CreateFeesPayments = ({ isOpen, onClose, memberFee, refetchPayments }) => 
           }}
           enableReinitialize
           onSubmit={async (values) => {
+            setLoading(true);
             try {
-              setLoading(async () => {
-                await createFeesPayment(values, auth);
-                toast?.success("Payment recorded successfully!");
-                onClose();
-                refetchPayments();
-              });
+              await createFeesPayment(values, auth);
+              toast?.success("Payment recorded successfully!");
+              onClose();
+              refetchPayments();
             } catch (error) {
               toast?.error("Failed to record payment!");
+            } finally {
+              setLoading(false);
             }
           }}
         >

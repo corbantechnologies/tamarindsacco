@@ -16,11 +16,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createFeeType } from "@/services/feetypes";
 import { Field, Form, Formik } from "formik";
-import React, { useTransition } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
-  const [loading, setLoading] = useTransition();
+  const [loading, setLoading] = useState(false);
   const auth = useAxiosAuth();
 
   return (
@@ -43,15 +43,16 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
             is_active: true,
           }}
           onSubmit={async (values) => {
+            setLoading(true);
             try {
-              setLoading(async () => {
-                await createFeeType(values, auth);
-                toast?.success("Fee type created successfully!");
-                onClose();
-                refetchFeeTypes();
-              });
+              await createFeeType(values, auth);
+              toast?.success("Fee type created successfully!");
+              onClose();
+              refetchFeeTypes();
             } catch (error) {
               toast?.error("Failed to create fee type!");
+            } finally {
+              setLoading(false);
             }
           }}
         >

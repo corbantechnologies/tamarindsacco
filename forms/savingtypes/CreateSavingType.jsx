@@ -16,11 +16,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createSavingType } from "@/services/savingstypes";
 import { Field, Form, Formik } from "formik";
-import React, { useTransition } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
-  const [loading, setLoading] = useTransition();
+  const [loading, setLoading] = useState(false);
   const auth = useAxiosAuth();
 
   return (
@@ -38,15 +38,16 @@ const CreateSavingTypeModal = ({ isOpen, onClose, refetchSavingTypes }) => {
             is_guaranteed: false,
           }}
           onSubmit={async (values) => {
+            setLoading(true);
             try {
-              setLoading(async () => {
-                await createSavingType(values, auth);
-                toast?.success("Saving type created successfully!");
-                onClose();
-                refetchSavingTypes();
-              });
+              await createSavingType(values, auth);
+              toast?.success("Saving type created successfully!");
+              onClose();
+              refetchSavingTypes();
             } catch (error) {
               toast?.error("Failed to create saving type!");
+            } finally {
+              setLoading(false);
             }
           }}
         >
