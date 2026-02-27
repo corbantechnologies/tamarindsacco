@@ -34,7 +34,6 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
         <Formik
           initialValues={{
             name: "",
-            description: "",
             standard_amount: 0,
             is_income: false,
             is_expense: false,
@@ -68,17 +67,6 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
                   name="name"
                   className="border-black focus:ring-[#cc5500]"
                   required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-black">
-                  Description
-                </Label>
-                <Field
-                  as={Textarea}
-                  id="description"
-                  name="description"
-                  className="border-black focus:ring-[#cc5500]"
                 />
               </div>
               <div className="space-y-2">
