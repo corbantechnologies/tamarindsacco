@@ -34,7 +34,6 @@ function CreateVentureType({ isOpen, onClose, refetchVentureTypes }) {
         <Formik
           initialValues={{
             name: "",
-            description: "",
             interest_rate: 0,
           }}
           onSubmit={async (values) => {
@@ -75,18 +74,7 @@ function CreateVentureType({ isOpen, onClose, refetchVentureTypes }) {
                   className="border-black focus:ring-[#cc5500]"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-black">
-                  Description
-                </Label>
-                <Field
-                  as={Textarea}
-                  rows={4}
-                  id="description"
-                  name="description"
-                  className="border-black focus:ring-[#cc5500]"
-                />
-              </div>
+              
               <DialogFooter>
                 <Button
                   type="button"
