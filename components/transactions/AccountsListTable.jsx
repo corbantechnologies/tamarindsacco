@@ -37,9 +37,11 @@ const AccountsListTable = ({ accountsList }) => {
   const [selectedSavingsTypes, setSelectedSavingsTypes] = useState([]);
   const [selectedVentureTypes, setSelectedVentureTypes] = useState([]);
   const [selectedLoanTypes, setSelectedLoanTypes] = useState([]);
+  const [selectedFeeTypes, setSelectedFeeTypes] = useState([]);
   const [openSavings, setOpenSavings] = useState(false);
   const [openVentures, setOpenVentures] = useState(false);
   const [openLoans, setOpenLoans] = useState(false);
+  const [openFees, setOpenFees] = useState(false);
   const [expandedRows, setExpandedRows] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -72,6 +74,14 @@ const AccountsListTable = ({ accountsList }) => {
     return Array.from(types);
   }, [data]);
 
+  const feeTypes = useMemo(() => {
+    const types = new Set();
+    data.forEach((user) => {
+      user.fees?.forEach((fee) => types.add(fee.fee_type_name));
+    });
+    return Array.from(types);
+  }, [data]);
+
   // Filter accounts based on search and selected types
   const filteredAccounts = useMemo(() => {
     return data.filter((user) => {
@@ -98,11 +108,18 @@ const AccountsListTable = ({ accountsList }) => {
           selectedLoanTypes.includes(typeName)
         );
 
+      const hasSelectedFees =
+        selectedFeeTypes.length === 0 ||
+        user.fees?.some((fee) =>
+          selectedFeeTypes.includes(fee.fee_type_name)
+        );
+
       return (
         matchesSearch &&
         hasSelectedSavings &&
         hasSelectedVentures &&
-        hasSelectedLoans
+        hasSelectedLoans &&
+        hasSelectedFees
       );
     });
   }, [
@@ -111,6 +128,7 @@ const AccountsListTable = ({ accountsList }) => {
     selectedSavingsTypes,
     selectedVentureTypes,
     selectedLoanTypes,
+    selectedFeeTypes,
   ]);
 
   // Pagination logic
@@ -159,14 +177,28 @@ const AccountsListTable = ({ accountsList }) => {
         allHeaders.push(`${type} Account`, `${type} Balance`);
       });
     }
+    if (
+      selectedFeeTypes.length === 0 ||
+      selectedFeeTypes.length === feeTypes.length
+    ) {
+      feeTypes.forEach((type) => {
+        allHeaders.push(`${type} Account`, `${type} Balance`);
+      });
+    } else {
+      selectedFeeTypes.forEach((type) => {
+        allHeaders.push(`${type} Account`, `${type} Balance`);
+      });
+    }
     return allHeaders;
   }, [
     savingsTypes,
     ventureTypes,
     loanTypes,
+    feeTypes,
     selectedSavingsTypes,
     selectedVentureTypes,
     selectedLoanTypes,
+    selectedFeeTypes,
   ]);
 
   // Headers for expanded tables
@@ -191,11 +223,6 @@ const AccountsListTable = ({ accountsList }) => {
     "Date",
   ];
 
-  const feeHeaders = [
-    "Account Number",
-    "Fee Type",
-  ];
-
   // Handle filter changes
   const handleSavingsTypeFilter = (type) => {
     setSelectedSavingsTypes((prev) =>
@@ -215,6 +242,12 @@ const AccountsListTable = ({ accountsList }) => {
     );
   };
 
+  const handleFeeTypeFilter = (type) => {
+    setSelectedFeeTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
   // Toggle row expansion
   const toggleRow = (memberNo) => {
     setExpandedRows((prev) => ({
@@ -228,10 +261,12 @@ const AccountsListTable = ({ accountsList }) => {
     setSelectedSavingsTypes([]);
     setSelectedVentureTypes([]);
     setSelectedLoanTypes([]);
+    setSelectedFeeTypes([]);
     setSearchTerm("");
     setOpenSavings(false);
     setOpenVentures(false);
     setOpenLoans(false);
+    setOpenFees(false);
     setExpandedRows({});
     setCurrentPage(1);
   };
@@ -239,7 +274,7 @@ const AccountsListTable = ({ accountsList }) => {
   // Reset page when filters change
   useMemo(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedSavingsTypes, selectedVentureTypes, selectedLoanTypes]);
+  }, [searchTerm, selectedSavingsTypes, selectedVentureTypes, selectedLoanTypes, selectedFeeTypes]);
 
   return (
     <div className="space-y-4">
@@ -408,6 +443,57 @@ const AccountsListTable = ({ accountsList }) => {
               </PopoverContent>
             </Popover>
           </div>
+          {/* Fee Types Dropdown */}
+          <div>
+            <Popover open={openFees} onOpenChange={setOpenFees}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openFees}
+                  className="w-full lg:w-[150px] justify-between text-xs sm:text-sm h-10"
+                >
+                  {selectedFeeTypes.length > 0
+                    ? `${selectedFeeTypes.length} fees`
+                    : "Fee types"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[150px] p-0">
+                <Command>
+                  <CommandInput
+                    placeholder="Search fees..."
+                    className="text-xs sm:text-sm h-8"
+                  />
+                  <CommandList>
+                    <CommandEmpty>No fee types found.</CommandEmpty>
+                    <CommandGroup>
+                      {feeTypes.map((type) => (
+                        <CommandItem
+                          key={type}
+                          value={type}
+                          onSelect={() => {
+                            handleFeeTypeFilter(type);
+                          }}
+                          className="text-xs sm:text-sm"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedFeeTypes.includes(type)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {type}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
           {/* Clear Filters Button */}
           <Button
             variant="outline"
@@ -449,8 +535,7 @@ const AccountsListTable = ({ accountsList }) => {
                     <TableCell className="px-2">
                       {(user.loan_interest?.length > 0 ||
                         user.loan_disbursements?.length > 0 ||
-                        user.loan_repayments?.length > 0 ||
-                        user.fees?.length > 0) && (
+                        user.loan_repayments?.length > 0) && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -527,12 +612,32 @@ const AccountsListTable = ({ accountsList }) => {
                       }
                       return null;
                     })}
+                    {feeTypes.map((type) => {
+                      if (
+                        selectedFeeTypes.length === 0 ||
+                        selectedFeeTypes.includes(type)
+                      ) {
+                        const fee = user.fees?.find(
+                          (f) => f.fee_type_name === type
+                        );
+                        return (
+                          <React.Fragment key={type}>
+                            <TableCell className="text-xs sm:text-sm truncate px-2">
+                              {fee ? fee.account_number : ""}
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm px-2">
+                              {fee?.remaining_balance !== undefined ? Number(fee.remaining_balance).toFixed(2) : ""}
+                            </TableCell>
+                          </React.Fragment>
+                        );
+                      }
+                      return null;
+                    })}
                   </TableRow>
                   {expandedRows[user.member_no] &&
                     (user.loan_interest?.length > 0 ||
                       user.loan_disbursements?.length > 0 ||
-                      user.loan_repayments?.length > 0 ||
-                      user.fees?.length > 0) && (
+                      user.loan_repayments?.length > 0) && (
                       <TableRow className="bg-gray-50/50">
                         <TableCell colSpan={headers.length} className="p-0 border-b-2 border-[#cc5500]/20">
                           <div className="p-2 sm:p-4 space-y-4 sm:space-y-6">
@@ -684,40 +789,7 @@ const AccountsListTable = ({ accountsList }) => {
                               </div>
                             )}
 
-                            {/* Fees Table */}
-                            {user.fees?.length > 0 && (
-                              <div className="bg-white rounded-md border shadow-sm">
-                                <h4 className="px-3 py-2 text-sm font-semibold text-purple-700 border-b bg-purple-50/50">
-                                  Fees
-                                </h4>
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow className="hover:bg-transparent">
-                                      {feeHeaders.map((header) => (
-                                        <TableHead
-                                          key={header}
-                                          className="text-xs sm:text-sm whitespace-nowrap px-3 h-8 text-gray-500"
-                                        >
-                                          {header}
-                                        </TableHead>
-                                      ))}
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {user.fees.map((fee, index) => (
-                                      <TableRow key={`fee-${fee.account_number}-${index}`}>
-                                        <TableCell className="text-xs sm:text-sm truncate px-3 py-2">
-                                          {fee.account_number}
-                                        </TableCell>
-                                        <TableCell className="text-xs sm:text-sm truncate px-3 py-2 text-gray-600">
-                                          {fee.fee_type_name}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              </div>
-                            )}
+
                           </div>
                         </TableCell>
                       </TableRow>
