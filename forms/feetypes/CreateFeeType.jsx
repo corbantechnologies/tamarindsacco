@@ -15,7 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import useAxiosAuth from "@/hooks/authentication/useAxiosAuth";
 import { createFeeType } from "@/services/feetypes";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, ErrorMessage } from "formik";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -81,6 +81,16 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
                   name="standard_amount"
                   className="border-black focus:ring-[#cc5500]"
                   required
+                  min="0.01"
+                  step="0.01"
+                  validate={(value) =>
+                    value <= 0 ? "Amount must be greater than zero" : undefined
+                  }
+                />
+                <ErrorMessage
+                  name="standard_amount"
+                  component="div"
+                  className="text-red-500 text-sm"
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -185,7 +195,7 @@ const CreateFeeType = ({ isOpen, onClose, refetchFeeTypes }) => {
                   Is Active?
                 </Label>
               </div>
-              
+
               <DialogFooter>
                 <Button
                   type="button"
