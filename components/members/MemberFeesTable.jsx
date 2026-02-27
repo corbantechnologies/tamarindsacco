@@ -77,15 +77,13 @@ function MemberFeesTable({ memberFees, refetchMemberFees }) {
                     )}
                   </TableCell>
                   <TableCell className="text-right">
-                    {!fee.is_paid && (
-                      <Button
-                        size="sm"
-                        onClick={() => handlePayClick(fee)}
-                        className="bg-[#045e32] hover:bg-[#037a40] text-white gap-2"
-                      >
-                        <CreditCard className="h-4 w-4" /> Pay
-                      </Button>
-                    )}
+                    <Button
+                      size="sm"
+                      onClick={() => handlePayClick(fee)}
+                      className="bg-[#045e32] hover:bg-[#037a40] text-white gap-2"
+                    >
+                      <CreditCard className="h-4 w-4" /> Pay
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
